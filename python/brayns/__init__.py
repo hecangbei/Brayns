@@ -41,6 +41,7 @@ from .client.client import Client
 from .client.request_error import RequestError
 from .client.request_future import RequestFuture
 from .client.request_progress import RequestProgress
+from .instance.instance import Instance
 from .utils.camera_path_handler import CameraPathHandler
 
 __all__ = [
@@ -48,5 +49,6 @@ __all__ = [
     'RequestError',
     'RequestFuture',
     'RequestProgress',
+    'Instance',
     'CameraPathHandler'
 ]
