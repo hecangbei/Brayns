@@ -24,8 +24,8 @@ import unittest
 from brayns.client.client import Client
 from brayns.client.request_error import RequestError
 
-from helpers.web_socket_connection import WebSocketConnection
-from helpers.web_socket_server import WebSocketServer
+from client.helpers.web_socket_connection import WebSocketConnection
+from client.helpers.web_socket_server import WebSocketServer
 
 
 class TestClient(unittest.TestCase):
