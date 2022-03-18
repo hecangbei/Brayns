@@ -54,6 +54,7 @@ class WebSocket(WebSocketProtocol):
         self._loop.run(
             self._websocket.close()
         ).result()
+        self._loop.close()
 
     def receive(self) -> Union[bytes, str]:
         return self._loop.run(

@@ -30,12 +30,11 @@ Example:
         cafile='server.pem' # Custom CA if server certificate is self-signed
     ) as client:
 
-        # Raw request with JSON-RPC method and params (defaults to None)
-        registry = client.request('registry')
+        # Raw request with JSON-RPC method and params
         schema = client.request('schema', {'endpoint': 'get-camera'})
 
-        # Request using auto generated API (here entrypoint get-camera)
-        camera = client.get_camera()
+        # Params defaults to None
+        camera = client.request('get-camera')
 """
 
 from .client.client import Client
