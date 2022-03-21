@@ -28,7 +28,7 @@ from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
 from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
 
 
-class FakeJsonRpcProtocol:
+class MockJsonRpcProtocol:
 
     def __init__(self) -> None:
         self._called = False
@@ -62,7 +62,7 @@ class FakeJsonRpcProtocol:
 class TestJsonRpcDispatcher(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._protocol = FakeJsonRpcProtocol()
+        self._protocol = MockJsonRpcProtocol()
         self._dispatcher = JsonRpcDispatcher(self._protocol)
 
     def test_binary(self) -> None:
