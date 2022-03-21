@@ -36,7 +36,6 @@ class TestJsonRpcClient(unittest.TestCase):
 
     def setUp(self) -> None:
         self._logger = logging.Logger('Test')
-        self._logger.addHandler(logging.StreamHandler(sys.stdout))
         self._websocket = MockWebSocket()
 
     def test_connection(self) -> None:
@@ -132,6 +131,7 @@ class TestJsonRpcClient(unittest.TestCase):
                 self.assertEqual(context.exception, error)
 
     def test_logging(self) -> None:
+        self._logger.addHandler(logging.StreamHandler(sys.stdout))
         with self.assertLogs(self._logger, logging.DEBUG) as context:
             with self._connect() as client:
                 client.send(JsonRpcRequest(0, 'test', 123))
