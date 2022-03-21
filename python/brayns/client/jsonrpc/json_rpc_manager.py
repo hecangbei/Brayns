@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any, Dict, Iterator, Optional, Tuple, Union
+from typing import Any, Iterator, Optional, Tuple, Union
 
 from ..request_error import RequestError
 from ..request_progress import RequestProgress
@@ -28,7 +28,7 @@ from .json_rpc_task import JsonRpcTask
 class JsonRpcManager:
 
     def __init__(self) -> None:
-        self._tasks: Dict[Union[int, str], JsonRpcTask] = {}
+        self._tasks: dict[Union[int, str], JsonRpcTask] = {}
 
     def __len__(self) -> int:
         return len(self._tasks)

@@ -33,7 +33,7 @@ class JsonRpcRequest:
     def is_notification(self) -> bool:
         return self.id is None
 
-    def to_json(self) -> str:
+    def to_dict(self) -> dict:
         message = {
             'jsonrpc': '2.0',
             'method': self.method
@@ -42,4 +42,7 @@ class JsonRpcRequest:
             message['id'] = self.id
         if self.params is not None:
             message['params'] = self.params
-        return json.dumps(message)
+        return message
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict())

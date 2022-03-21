@@ -27,24 +27,41 @@ from .event_loop import EventLoop
 from .web_socket_protocol import WebSocketProtocol
 
 
-class WebSocket(WebSocketProtocol):
+class WebSocketClient(WebSocketProtocol):
 
-    def __init__(
-        self,
+    @staticmethod
+    def connect(
         uri: str,
         secure: bool = False,
         cafile: Optional[str] = None
-    ) -> None:
-        self._uri = ('wss://' if secure else 'ws://') + uri
-        self._ssl = ssl.create_default_context(
-            cafile=cafile
-        ) if secure else None
-        self._loop = EventLoop()
-        self._loop.run(
-            self._connect()
-        ).result()
+    ) -> 'WebSocketClient':
+        async def _connect():
+            return await websockets.connect(
+                uri=('wss://' if secure else 'ws://') + uri,
+                ssl=ssl.create_default_context(
+                    cafile=cafile
+                ) if secure else None,
+                ping_interval=None,
+                close_timeout=0,
+                max_size=int(2e9)
+            )
+        loop = EventLoop()
+        return WebSocketClient(
+            websocket=loop.run(
+                _connect()
+            ).result(),
+            loop=loop
+        )
 
-    def __enter__(self) -> 'WebSocket':
+    def __init__(
+        self,
+        websocket: websockets.WebSocketClientProtocol,
+        loop: EventLoop
+    ) -> None:
+        self._websocket = websocket
+        self._loop = loop
+
+    def __enter__(self) -> 'WebSocketClient':
         return self
 
     def __exit__(self, *_) -> None:
@@ -65,12 +82,3 @@ class WebSocket(WebSocketProtocol):
         self._loop.run(
             self._websocket.send(data)
         ).result()
-
-    async def _connect(self) -> None:
-        self._websocket = await websockets.connect(
-            uri=self._uri,
-            ssl=self._ssl,
-            ping_interval=None,
-            close_timeout=0,
-            max_size=int(2e9)
-        )

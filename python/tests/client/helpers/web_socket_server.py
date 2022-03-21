@@ -24,40 +24,63 @@ from typing import Any, Callable, Coroutine, Optional
 import websockets
 from brayns.client.websocket.event_loop import EventLoop
 
-from .web_socket_connection import WebSocketConnection
-
 
 class WebSocketServer:
 
     ConnectionHandler = Callable[
-        [WebSocketConnection],
+        [websockets.WebSocketServerProtocol, str],
         Coroutine[Any, Any, None]
     ]
 
-    def __init__(
-        self,
-        handle_connection: ConnectionHandler,
+    @staticmethod
+    async def echo(
+        websocket: websockets.WebSocketServerProtocol,
+        path: str
+    ) -> None:
+        data = await websocket.recv()
+        await websocket.send(data)
+
+    @staticmethod
+    def start(
+        connection_handler: ConnectionHandler,
         uri: str,
         certfile: Optional[str] = None,
         keyfile: Optional[str] = None,
         password: Optional[str] = None
-    ) -> None:
-        self._handle_connection = handle_connection
-        host, port = uri.split(':')
-        self._host = host
-        self._port = int(port)
-        self._ssl = None
-        if certfile is not None:
-            self._ssl = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            self._ssl.load_cert_chain(
-                certfile=certfile,
-                keyfile=keyfile,
-                password=password
+    ) -> 'WebSocketServer':
+        async def _start():
+            host, port = uri.split(':')
+            context = None
+            if certfile is not None:
+                context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+                context.load_cert_chain(
+                    certfile=certfile,
+                    keyfile=keyfile,
+                    password=password
+                )
+            return await websockets.serve(
+                ws_handler=connection_handler,
+                host=host,
+                port=int(port),
+                ssl=context,
+                ping_interval=None,
+                close_timeout=0
             )
-        self._loop = EventLoop()
-        self._loop.run(
-            self._start()
-        ).result()
+        loop = EventLoop()
+        return WebSocketServer(
+            websocket=loop.run(
+                _start()
+            ).result(),
+            loop=loop
+        )
+
+    def __init__(
+        self,
+        websocket: websockets.WebSocketServer,
+        loop: EventLoop
+    ) -> None:
+        self._websocket = websocket
+        self._loop = loop
 
     def __enter__(self) -> 'WebSocketServer':
         return self
@@ -71,22 +94,3 @@ class WebSocketServer:
             self._websocket.wait_closed()
         ).result()
         self._loop.close()
-
-    async def _start(self) -> None:
-        self._websocket = await websockets.serve(
-            ws_handler=self._handle,
-            host=self._host,
-            port=self._port,
-            ssl=self._ssl,
-            ping_interval=None,
-            close_timeout=0
-        )
-
-    async def _handle(
-        self,
-        websocket: websockets.WebSocketServerProtocol,
-        *_
-    ) -> None:
-        await self._handle_connection(
-            WebSocketConnection(websocket)
-        )

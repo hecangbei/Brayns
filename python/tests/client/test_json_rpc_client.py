@@ -18,159 +18,137 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import json
 import logging
+import sys
 import unittest
-from typing import Union
 
 from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
+from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
+from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
 from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
-from brayns.client.jsonrpc.json_rpc_task import JsonRpcTask
 from brayns.client.request_error import RequestError
 from brayns.client.request_progress import RequestProgress
-from brayns.client.websocket.web_socket_protocol import WebSocketProtocol
 
-
-class FakeWebSocket(WebSocketProtocol):
-
-    def __init__(self) -> None:
-        self.closed = False
-        self.received = []
-        self.replies = []
-
-    def close(self) -> None:
-        self.closed = True
-
-    def receive(self) -> Union[bytes, str]:
-        return self.replies.pop()
-
-    def send(self, data: Union[bytes, str]) -> None:
-        self.received.append(data)
-
+from client.helpers.mock_web_socket import MockWebSocket
 
 class TestJsonRpcClient(unittest.TestCase):
 
     def setUp(self) -> None:
         self._logger = logging.Logger('Test')
-        self._logger.disabled = True
-        self._websocket = FakeWebSocket()
-        self._sent = []
-        self._received = self._websocket.received
-        self._client = JsonRpcClient(
-            websocket=self._websocket,
-            logger=self._logger
-        )
-
-    def tearDown(self) -> None:
-        self._client.disconnect()
+        self._logger.addHandler(logging.StreamHandler(sys.stdout))
+        self._websocket = MockWebSocket()
 
     def test_connection(self) -> None:
-        with self._client:
+        with self._connect():
             pass
         self.assertTrue(self._websocket.closed)
 
     def test_notification(self) -> None:
-        task = self._send(JsonRpcRequest(None, 'test', 1))
-        self._check_requests()
-        self.assertEqual(task.get_result(), None)
-        self.assertEqual(len(self._client.get_active_tasks()), 0)
+        notification = JsonRpcRequest(None, 'test', 1)
+        with self._connect() as client:
+            task = client.send(notification)
+            self.assertTrue(self._websocket.has_received([notification]))
+            self.assertEqual(len(client.get_active_tasks()), 0)
+            self.assertEqual(task.get_result(), None)
 
-    def test_requests(self) -> None:
-        self._send_requests()
-        self._check_requests()
-        for task in self._tasks:
+    def test_request(self) -> None:
+        request = JsonRpcRequest(0, 'test', 123)
+        reply = JsonRpcReply(0, 456)
+        with self._connect() as client:
+            task = client.send(request)
+            self.assertTrue(self._websocket.has_received([request]))
             self.assertFalse(task.is_ready())
-            self.assertFalse(task.has_progress())
+            self.assertEqual(len(client.get_active_tasks()), 1)
+            self._websocket.reply(reply)
+            client.poll()
+            self.assertEqual(task.get_result(), reply.result)
+            self.assertEqual(len(client.get_active_tasks()), 0)
 
-    def test_result(self) -> None:
-        self._send_requests()
-        result = 26
-        self._reply({
-            'id': self._requests[1].id,
-            'result': result
-        })
-        self.assertEqual(self._tasks[1].get_result(), result)
-        self.assertEqual(len(self._client.get_active_tasks()), 2)
+    def test_multiple_requests(self) -> None:
+        requests = [
+            JsonRpcRequest(0, 'test1', 123),
+            JsonRpcRequest(1, 'test2', 456),
+            JsonRpcRequest(2, 'test3', 789)
+        ]
+        replies = [
+            JsonRpcReply(0, 12),
+            JsonRpcReply(1, 34)
+        ]
+        with self._connect() as client:
+            tasks = [client.send(request) for request in requests]
+            self.assertTrue(self._websocket.has_received(requests))
+            self.assertEqual(len(client.get_active_tasks()), 3)
+            for task in tasks:
+                self.assertFalse(task.is_ready())
+            for reply in replies:
+                self._websocket.reply(reply)
+                client.poll()
+            self.assertEqual(len(client.get_active_tasks()), 1)
+            for task, reply in zip(tasks, replies):
+                self.assertEqual(task.get_result(), reply.result)
+            
 
     def test_progress(self) -> None:
-        self._send_requests()
+        request = JsonRpcRequest(0, 'test', 123)
         progress = RequestProgress('test', 0.5)
-        self._reply({
-            'params': {
-                'id': self._requests[1].id,
-                'operation': progress.operation,
-                'amount': progress.amount
-            }
-        })
-        self.assertEqual(self._tasks[1].get_progress(), progress)
-        self.assertEqual(len(self._client.get_active_tasks()), 3)
-        result = 25
-        self._reply({
-            'id': 2,
-            'result': result
-        })
-        self.assertEqual(self._tasks[1].get_result(), result)
-        self.assertEqual(len(self._client.get_active_tasks()), 2)
+        message = JsonRpcProgress(0, progress)
+        with self._connect() as client:
+            task = client.send(request)
+            self._websocket.progress(message)
+            client.poll()
+            self.assertFalse(task.is_ready())
+            self.assertEqual(task.get_progress(), progress)
 
     def test_error(self) -> None:
-        self._send_requests()
-        error = RequestError('test', 3, 4)
-        self._reply({
-            'id': self._requests[1].id,
-            'error': {
-                'code': error.code,
-                'message': error.message,
-                'data': error.data
-            }
-        })
-        with self.assertRaises(RequestError) as context:
-            self._tasks[1].get_result()
-        self.assertEqual(context.exception, error)
-        self.assertEqual(len(self._client.get_active_tasks()), 2)
-
-    def test_general_error(self) -> None:
-        self._send_requests()
-        error = RequestError('test', 3, 4)
-        self._reply({
-            'error': {
-                'code': error.code,
-                'message': error.message,
-                'data': error.data
-            }
-        })
-        for task in self._tasks:
+        request = JsonRpcRequest(0, 'test', 123)
+        error = RequestError('test', 2, 123)
+        message = JsonRpcError(0, error)
+        with self._connect() as client:
+            task = client.send(request)
+            self._websocket.error(message)
+            client.poll()
+            self.assertTrue(task.is_ready())
             with self.assertRaises(RequestError) as context:
                 task.get_result()
             self.assertEqual(context.exception, error)
-        self.assertEqual(len(self._client.get_active_tasks()), 0)
 
-    def _send_requests(self) -> None:
-        self._requests = [
-            JsonRpcRequest(1, 'test1', 4),
-            JsonRpcRequest(2, 'test', 5),
-            JsonRpcRequest(3, 'test', 6)
+    def test_general_error(self) -> None:
+        requests = [
+            JsonRpcRequest(0, 'test1', 123),
+            JsonRpcRequest(1, 'test2', 456),
+            JsonRpcRequest(2, 'test3', 789)
         ]
-        self._tasks = [self._send(request) for request in self._requests]
+        error = RequestError('test', 3, 123)
+        message = JsonRpcError(None, error)
+        with self._connect() as client:
+            tasks = [client.send(request) for request in requests]
+            self._websocket.error(message)
+            client.poll()
+            self.assertEqual(len(client.get_active_tasks()), 0)
+            for task in tasks:
+                with self.assertRaises(RequestError) as context:
+                    task.get_result()
+                self.assertEqual(context.exception, error)
 
-    def _send(self, request: JsonRpcRequest) -> JsonRpcTask:
-        self._sent.append(request)
-        return self._client.send(request)
+    def test_logging(self) -> None:
+        with self.assertLogs(self._logger, logging.DEBUG) as context:
+            with self._connect() as client:
+                client.send(JsonRpcRequest(0, 'test', 123))
+                self._websocket.reply(JsonRpcReply(0, 456))
+                client.poll()
+                client.send(JsonRpcRequest(0, 'test', 123))
+                self._websocket.error(JsonRpcError(0, RequestError('test')))
+                client.poll()
+                self._websocket.progress(JsonRpcProgress(0, RequestProgress('test', 0.5)))
+                client.poll()
+        self.assertEqual(len(context.output), 9)
 
-    def _reply(self, data: dict) -> None:
-        self._websocket.replies.append(json.dumps(data))
-        self._client.poll()
-
-    def _check_requests(self) -> None:
-        self.assertEqual(len(self._sent), len(self._received))
-        for sent, received in zip(self._sent, self._received):
-            self._check_request(sent, received)
-
-    def _check_request(self, request: JsonRpcRequest, data: str) -> None:
-        message: dict = json.loads(data)
-        self.assertEqual(message['jsonrpc'], '2.0')
-        self.assertEqual(message.get('id'), request.id)
-        self.assertEqual(message['method'], request.method)
-        self.assertEqual(message['params'], request.params)
+    def _connect(self) -> JsonRpcClient:
+        return JsonRpcClient(
+            websocket=self._websocket,
+            logger=self._logger
+        )
 
 
 if __name__ == '__main__':

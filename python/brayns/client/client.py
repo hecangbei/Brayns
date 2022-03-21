@@ -19,24 +19,25 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import logging
+import sys
 from typing import Any, Optional
 
 from .jsonrpc.json_rpc_client import JsonRpcClient
 from .jsonrpc.json_rpc_request import JsonRpcRequest
 from .request_future import RequestFuture
-from .websocket.web_socket import WebSocket
+from .websocket.web_socket_client import WebSocketClient
 
 
 class Client:
     """Brayns client implementation to connect to a renderer."""
 
-    def __init__(
-        self,
+    @staticmethod
+    def connect(
         uri: str,
         secure: bool = False,
         cafile: Optional[str] = None,
         loglevel=logging.ERROR
-    ) -> None:
+    ) -> 'Client':
         """Connect to the renderer using the given settings.
 
         :param uri: Renderer URI in format 'host:port'
@@ -48,16 +49,31 @@ class Client:
         :param loglevel: Log level, defaults to logging.ERROR
         :type loglevel: int
         """
-        self._client = JsonRpcClient(
-            websocket=WebSocket(
-                uri=uri,
-                secure=secure,
-                cafile=cafile
+        logger = logging.Logger('Brayns', loglevel)
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+        return Client(
+            JsonRpcClient(
+                websocket=WebSocketClient.connect(
+                    uri=uri,
+                    secure=secure,
+                    cafile=cafile
+                )
             ),
-            logger=logging.Logger('Brayns', loglevel)
+            logger=logger
         )
 
-    def __enter__(self) -> None:
+    def __init__(
+        self,
+        client: JsonRpcClient
+    ) -> None:
+        """Low level initialization with dependencies.
+
+        :param client: JSON-RPC client
+        :type client: JsonRpcClient
+        """
+        self._client = client
+
+    def __enter__(self) -> 'Client':
         """Allow using Brayns client in context manager."""
         return self
 

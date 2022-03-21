@@ -23,8 +23,11 @@ from typing import Protocol, Union
 
 class WebSocketProtocol(Protocol):
 
-    def close(self) -> None: ...
+    def close(self) -> None:
+        raise NotImplementedError()
 
-    def receive(self) -> Union[bytes, str]: ...
+    def receive(self) -> Union[bytes, str]:
+        raise NotImplementedError()
 
-    def send(self, data: Union[bytes, str]) -> None: ...
+    def send(self, data: Union[bytes, str]) -> None:
+        raise NotImplementedError()

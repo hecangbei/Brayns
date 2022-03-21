@@ -63,7 +63,7 @@ class JsonRpcClient:
         )
 
     def send(self, request: JsonRpcRequest) -> JsonRpcTask:
-        self._logger.debug('Send JSON-RPC request: {}.', request)
+        self._logger.debug('Send JSON-RPC request: %s.', request)
         self._websocket.send(request.to_json())
         if request.is_notification():
             return JsonRpcTask.from_result(None)
