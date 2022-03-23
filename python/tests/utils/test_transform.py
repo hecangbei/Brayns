@@ -18,26 +18,35 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Protocol, Union
+import unittest
 
-from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
+from brayns.utils.quaternion import Quaternion
+from brayns.utils.transform import Transform
+from brayns.utils.vector3 import Vector3
 
 
-class JsonRpcProtocol(Protocol):
+class TestTransform(unittest.TestCase):
 
-    def on_binary(self, data: bytes) -> None:
-        pass
+    def setUp(self) -> None:
+        self._transform = Transform(
+            translation=Vector3(1, 2, 3),
+            scale=Vector3(1, 1, 1),
+            rotation=Quaternion(1, 2, 3, 4),
+            rotation_center=Vector3(4, 5, 6)
+        )
+        self._template = {
+            'translation': [1, 2, 3],
+            'scale': [1, 1, 1],
+            'rotation': [1, 2, 3, 4],
+            'rotation_center': [4, 5, 6]
+        }
 
-    def on_reply(self, reply: JsonRpcReply) -> None:
-        pass
+    def test_serialize(self) -> None:
+        self.assertEqual(self._transform.to_dict(), self._template)
 
-    def on_error(self, error: JsonRpcError) -> None:
-        pass
+    def test_deserialize(self) -> None:
+        self.assertEqual(Transform.from_dict(self._template), self._transform)
 
-    def on_progress(self, progress: JsonRpcProgress) -> None:
-        pass
 
-    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        pass
+if __name__ == '__main__':
+    unittest.main()

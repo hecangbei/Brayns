@@ -18,26 +18,33 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Protocol, Union
+from dataclasses import dataclass
 
-from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
+from brayns.utils.quaternion import Quaternion
+from brayns.utils.vector3 import Vector3
 
 
-class JsonRpcProtocol(Protocol):
+@dataclass(frozen=True)
+class Transform:
 
-    def on_binary(self, data: bytes) -> None:
-        pass
+    translation: Vector3
+    scale: Vector3
+    rotation: Quaternion
+    rotation_center: Vector3
 
-    def on_reply(self, reply: JsonRpcReply) -> None:
-        pass
+    @staticmethod
+    def from_dict(message: dict) -> 'Transform':
+        return Transform(
+            Vector3(*message['translation']),
+            Vector3(*message['scale']),
+            Quaternion(*message['rotation']),
+            Vector3(*message['rotation_center']),
+        )
 
-    def on_error(self, error: JsonRpcError) -> None:
-        pass
-
-    def on_progress(self, progress: JsonRpcProgress) -> None:
-        pass
-
-    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        pass
+    def to_dict(self) -> dict:
+        return {
+            'translation': list(self.translation),
+            'scale': list(self.scale),
+            'rotation': list(self.rotation),
+            'rotation_center': list(self.rotation_center),
+        }

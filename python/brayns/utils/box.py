@@ -18,12 +18,20 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import pathlib
+from dataclasses import dataclass
 
-import brayns
+from brayns.utils.vector3 import Vector3
 
 
-brayns.save_rst_doc(
-    uri='localhost:5000',
-    folder=str(pathlib.Path(__file__).parent / 'doc' / 'source')
-)
+@dataclass(frozen=True)
+class Box:
+
+    min: Vector3
+    max: Vector3
+
+    @staticmethod
+    def from_dict(message: dict) -> 'Box':
+        return Box(
+            Vector3(*message['min']),
+            Vector3(*message['max'])
+        )

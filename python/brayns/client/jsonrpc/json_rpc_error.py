@@ -21,7 +21,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from ..request_error import RequestError
+from brayns.client.request_error import RequestError
 
 
 @dataclass

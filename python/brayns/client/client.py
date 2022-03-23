@@ -22,13 +22,14 @@ import logging
 import sys
 from typing import Any, Optional
 
+from .client_protocol import ClientProtocol
 from .jsonrpc.json_rpc_client import JsonRpcClient
 from .jsonrpc.json_rpc_request import JsonRpcRequest
 from .request_future import RequestFuture
 from .websocket.web_socket_client import WebSocketClient
 
 
-class Client:
+class Client(ClientProtocol):
     """Brayns client implementation to connect to a renderer."""
 
     @staticmethod
@@ -62,10 +63,7 @@ class Client:
             logger=logger
         )
 
-    def __init__(
-        self,
-        client: JsonRpcClient
-    ) -> None:
+    def __init__(self, client: JsonRpcClient) -> None:
         """Low level initialization with dependencies.
 
         :param client: JSON-RPC client

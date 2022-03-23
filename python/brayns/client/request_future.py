@@ -20,8 +20,8 @@
 
 from typing import Any, Callable, Iterator
 
-from .jsonrpc.json_rpc_task import JsonRpcTask
-from .request_progress import RequestProgress
+from brayns.client.jsonrpc.json_rpc_task import JsonRpcTask
+from brayns.client.request_progress import RequestProgress
 
 
 class RequestFuture:

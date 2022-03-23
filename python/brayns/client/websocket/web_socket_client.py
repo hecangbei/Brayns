@@ -22,9 +22,8 @@ import ssl
 from typing import Optional, Union
 
 import websockets
-
-from .event_loop import EventLoop
-from .web_socket_protocol import WebSocketProtocol
+from brayns.client.websocket.event_loop import EventLoop
+from brayns.client.websocket.web_socket_protocol import WebSocketProtocol
 
 
 class WebSocketClient(WebSocketProtocol):
