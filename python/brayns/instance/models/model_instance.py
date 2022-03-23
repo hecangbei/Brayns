@@ -46,6 +46,14 @@ class ModelInstance:
         return self._get()['metadata']
 
     @property
+    def visible(self) -> bool:
+        return self._get()['visible']
+
+    @visible.setter
+    def visible(self, value: bool) -> None:
+        self._update({'visible': value})
+
+    @property
     def transform(self) -> Transform:
         return Transform.from_dict(self._get_transform())
 
@@ -69,32 +77,29 @@ class ModelInstance:
     def orientation(self, value: Quaternion) -> None:
         self._update_transform({'rotation': list(value)})
 
-    @property
-    def visible(self) -> bool:
-        return self._get()['visible']
+    def translate(self, translation: Vector3) -> None:
+        self.position += translation
 
-    @visible.setter
-    def visible(self, value: bool) -> None:
-        self._update({'visible': value})
-
-    def translate(self, value: Vector3) -> None:
-        self.position = self.position + value
-
-    def rotate(self, value: Quaternion, around: Optional[Vector3] = None) -> None:
+    def rotate(self, rotation: Quaternion, around: Optional[Vector3] = None) -> None:
         if around is not None:
-            self.position = value.apply_around(value, around)
-        self.rotation = value * self.rotation
+            self.position = rotation.apply_around(self.position, around)
+        self.orientation = rotation * self.orientation
 
     def _get(self) -> Any:
         return self._client.request('get-model', {'id': self._id})
 
     def _update(self, values: dict) -> None:
-        self._client.request('update-model', values)
+        message = {'id': self._id}
+        message.update(values)
+        self._client.request('update-model', message)
 
     def _get_transform(self) -> dict:
         return self._get()['transformation']
 
+    def _set_transform(self, transform: dict) -> None:
+        self._update({'transformation': transform})
+
     def _update_transform(self, values: dict) -> None:
         transform = self._get_transform()
         transform.update(values)
-        self._update({'transformation': transform})
+        self._set_transform(transform)

@@ -30,7 +30,8 @@ from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.client.request_error import RequestError
 from brayns.client.request_progress import RequestProgress
 
-from client.helpers.mock_web_socket import MockWebSocket
+from client.websocket.mock_web_socket import MockWebSocket
+
 
 class TestJsonRpcClient(unittest.TestCase):
 
@@ -86,7 +87,6 @@ class TestJsonRpcClient(unittest.TestCase):
             self.assertEqual(len(client.get_active_tasks()), 1)
             for task, reply in zip(tasks, replies):
                 self.assertEqual(task.get_result(), reply.result)
-            
 
     def test_progress(self) -> None:
         request = JsonRpcRequest(0, 'test', 123)
@@ -140,7 +140,8 @@ class TestJsonRpcClient(unittest.TestCase):
                 client.send(JsonRpcRequest(0, 'test', 123))
                 self._websocket.error(JsonRpcError(0, RequestError('test')))
                 client.poll()
-                self._websocket.progress(JsonRpcProgress(0, RequestProgress('test', 0.5)))
+                self._websocket.progress(JsonRpcProgress(
+                    0, RequestProgress('test', 0.5)))
                 client.poll()
         self.assertEqual(len(context.output), 9)
 
