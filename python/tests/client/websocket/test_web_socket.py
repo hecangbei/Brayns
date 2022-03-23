@@ -23,8 +23,7 @@ import unittest
 from typing import Union
 
 from brayns.client.websocket.web_socket_client import WebSocketClient
-
-from client.helpers.web_socket_server import WebSocketServer
+from client.websocket.web_socket_server import WebSocketServer
 
 
 class TestWebSocket(unittest.TestCase):
