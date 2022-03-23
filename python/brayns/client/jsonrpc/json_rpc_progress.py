@@ -21,7 +21,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from ..request_progress import RequestProgress
+from brayns.client.request_progress import RequestProgress
 
 
 @dataclass

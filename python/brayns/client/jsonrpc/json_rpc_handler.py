@@ -21,11 +21,11 @@
 import logging
 from typing import Union
 
-from .json_rpc_error import JsonRpcError
-from .json_rpc_manager import JsonRpcManager
-from .json_rpc_progress import JsonRpcProgress
-from .json_rpc_protocol import JsonRpcProtocol
-from .json_rpc_reply import JsonRpcReply
+from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
+from brayns.client.jsonrpc.json_rpc_manager import JsonRpcManager
+from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
+from brayns.client.jsonrpc.json_rpc_protocol import JsonRpcProtocol
+from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
 
 
 class JsonRpcHandler(JsonRpcProtocol):

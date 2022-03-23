@@ -17,27 +17,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-from typing import Protocol, Union
-
-from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
-
-
-class JsonRpcProtocol(Protocol):
-
-    def on_binary(self, data: bytes) -> None:
-        pass
-
-    def on_reply(self, reply: JsonRpcReply) -> None:
-        pass
-
-    def on_error(self, error: JsonRpcError) -> None:
-        pass
-
-    def on_progress(self, progress: JsonRpcProgress) -> None:
-        pass
-
-    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        pass

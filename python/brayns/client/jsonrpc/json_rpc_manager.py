@@ -20,9 +20,9 @@
 
 from typing import Any, Iterator, Optional, Tuple, Union
 
-from ..request_error import RequestError
-from ..request_progress import RequestProgress
-from .json_rpc_task import JsonRpcTask
+from brayns.client.jsonrpc.json_rpc_task import JsonRpcTask
+from brayns.client.request_error import RequestError
+from brayns.client.request_progress import RequestProgress
 
 
 class JsonRpcManager:

@@ -18,26 +18,26 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Protocol, Union
-
-from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
+from typing import Protocol
 
 
-class JsonRpcProtocol(Protocol):
+class ModelProtocol(Protocol):
 
-    def on_binary(self, data: bytes) -> None:
-        pass
+    @property
+    def path(self) -> str:
+        raise NotImplementedError()
 
-    def on_reply(self, reply: JsonRpcReply) -> None:
-        pass
+    @property
+    def loader(self) -> str:
+        raise NotImplementedError()
 
-    def on_error(self, error: JsonRpcError) -> None:
-        pass
+    @property
+    def loader_properties(self) -> dict:
+        raise NotImplementedError()
 
-    def on_progress(self, progress: JsonRpcProgress) -> None:
-        pass
-
-    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        pass
+    def to_dict(self) -> dict:
+        return {
+            'path': self.path,
+            'loader_name': self.loader,
+            'loader_properties': self.loader_properties
+        }
