@@ -19,7 +19,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
-from typing import Any
 
 from brayns.instance.models.model_instance import ModelInstance
 from brayns.utils.box import Box
@@ -36,9 +35,8 @@ class TestModelInstance(unittest.TestCase):
         self._model = ModelInstance(self._client, 0)
         self._transform = Transform(
             translation=Vector3(1, 2, 3),
-            scale=Vector3(4, 5, 6),
             rotation=Quaternion(1, 2, 3, 4),
-            rotation_center=Vector3(1, 2, 3)
+            scale=Vector3(4, 5, 6)
         )
 
     def test_id(self) -> None:
@@ -82,46 +80,25 @@ class TestModelInstance(unittest.TestCase):
         self._add_result(result)
         self.assertEqual(self._model.transform, self._transform)
         self._check_get()
-        self._add_result(result)
-        self.assertEqual(self._model.position, self._transform.translation)
-        self._check_get()
-        self._add_result(result)
-        self.assertEqual(self._model.orientation, self._transform.rotation)
-        self._check_get()
 
     def test_translate(self) -> None:
-        position = Vector3(3, 2, 1)
+        translation = Vector3(3, 2, 1)
         transform = self._transform.to_dict()
         self._add_result({'transformation': transform})
         self._add_result({})
-        self._model.position = position
-        self._check_set_transform({'translation': list(position)})
-        transform['translation'] = list(position)
-        self._add_result({'transformation': transform})
-        self._add_result({'transformation': transform})
-        self._add_result({})
-        self._model.translate(position)
-        self._check_set_transform({'translation': list(2 * position)})
+        self._model.translate(translation)
+        expected = self._transform.translate(translation)
+        self.assertEqual(self._get_received_transform(), expected.to_dict())
 
     def test_rotate(self) -> None:
-        axis = Vector3(0, 0, 1)
-        rotation = Quaternion.from_axis_angle(
-            axis=axis,
-            angle=90,
-            degrees=True
-        )
+        rotation = Quaternion(4, 5, 6, 7)
+        center = Vector3(1, 2, 3)
         transform = self._transform.to_dict()
         self._add_result({'transformation': transform})
         self._add_result({})
-        self._model.orientation = rotation
-        self._check_set_transform({'rotation': list(rotation)})
-        self._add_result({'transformation': transform})
-        self._add_result({'transformation': transform})
-        self._add_result({})
-        self._model.rotate(rotation)
-        message = self._get_received_transform()
-        orientation = Quaternion(*message['rotation'])
-        self.assertAlmostEqual(orientation, rotation * rotation)
+        self._model.rotate(rotation, center)
+        expected = self._transform.rotate(rotation, center)
+        self.assertEqual(self._get_received_transform(), expected.to_dict())
 
     def _add_result(self, values: dict) -> None:
         message = {'id': self._model.id}
@@ -139,11 +116,6 @@ class TestModelInstance(unittest.TestCase):
         self.assertTrue(
             self._client.has_received('update-model', message)
         )
-
-    def _check_set_transform(self, values: dict) -> None:
-        transform = self._transform.to_dict()
-        transform.update(values)
-        self._check_set({'transformation': transform})
 
     def _get_received_transform(self) -> dict:
         return self._client.get_last_result()['transformation']

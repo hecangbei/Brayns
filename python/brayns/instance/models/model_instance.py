@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any, Optional
+from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.utils.box import Box
@@ -55,35 +55,20 @@ class ModelInstance:
 
     @property
     def transform(self) -> Transform:
-        return Transform.from_dict(self._get_transform())
+        return Transform.from_dict(self._get()['transformation'])
 
     @transform.setter
     def transform(self, value: Transform) -> None:
-        self._update_transform(value.to_dict())
-
-    @property
-    def position(self) -> Vector3:
-        return self.transform.translation
-
-    @position.setter
-    def position(self, value: Vector3) -> None:
-        self._update_transform({'translation': list(value)})
-
-    @property
-    def orientation(self) -> Quaternion:
-        return self.transform.rotation
-
-    @orientation.setter
-    def orientation(self, value: Quaternion) -> None:
-        self._update_transform({'rotation': list(value)})
+        self._update({'transformation': value.to_dict()})
 
     def translate(self, translation: Vector3) -> None:
-        self.position += translation
+        self.transform = self.transform.translate(translation)
 
-    def rotate(self, rotation: Quaternion, around: Optional[Vector3] = None) -> None:
-        if around is not None:
-            self.position = rotation.apply_around(self.position, around)
-        self.orientation = rotation * self.orientation
+    def rotate(self, rotation: Quaternion, center=Vector3.full(0)) -> None:
+        self.transform = self.transform.rotate(rotation, center)
+
+    def rescale(self, scale: Vector3) -> None:
+        self.transform = self.transform.rescale(scale)
 
     def _get(self) -> Any:
         return self._client.request('get-model', {'id': self._id})
@@ -92,14 +77,3 @@ class ModelInstance:
         message = {'id': self._id}
         message.update(values)
         self._client.request('update-model', message)
-
-    def _get_transform(self) -> dict:
-        return self._get()['transformation']
-
-    def _set_transform(self, transform: dict) -> None:
-        self._update({'transformation': transform})
-
-    def _update_transform(self, values: dict) -> None:
-        transform = self._get_transform()
-        transform.update(values)
-        self._set_transform(transform)

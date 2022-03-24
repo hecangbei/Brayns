@@ -26,6 +26,14 @@ from brayns.utils.vector3 import Vector3
 
 class TestVector3(unittest.TestCase):
 
+    def test_full(self) -> None:
+        test = Vector3.full(0)
+        self.assertEqual(list(test), 3 * [0])
+
+    def test_unpack(self) -> None:
+        values = [1, 2, 3]
+        self.assertEqual(Vector3.unpack(values), Vector3(*values))
+
     def test_iter(self) -> None:
         values = [1, 2, 3]
         test = Vector3(*values)
@@ -33,8 +41,11 @@ class TestVector3(unittest.TestCase):
         self.assertEqual([test.x, test.y, test.z], values)
 
     def test_neg(self) -> None:
-        values = [1, 2, 3]
-        self.assertEqual(-Vector3(*values), Vector3(-1, -2, -3))
+        self.assertEqual(-Vector3(1, 2, 3), Vector3(-1, -2, -3))
+
+    def test_abs(self) -> None:
+        test = Vector3(1, 2, 3)
+        self.assertEqual(abs(test), test.norm)
 
     def test_add(self) -> None:
         self.assertEqual(Vector3(1, 2, 3) + Vector3(4, 5, 6), Vector3(5, 7, 9))
@@ -55,13 +66,16 @@ class TestVector3(unittest.TestCase):
         self.assertEqual(Vector3(1, 2, 4) / 4, Vector3(0.25, 0.5, 1))
         self.assertEqual(1 / Vector3(1, 2, 4), Vector3(1, 0.5, 0.25))
 
+    def test_square_norm(self) -> None:
+        self.assertEqual(Vector3(1, 2, 3).square_norm, 14)
+
     def test_norm(self) -> None:
+        self.assertEqual(Vector3(1, 2, 3).norm, math.sqrt(14))
+
+    def test_normalized(self) -> None:
         test = Vector3(1, 2, 3)
-        norm = 14
-        self.assertAlmostEqual(test.square_norm(), norm)
-        self.assertAlmostEqual(test.norm(), math.sqrt(norm))
-        self.assertAlmostEqual(test.normalize().norm(), 1)
-        self.assertAlmostEqual(test.normalize() * test.norm(), test)
+        self.assertAlmostEqual(test.normalized.norm, 1)
+        self.assertAlmostEqual(test.normalized * test.norm, test)
 
 
 if __name__ == '__main__':
