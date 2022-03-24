@@ -34,20 +34,12 @@ class Quaternion:
     w: float
 
     @staticmethod
-    def from_euler(
-        roll: float,
-        pitch: float,
-        yaw: float,
-        degrees: bool = False
-    ) -> 'Quaternion':
+    def from_euler(rpy: Vector3, degrees: bool = False) -> 'Quaternion':
         if degrees:
-            roll, pitch, yaw = (
-                math.radians(angle)
-                for angle in (roll, pitch, yaw)
-            )
-        r, p, y = (angle / 2 for angle in (roll, pitch, yaw))
-        cr, cp, cy = (math.cos(angle) for angle in (r, p, y))
-        sr, sp, sy = (math.sin(angle) for angle in (r, p, y))
+            rpy = Vector3.unpack(math.radians(i) for i in rpy)
+        rpy /= 2
+        cr, cp, cy = Vector3.unpack(math.cos(i) for i in rpy)
+        sr, sp, sy = Vector3.unpack(math.sin(i) for i in rpy)
         return Quaternion(
             sr * cp * cy - cr * sp * sy,
             cr * sp * cy + sr * cp * sy,
@@ -56,35 +48,39 @@ class Quaternion:
         )
 
     @staticmethod
-    def from_axis_angle(
-        axis: Vector3,
-        angle: float,
-        degrees=False
-    ) -> 'Quaternion':
+    def from_axis_angle(axis: Vector3, angle: float, degrees=False) -> 'Quaternion':
         if degrees:
             angle = math.radians(angle)
         half_angle = angle / 2
-        axis = axis.normalize() * math.sin(half_angle)
+        axis = axis.normalized * math.sin(half_angle)
         return Quaternion(*axis, math.cos(half_angle))
+
+    @staticmethod
+    def from_vector(value: Vector3) -> 'Quaternion':
+        return Quaternion(*value, 0.0)
+
+    @staticmethod
+    def unpack(values: Iterator[float]) -> 'Quaternion':
+        return Quaternion(*values)
 
     def __iter__(self) -> Iterator[float]:
         yield from (self.x, self.y, self.z, self.w)
 
     def __abs__(self) -> float:
-        return self.norm()
+        return self.norm
 
     def __neg__(self) -> 'Quaternion':
-        return Quaternion(*(-x for x in self))
+        return Quaternion.unpack(-i for i in self)
 
     def __add__(self, other: 'Quaternion') -> 'Quaternion':
-        return Quaternion(*(x + y for x, y in zip(self, other)))
+        return Quaternion.unpack(i + j for i, j in zip(self, other))
 
     def __sub__(self, other: 'Quaternion') -> 'Quaternion':
-        return Quaternion(*(x - y for x, y in zip(self, other)))
+        return Quaternion.unpack(i - j for i, j in zip(self, other))
 
     def __mul__(self, value: Union[int, float, 'Quaternion']) -> 'Quaternion':
         if isinstance(value, (int, float)):
-            return Quaternion(*(x * value for x in self))
+            return Quaternion.unpack(i * value for i in self)
         x0, y0, z0, w0 = self
         x1, y1, z1, w1 = value
         return Quaternion(
@@ -101,33 +97,40 @@ class Quaternion:
 
     def __truediv__(self, value: Union[int, float, 'Quaternion']) -> 'Quaternion':
         if isinstance(value, (int, float)):
-            return Quaternion(*(x / value for x in self))
-        return self * value.inverse()
+            return Quaternion.unpack(i / value for i in self)
+        return self * value.inverse
 
     def __rtruediv__(self, value: Union[int, float, 'Quaternion']) -> 'Quaternion':
         if isinstance(value, (int, float)):
-            return Quaternion(*(value / x for x in self))
-        return value * self.inverse()
+            return Quaternion.unpack(value / i for i in self)
+        return value * self.inverse
 
+    @property
+    def vector(self) -> Vector3:
+        return Vector3(self.x, self.y, self.z)
+
+    @property
     def square_norm(self) -> float:
-        return sum(x * x for x in self)
+        return sum(i * i for i in self)
 
+    @property
     def norm(self) -> float:
-        return math.sqrt(self.square_norm())
+        return math.sqrt(self.square_norm)
 
-    def normalize(self) -> 'Quaternion':
-        return self / self.norm()
+    @property
+    def normalized(self) -> 'Quaternion':
+        return self / self.norm
 
+    @property
     def conjugate(self) -> 'Quaternion':
         return Quaternion(-self.x, -self.y, -self.z, self.w)
 
+    @property
     def inverse(self) -> 'Quaternion':
-        return self.conjugate() / self.square_norm()
+        return self.conjugate / self.square_norm
 
-    def apply(self, value: Vector3) -> Vector3:
-        q = self.normalize()
-        v = q * Quaternion(*value, 0.0) * q.conjugate()
-        return Vector3(v.x, v.y, v.z)
-
-    def apply_around(self, value: Vector3, center: Vector3) -> Vector3:
-        return center + self.apply(value - center)
+    def rotate(self, value: Vector3, center=Vector3(0, 0, 0)) -> Vector3:
+        rotation = self.normalized
+        quaternion = Quaternion.from_vector(value - center)
+        quaternion = rotation * quaternion * rotation.conjugate
+        return center + quaternion.vector

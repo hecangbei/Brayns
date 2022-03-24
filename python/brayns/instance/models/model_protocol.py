@@ -29,11 +29,11 @@ class ModelProtocol(Protocol):
 
     @property
     def loader(self) -> str:
-        raise NotImplementedError()
+        return ''
 
     @property
     def loader_properties(self) -> dict:
-        raise NotImplementedError()
+        return {}
 
     def to_dict(self) -> dict:
         return {

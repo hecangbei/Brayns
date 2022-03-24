@@ -30,44 +30,55 @@ class Vector3:
     y: float
     z: float
 
+    @staticmethod
+    def full(value: float) -> 'Vector3':
+        return Vector3(value, value, value)
+
+    @staticmethod
+    def unpack(values: Iterator[float]) -> 'Vector3':
+        return Vector3(*values)
+
     def __iter__(self) -> Iterator[float]:
         yield from (self.x, self.y, self.z)
 
     def __neg__(self) -> 'Vector3':
-        return Vector3(*(-x for x in self))
+        return Vector3.unpack(-i for i in self)
 
     def __abs__(self) -> float:
-        return self.norm()
+        return self.norm
 
     def __add__(self, other: 'Vector3') -> 'Vector3':
-        return Vector3(*(x + y for x, y in zip(self, other)))
+        return Vector3.unpack(i + j for i, j in zip(self, other))
 
     def __sub__(self, other: 'Vector3') -> 'Vector3':
-        return Vector3(*(x - y for x, y in zip(self, other)))
+        return Vector3.unpack(i - j for i, j in zip(self, other))
 
     def __mul__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
         if isinstance(value, (int, float)):
-            return Vector3(*(x * value for x in self))
-        return Vector3(*(x * y for x, y in zip(self, value)))
+            return Vector3.unpack(i * value for i in self)
+        return Vector3.unpack(i * j for i, j in zip(self, value))
 
     def __rmul__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
         return self * value
 
     def __truediv__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
         if isinstance(value, (int, float)):
-            return Vector3(*(x / value for x in self))
-        return Vector3(*(x / y for x, y in zip(self, value)))
+            return Vector3.unpack(i / value for i in self)
+        return Vector3.unpack(i / j for i, j in zip(self, value))
 
     def __rtruediv__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
         if isinstance(value, (int, float)):
-            return Vector3(*(value / x for x in self))
-        return Vector3(*(y / x for x, y in zip(self, value)))
+            return Vector3.unpack(value / i for i in self)
+        return Vector3.unpack(j / i for i, j in zip(self, value))
 
+    @property
     def square_norm(self) -> float:
-        return sum(x * x for x in self)
+        return sum(i * i for i in self)
 
+    @property
     def norm(self) -> float:
-        return math.sqrt(self.square_norm())
+        return math.sqrt(self.square_norm)
 
-    def normalize(self) -> 'Vector3':
-        return self / self.norm()
+    @property
+    def normalized(self) -> 'Vector3':
+        return self / self.norm

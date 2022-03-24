@@ -35,3 +35,11 @@ class Box:
             Vector3(*message['min']),
             Vector3(*message['max'])
         )
+
+    @property
+    def center(self) -> Vector3:
+        return (self.min + self.max) / 2
+
+    @property
+    def size(self) -> Vector3:
+        return self.max - self.min

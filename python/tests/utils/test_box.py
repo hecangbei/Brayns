@@ -40,6 +40,12 @@ class TestBox(unittest.TestCase):
     def test_deserialize(self) -> None:
         self.assertEqual(Box.from_dict(self._template), self._box)
 
+    def test_center(self) -> None:
+        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
+
+    def test_size(self) -> None:
+        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+
 
 if __name__ == '__main__':
     unittest.main()
