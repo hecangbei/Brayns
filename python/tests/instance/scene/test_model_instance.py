@@ -20,7 +20,7 @@
 
 import unittest
 
-from brayns.instance.models.model_instance import ModelInstance
+from brayns.instance.scene.model_instance import ModelInstance
 from brayns.utils.box import Box
 from brayns.utils.quaternion import Quaternion
 from brayns.utils.transform import Transform

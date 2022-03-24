@@ -23,7 +23,7 @@ from typing import Optional
 
 from brayns.client.client import Client
 from brayns.client.client_protocol import ClientProtocol
-from brayns.instance.models.model_registry import ModelRegistry
+from brayns.instance.scene.scene import Scene
 
 
 class Instance:
@@ -46,8 +46,8 @@ class Instance:
 
     def __init__(self, client: ClientProtocol) -> None:
         self._client = client
-        self._models = ModelRegistry(self._client)
+        self._scene = Scene(self._client)
 
     @property
-    def models(self) -> ModelRegistry:
-        return self._models
+    def scene(self) -> Scene:
+        return self._scene
