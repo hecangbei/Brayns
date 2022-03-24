@@ -26,10 +26,10 @@ from brayns.client.request_future import RequestFuture
 class ClientProtocol(Protocol):
 
     def disconnect(self) -> None:
-        raise NotImplementedError()
+        pass
 
     def request(self, method: str, params: Any = None) -> Any:
-        raise NotImplementedError()
+        return self.task(method, params).wait_for_result()
 
     def task(self, method: str, params: Any = None) -> RequestFuture:
         raise NotImplementedError()

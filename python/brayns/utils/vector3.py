@@ -20,7 +20,7 @@
 
 import math
 from dataclasses import dataclass
-from typing import Iterator, Union
+from typing import Iterable, Iterator, Union
 
 
 @dataclass(frozen=True)
@@ -35,7 +35,7 @@ class Vector3:
         return Vector3(value, value, value)
 
     @staticmethod
-    def unpack(values: Iterator[float]) -> 'Vector3':
+    def unpack(values: Iterable[float]) -> 'Vector3':
         return Vector3(*values)
 
     def __iter__(self) -> Iterator[float]:

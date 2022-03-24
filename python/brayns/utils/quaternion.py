@@ -20,7 +20,7 @@
 
 import math
 from dataclasses import dataclass
-from typing import Iterator, Union
+from typing import Iterable, Iterator, Union
 
 from brayns.utils.vector3 import Vector3
 
@@ -60,7 +60,7 @@ class Quaternion:
         return Quaternion(*value, 0.0)
 
     @staticmethod
-    def unpack(values: Iterator[float]) -> 'Quaternion':
+    def unpack(values: Iterable[float]) -> 'Quaternion':
         return Quaternion(*values)
 
     def __iter__(self) -> Iterator[float]:
