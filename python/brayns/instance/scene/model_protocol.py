@@ -34,10 +34,3 @@ class ModelProtocol(Protocol):
     @property
     def loader_properties(self) -> dict:
         return {}
-
-    def to_dict(self) -> dict:
-        return {
-            'path': self.path,
-            'loader_name': self.loader,
-            'loader_properties': self.loader_properties
-        }

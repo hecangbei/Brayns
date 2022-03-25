@@ -46,7 +46,7 @@ class Instance:
 
     def __init__(self, client: ClientProtocol) -> None:
         self._client = client
-        self._scene = Scene(self._client)
+        self._scene = Scene(client)
 
     @property
     def scene(self) -> Scene:
