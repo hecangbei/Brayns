@@ -39,16 +39,16 @@ class TestWebSocket(unittest.TestCase):
         self._request = None
         self._reply = None
 
-    def test_text(self) -> None:
+    def test_send_receive_text(self) -> None:
         self._send_and_receive('test')
 
-    def test_text_secure(self) -> None:
+    def test_send_receive_text_secure(self) -> None:
         self._send_and_receive('test', secure=True)
 
-    def test_binary(self) -> None:
+    def test_send_receive_binary(self) -> None:
         self._send_and_receive(b'test')
 
-    def test_binary_secure(self) -> None:
+    def test_send_receive_binary_secure(self) -> None:
         self._send_and_receive(b'test', secure=True)
 
     def _start_echo_server(self, secure: bool = False) -> WebSocketServer:

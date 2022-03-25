@@ -29,7 +29,7 @@ from brayns.utils.vector3 import Vector3
 class MockSceneClient(ClientProtocol):
 
     def __init__(self) -> None:
-        self.scene = {
+        self._scene = {
             'bounds': {
                 'min': [1, 2, 3],
                 'max': [4, 5, 6]
@@ -44,7 +44,7 @@ class MockSceneClient(ClientProtocol):
         return model
 
     def get_models(self) -> list[dict]:
-        return self.scene['models']
+        return self._scene['models']
 
     def get_model_ids(self) -> list[int]:
         return [model['id'] for model in self.get_models()]
@@ -55,9 +55,12 @@ class MockSceneClient(ClientProtocol):
             if model['id'] == id
         ][0]
 
+    def get_bounds(self) -> dict:
+        return self._scene['bounds']
+
     def request(self, method: str, params: Any = None) -> Any:
         if method == 'get-scene':
-            return self.scene
+            return self._scene
         if method == 'get-model':
             return self.get_model(params['id'])
         if method == 'add-model':
@@ -72,7 +75,7 @@ class MockSceneClient(ClientProtocol):
         self._id += 1
         return {
             'id': self._id - 1,
-            'bounds': self.scene['bounds'],
+            'bounds': self._scene['bounds'],
             'metadata': {'test': '123'},
             'visible': True,
             'transformation': Transform(
@@ -87,7 +90,7 @@ class MockSceneClient(ClientProtocol):
         model.update(params)
 
     def _remove_model(self, params: dict) -> None:
-        self.scene['models'] = [
+        self._scene['models'] = [
             model for model in self.get_models()
             if model['id'] not in params['ids']
         ]
