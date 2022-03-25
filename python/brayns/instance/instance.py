@@ -18,31 +18,11 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import logging
-from typing import Optional
-
-from brayns.client.client import Client
 from brayns.client.client_protocol import ClientProtocol
 from brayns.instance.scene.scene import Scene
 
 
 class Instance:
-
-    @staticmethod
-    def connect(
-        uri: str,
-        secure: bool = False,
-        cafile: Optional[str] = None,
-        loglevel=logging.ERROR
-    ) -> 'Instance':
-        return Instance(
-            Client.connect(
-                uri=uri,
-                secure=secure,
-                cafile=cafile,
-                loglevel=loglevel
-            )
-        )
 
     def __init__(self, client: ClientProtocol) -> None:
         self._client = client

@@ -19,32 +19,27 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
+from typing import Any
 
-from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.vector3 import Vector3
+from brayns.client.client_protocol import ClientProtocol
+from brayns.client.request_future import RequestFuture
+from brayns.instance.instance import Instance
+from brayns.instance.scene.scene import Scene
 
 
-class TestBox(unittest.TestCase):
+class MockClient(ClientProtocol):
+
+    def task(self, method: str, params: Any = None) -> RequestFuture:
+        pass
+
+
+class TestInstance(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._box = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
-        )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [4, 5, 6]
-        }
+        self._instance = Instance(MockClient())
 
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
-
-    def test_center(self) -> None:
-        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
-
-    def test_size(self) -> None:
-        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+    def test_scene(self) -> None:
+        self.assertIsInstance(self._instance.scene, Scene)
 
 
 if __name__ == '__main__':

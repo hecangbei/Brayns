@@ -37,6 +37,10 @@ class MockSceneClient(ClientProtocol):
             'models': []
         }
         self._id = 0
+        self._params = []
+
+    def get_received_params(self) -> list:
+        return self._params
 
     def add_mock_model(self) -> dict:
         model = self._create_mock_model()
@@ -59,6 +63,7 @@ class MockSceneClient(ClientProtocol):
         return self._scene['bounds']
 
     def request(self, method: str, params: Any = None) -> Any:
+        self._params.append(params)
         if method == 'get-scene':
             return self._scene
         if method == 'get-model':

@@ -51,9 +51,9 @@ class ModelRegistry:
         return [
             self._create_instance(message)
             for message in self._client.request('add-model', {
-                'path': model.path,
-                'loader_name': model.loader,
-                'loader_properties': model.loader_properties
+                'path': model.get_path(),
+                'loader_name': model.get_loader(),
+                'loader_properties': model.get_loader_properties()
             })
         ]
 

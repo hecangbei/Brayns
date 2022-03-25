@@ -18,34 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.vector3 import Vector3
+from dataclasses import dataclass, field
 
 
-class TestBox(unittest.TestCase):
+@dataclass
+class BbpCells:
 
-    def setUp(self) -> None:
-        self._box = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
-        )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [4, 5, 6]
-        }
+    density: float = 1.0
+    targets: list[str] = field(default_factory=list)
+    gids: list[int] = field(default_factory=list)
 
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
+    @staticmethod
+    def all() -> 'BbpCells':
+        return BbpCells.from_density(1.0)
 
-    def test_center(self) -> None:
-        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
+    @staticmethod
+    def from_density(density: float) -> 'BbpCells':
+        return BbpCells(density=density)
 
-    def test_size(self) -> None:
-        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+    @staticmethod
+    def from_targets(targets: list[str], density: float = 1.0) -> 'BbpCells':
+        return BbpCells(density=density, targets=targets)
 
-
-if __name__ == '__main__':
-    unittest.main()
+    @staticmethod
+    def from_gids(gids: list[int]) -> 'BbpCells':
+        return BbpCells(gids=gids)

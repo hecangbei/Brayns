@@ -18,34 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.vector3 import Vector3
+from dataclasses import dataclass
 
 
-class TestBox(unittest.TestCase):
+@dataclass
+class BbpReport:
 
-    def setUp(self) -> None:
-        self._box = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
+    type: str
+    name: str = ''
+    spike_transition_time: float = 1.0
+
+    @staticmethod
+    def none() -> 'BbpReport':
+        return BbpReport(type='none')
+
+    @staticmethod
+    def spikes(spike_transition_time: float = 1.0) -> 'BbpReport':
+        return BbpReport(
+            type='spikes',
+            spike_transition_time=spike_transition_time
         )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [4, 5, 6]
-        }
 
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
-
-    def test_center(self) -> None:
-        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
-
-    def test_size(self) -> None:
-        self.assertEqual(self._box.size, Vector3(3, 3, 3))
-
-
-if __name__ == '__main__':
-    unittest.main()
+    @staticmethod
+    def compartment(name: str) -> 'BbpReport':
+        return BbpReport(type='compartment', name=name)

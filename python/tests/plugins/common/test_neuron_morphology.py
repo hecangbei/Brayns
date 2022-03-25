@@ -20,31 +20,25 @@
 
 import unittest
 
-from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.vector3 import Vector3
+from brayns.plugins.common.neuron_morphology import NeuronMorphology
+from brayns.plugins.common.neuron_radius import NeuronRadius
 
 
-class TestBox(unittest.TestCase):
+class TestNeuronMorphology(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._box = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
+    def test_to_dict(self) -> None:
+        test = NeuronMorphology(
+            radius=NeuronRadius.default(),
+            load_soma=True,
+            load_axon=False,
+            load_dendrites=False
         )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [4, 5, 6]
-        }
-
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
-
-    def test_center(self) -> None:
-        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
-
-    def test_size(self) -> None:
-        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+        message = test.to_dict()
+        self.assertEqual(message['radius_multiplier'], test.radius.multiplier)
+        self.assertEqual(message['radius_override'], test.radius.value)
+        self.assertEqual(message['load_some'], test.load_soma)
+        self.assertEqual(message['load_axon'], test.load_axon)
+        self.assertEqual(message['load_dendrites'], test.load_dendrites)
 
 
 if __name__ == '__main__':
