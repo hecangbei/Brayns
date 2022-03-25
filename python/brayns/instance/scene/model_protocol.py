@@ -23,14 +23,11 @@ from typing import Protocol
 
 class ModelProtocol(Protocol):
 
-    @property
-    def path(self) -> str:
+    def get_path(self) -> str:
         raise NotImplementedError()
 
-    @property
-    def loader(self) -> str:
+    def get_loader(self) -> str:
         return ''
 
-    @property
-    def loader_properties(self) -> dict:
+    def get_loader_properties(self) -> dict:
         return {}

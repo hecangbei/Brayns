@@ -40,11 +40,11 @@ class TestTransform(unittest.TestCase):
             'rotation_center': [1, 2, 3]
         }
 
-    def test_serialize(self) -> None:
-        self.assertEqual(self._transform.to_dict(), self._template)
-
-    def test_deserialize(self) -> None:
+    def test_from_dict(self) -> None:
         self.assertEqual(Transform.from_dict(self._template), self._transform)
+
+    def test_to_dict(self) -> None:
+        self.assertEqual(self._transform.to_dict(), self._template)
 
     def test_update(self) -> None:
         translation = Vector3(3, 2, 1)

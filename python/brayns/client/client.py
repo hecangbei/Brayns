@@ -18,50 +18,16 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import logging
-import sys
-from typing import Any, Optional
+from typing import Any
 
 from .client_protocol import ClientProtocol
 from .jsonrpc.json_rpc_client import JsonRpcClient
 from .jsonrpc.json_rpc_request import JsonRpcRequest
 from .request_future import RequestFuture
-from .websocket.web_socket_client import WebSocketClient
 
 
 class Client(ClientProtocol):
     """Brayns client implementation to connect to a renderer."""
-
-    @staticmethod
-    def connect(
-        uri: str,
-        secure: bool = False,
-        cafile: Optional[str] = None,
-        loglevel=logging.ERROR
-    ) -> 'Client':
-        """Connect to the renderer using the given settings.
-
-        :param uri: Renderer URI in format 'host:port'
-        :type uri: str
-        :param secure: True if SSL is enabled, defaults to False
-        :type secure: bool, optional
-        :param cafile: Additional certification authority, defaults to None
-        :type cafile: Optional[str], optional
-        :param loglevel: Log level, defaults to logging.ERROR
-        :type loglevel: int
-        """
-        logger = logging.Logger('Brayns', loglevel)
-        logger.addHandler(logging.StreamHandler(sys.stdout))
-        return Client(
-            JsonRpcClient(
-                websocket=WebSocketClient.connect(
-                    uri=uri,
-                    secure=secure,
-                    cafile=cafile
-                )
-            ),
-            logger=logger
-        )
 
     def __init__(self, client: JsonRpcClient) -> None:
         """Low level initialization with dependencies.

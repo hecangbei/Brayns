@@ -29,16 +29,13 @@ from tests.instance.scene.mock_scene_client import MockSceneClient
 
 class MockModel(ModelProtocol):
 
-    @property
-    def path(self) -> str:
+    def get_path(self) -> str:
         return 'path'
 
-    @property
-    def loader(self) -> str:
+    def get_loader(self) -> str:
         return 'loader'
 
-    @property
-    def loader_properties(self) -> dict:
+    def get_loader_properties(self) -> dict:
         return 'properties'
 
 

@@ -20,31 +20,31 @@
 
 import unittest
 
-from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.vector3 import Vector3
+from brayns.plugins.bbp.bbp_report import BbpReport
 
 
-class TestBox(unittest.TestCase):
+class TestBbpReport(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._box = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
-        )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [4, 5, 6]
-        }
+    def test_none(self) -> None:
+        report = BbpReport.none()
+        self.assertEqual(report.type, 'none')
 
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
+    def test_spikes(self) -> None:
+        report = BbpReport.spikes()
+        self.assertEqual(report.type, 'spikes')
+        self.assertEqual(report.spike_transition_time, 1.0)
 
-    def test_center(self) -> None:
-        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
+    def test_spikes_with_time(self) -> None:
+        t = 0.5
+        report = BbpReport.spikes(t)
+        self.assertEqual(report.type, 'spikes')
+        self.assertEqual(report.spike_transition_time, t)
 
-    def test_size(self) -> None:
-        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+    def test_compartment(self) -> None:
+        name = 'test'
+        report = BbpReport.compartment(name)
+        self.assertEqual(report.type, 'compartment')
+        self.assertEqual(report.name, name)
 
 
 if __name__ == '__main__':

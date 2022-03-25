@@ -18,17 +18,10 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any
 import unittest
 
-from brayns.client.client_protocol import ClientProtocol
-from brayns.instance.scene.model_instance import ModelInstance
-from brayns.instance.scene.model_protocol import ModelProtocol
 from brayns.instance.scene.scene import Scene
 from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.transform import Transform
-from brayns.utils.vector3 import Vector3
 from instance.scene.mock_scene_client import MockSceneClient
 
 

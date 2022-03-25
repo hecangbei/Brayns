@@ -20,31 +20,26 @@
 
 import unittest
 
-from brayns.utils.box import Box
-from brayns.utils.quaternion import Quaternion
-from brayns.utils.vector3 import Vector3
+from brayns.plugins.common.neuron_radius import NeuronRadius
 
 
-class TestBox(unittest.TestCase):
+class TestNeuronRadius(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._box = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
-        )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [4, 5, 6]
-        }
+    def test_default(self) -> None:
+        test = NeuronRadius.default()
+        self.assertEqual(test.multiplier, 1.0)
+        self.assertEqual(test.value, 0.0)
 
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
+    def test_multiply(self) -> None:
+        factor = 3.0
+        test = NeuronRadius.multiply(factor)
+        self.assertEqual(test.multiplier, factor)
+        self.assertEqual(test.value, 0.0)
 
-    def test_center(self) -> None:
-        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
-
-    def test_size(self) -> None:
-        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+    def test_override(self) -> None:
+        value = 2.0
+        test = NeuronRadius.override(value)
+        self.assertEqual(test.value, value)
 
 
 if __name__ == '__main__':
