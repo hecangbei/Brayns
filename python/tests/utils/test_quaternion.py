@@ -46,6 +46,9 @@ class TestQuaternion(unittest.TestCase):
         test = Quaternion.from_vector(vector)
         self.assertEqual(Vector3(test.x, test.y, test.z), vector)
 
+    def test_identity(self) -> None:
+        self.assertEqual(Quaternion.identity(), Quaternion(0, 0, 0, 1))
+
     def test_unpack(self) -> None:
         values = [1, 2, 3, 4]
         self.assertEqual(Quaternion.unpack(values), Quaternion(*values))
@@ -91,7 +94,7 @@ class TestQuaternion(unittest.TestCase):
             Quaternion(1, 0.5, 0.25, 0.2)
         )
         test = Quaternion(1, 2, 3, 4)
-        self.assertAlmostEqual(test * test.inverse, Quaternion(0, 0, 0, 1))
+        self.assertAlmostEqual(test * test.inverse, Quaternion.identity())
 
     def test_vector(self) -> None:
         test = Quaternion(1, 2, 3, 4)
@@ -121,7 +124,7 @@ class TestQuaternion(unittest.TestCase):
 
     def test_inverse(self) -> None:
         test = Quaternion(1, 2, 3, 4)
-        self.assertAlmostEqual(test * test.inverse, Quaternion(0, 0, 0, 1))
+        self.assertAlmostEqual(test * test.inverse, Quaternion.identity())
 
     def test_rotate(self) -> None:
         rotation = Quaternion.from_euler(Vector3(22, 35, 68), degrees=True)

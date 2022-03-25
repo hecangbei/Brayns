@@ -23,102 +23,87 @@ import unittest
 from brayns.instance.scene.model_instance import ModelInstance
 from brayns.utils.box import Box
 from brayns.utils.quaternion import Quaternion
-from brayns.utils.transform import Transform
 from brayns.utils.vector3 import Vector3
-from client.mock_client import MockClient
+from instance.scene.mock_scene_client import MockSceneClient
 
 
 class TestModelInstance(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._client = MockClient()
-        self._model = ModelInstance(self._client, 0)
-        self._transform = Transform(
-            translation=Vector3(1, 2, 3),
-            rotation=Quaternion(1, 2, 3, 4),
-            scale=Vector3(4, 5, 6)
-        )
+        self._client = MockSceneClient()
+        self._mock = self._client.add_mock_model()
+        self._model = ModelInstance(self._client, self._mock['id'])
 
     def test_id(self) -> None:
-        self.assertEqual(self._model.id, 0)
+        self.assertEqual(self._model.id, self._mock['id'])
 
     def test_bounds(self) -> None:
-        bounds = Box(
-            min=Vector3(1, 2, 3),
-            max=Vector3(4, 5, 6)
+        self.assertEqual(
+            self._model.bounds,
+            Box.from_dict(self._mock['bounds'])
         )
-        self._add_result({
-            'bounds': {
-                'min': bounds.min,
-                'max': bounds.max
-            }
-        })
-        self.assertEqual(self._model.bounds, bounds)
-        self._check_get()
 
     def test_metadata(self) -> None:
-        metadata = {
-            'test1': '1',
-            'test2': '2'
-        }
-        self._add_result({
-            'metadata': metadata
-        })
-        self.assertEqual(self._model.metadata, metadata)
-        self._check_get()
+        self.assertEqual(self._model.metadata, self._mock['metadata'])
 
     def test_visible(self) -> None:
-        self._add_result({'visible': False})
+        self._mock['visible'] = True
+        self.assertEqual(self._model.visible, True)
+        self._model.visible = False
         self.assertFalse(self._model.visible)
-        self._check_get()
-        self._add_result({})
-        self._model.visible = True
-        self._check_set({'visible': True})
+        self.assertFalse(self._mock['visible'])
 
     def test_transform(self) -> None:
-        result = {'transformation': self._transform.to_dict()}
-        self._add_result(result)
-        self.assertEqual(self._model.transform, self._transform)
-        self._check_get()
+        self.assertEqual(
+            self._model.transform.to_dict(),
+            self._mock['transformation']
+        )
+        translation = Vector3(1, 2, 3)
+        self._model.transform = self._model.transform.update(
+            translation=translation
+        )
+        self.assertEqual(self._model.transform.translation, translation)
+        self.assertEqual(
+            self._model.transform.to_dict(),
+            self._mock['transformation']
+        )
 
     def test_translate(self) -> None:
-        translation = Vector3(3, 2, 1)
-        transform = self._transform.to_dict()
-        self._add_result({'transformation': transform})
-        self._add_result({})
+        ref = self._model.transform.translation
+        translation = Vector3(1, 2, 3)
         self._model.translate(translation)
-        expected = self._transform.translate(translation)
-        self.assertEqual(self._get_received_transform(), expected.to_dict())
+        self.assertEqual(self._model.transform.translation, ref + translation)
 
     def test_rotate(self) -> None:
         rotation = Quaternion(4, 5, 6, 7)
         center = Vector3(1, 2, 3)
-        transform = self._transform.to_dict()
-        self._add_result({'transformation': transform})
-        self._add_result({})
+        orientation = self._model.transform.rotation
+        translation = self._model.transform.translation
+        self._model.rotate(rotation)
+        self.assertAlmostEqual(
+            self._model.transform.translation,
+            rotation.rotate(translation)
+        )
+        self.assertAlmostEqual(
+            self._model.transform.rotation,
+            rotation * orientation
+        )
+        self._model.rotate(rotation.inverse)
         self._model.rotate(rotation, center)
-        expected = self._transform.rotate(rotation, center)
-        self.assertEqual(self._get_received_transform(), expected.to_dict())
-
-    def _add_result(self, values: dict) -> None:
-        message = {'id': self._model.id}
-        message.update(values)
-        self._client.results.append(message)
-
-    def _check_get(self) -> None:
-        self.assertTrue(
-            self._client.has_received('get-model', {'id': self._model.id})
+        self.assertAlmostEqual(
+            self._model.transform.translation,
+            rotation.rotate(translation, center)
+        )
+        self.assertAlmostEqual(
+            self._model.transform.rotation,
+            rotation * orientation
         )
 
-    def _check_set(self, values: dict) -> None:
-        message = {'id': self._model.id}
-        message.update(values)
-        self.assertTrue(
-            self._client.has_received('update-model', message)
-        )
-
-    def _get_received_transform(self) -> dict:
-        return self._client.get_last_result()['transformation']
+    def test_rescale(self) -> None:
+        scale = Vector3(1, 2, 3)
+        ref = self._model.transform.scale
+        self._model.rescale(scale)
+        self.assertEqual(self._model.transform.scale, ref * scale)
 
 
 if __name__ == '__main__':
