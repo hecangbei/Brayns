@@ -45,7 +45,7 @@ class TestScene(unittest.TestCase):
     def test_bounds(self) -> None:
         self.assertEqual(
             self._scene.bounds,
-            Box.from_dict(self._client.scene['bounds'])
+            Box.from_dict(self._client.get_bounds())
         )
 
     def test_center(self) -> None:

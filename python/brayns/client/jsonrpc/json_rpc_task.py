@@ -53,7 +53,7 @@ class JsonRpcTask:
 
     def get_progress(self) -> RequestProgress:
         if self.is_ready():
-            raise RuntimeError('Task is not running anymore')
+            raise RuntimeError('Task is not running')
         if not self.has_progress():
             raise RuntimeError('No progresses received yet')
         progress = self._progress
@@ -61,12 +61,18 @@ class JsonRpcTask:
         return progress
 
     def set_result(self, result: Any) -> None:
+        if self.is_ready():
+            raise RuntimeError('Task is not running')
         self._result = result
         self._ready = True
 
     def set_error(self, error: RequestError) -> None:
+        if self.is_ready():
+            raise RuntimeError('Task is not running')
         self._error = error
         self._ready = True
 
     def add_progress(self, progress: RequestProgress) -> None:
+        if self.is_ready():
+            raise RuntimeError('Task is not running')
         self._progress = progress

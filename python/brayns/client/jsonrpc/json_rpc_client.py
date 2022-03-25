@@ -56,18 +56,18 @@ class JsonRpcClient:
             RequestError('Disconnection from client side')
         )
 
-    def poll(self) -> None:
-        self._logger.debug('Poll incoming JSON-RPC messages.')
-        self._dispatcher.dispatch(
-            self._websocket.receive()
-        )
-
     def send(self, request: JsonRpcRequest) -> JsonRpcTask:
         self._logger.debug('Send JSON-RPC request: %s.', request)
         self._websocket.send(request.to_json())
         if request.is_notification():
             return JsonRpcTask.from_result(None)
         return self._manager.add_task(request.id)
+
+    def poll(self) -> None:
+        self._logger.debug('Poll incoming JSON-RPC messages.')
+        self._dispatcher.dispatch(
+            self._websocket.receive()
+        )
 
     def get_active_tasks(self) -> JsonRpcManager:
         return self._manager

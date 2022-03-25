@@ -65,12 +65,12 @@ class TestJsonRpcDispatcher(unittest.TestCase):
         self._protocol = MockJsonRpcProtocol()
         self._dispatcher = JsonRpcDispatcher(self._protocol)
 
-    def test_binary(self) -> None:
+    def test_dispatch_binary(self) -> None:
         data = b'test'
         self._dispatcher.dispatch(data)
         self.assertEqual(self._protocol.get_data(), data)
 
-    def test_reply(self) -> None:
+    def test_dispatch_reply(self) -> None:
         reply = {
             'id': 1,
             'result': [1, 2, 3]
@@ -81,7 +81,7 @@ class TestJsonRpcDispatcher(unittest.TestCase):
             JsonRpcReply.from_dict(reply)
         )
 
-    def test_error(self) -> None:
+    def test_dispatch_error(self) -> None:
         error = {
             'id': 1,
             'error': {
@@ -95,7 +95,7 @@ class TestJsonRpcDispatcher(unittest.TestCase):
             JsonRpcError.from_dict(error)
         )
 
-    def test_progress(self) -> None:
+    def test_dispatch_progress(self) -> None:
         progress = {
             'params': {
                 'id': 1,
@@ -109,7 +109,7 @@ class TestJsonRpcDispatcher(unittest.TestCase):
             JsonRpcProgress.from_dict(progress)
         )
 
-    def test_invalid_frame(self) -> None:
+    def test_dispatch_invalid_frame(self) -> None:
         invalid_frame = 'sdfbxcbxbcv'
         self._dispatcher.dispatch(invalid_frame)
         data, e = self._protocol.get_data()

@@ -31,27 +31,26 @@ from brayns.client.websocket.web_socket_protocol import WebSocketProtocol
 class MockWebSocket(WebSocketProtocol):
 
     def __init__(self) -> None:
-        self.closed = False
-        self.received = []
-        self.replies = []
+        self._closed = False
+        self._requests = []
+        self._replies = []
 
-    def has_received(self, requests: list[JsonRpcRequest]) -> bool:
-        expected = [request.to_dict() for request in requests]
-        received = [json.loads(message) for message in self.received]
-        return received == expected
+    @property
+    def closed(self) -> bool:
+        return self._closed
 
-    def got_request(self, method: str, params: Any) -> bool:
-        message = json.loads(self.received[-1])
-        return message['method'] == method and message['params'] == params
+    @property
+    def requests(self) -> list[JsonRpcRequest]:
+        return self._requests
 
     def reply(self, reply: JsonRpcReply) -> None:
-        self.replies.append(json.dumps({
+        self._replies.append(json.dumps({
             'id': reply.id,
             'result': reply.result
         }))
 
     def progress(self, progress: JsonRpcProgress) -> None:
-        self.replies.append(json.dumps({
+        self._replies.append(json.dumps({
             'params': {
                 'id': progress.id,
                 'operation': progress.params.operation,
@@ -60,7 +59,7 @@ class MockWebSocket(WebSocketProtocol):
         }))
 
     def error(self, error: JsonRpcError) -> None:
-        self.replies.append(json.dumps({
+        self._replies.append(json.dumps({
             'id': error.id,
             'error': {
                 'code': error.error.code,
@@ -70,10 +69,15 @@ class MockWebSocket(WebSocketProtocol):
         }))
 
     def close(self) -> None:
-        self.closed = True
+        self._closed = True
 
     def receive(self) -> Union[bytes, str]:
-        return self.replies.pop(0)
+        return self._replies.pop(0)
 
     def send(self, data: Union[bytes, str]) -> None:
-        self.received.append(data)
+        message: dict = json.loads(data)
+        self._requests.append(JsonRpcRequest(
+            id=message.get('id'),
+            method=message['method'],
+            params=message.get('params')
+        ))

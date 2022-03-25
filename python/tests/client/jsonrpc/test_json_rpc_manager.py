@@ -29,64 +29,65 @@ class TestJsonRpcManager(unittest.TestCase):
 
     def setUp(self) -> None:
         self._manager = JsonRpcManager()
-        self._ids = [1, 2, 3, 'four']
-        for id in self._ids:
-            self._manager.add_task(id)
-        self._tasks = [task for _, task in self._manager]
 
-    def test_add_tasks(self) -> None:
-        self.assertEqual(len(self._manager), len(self._ids))
-        for id in self._ids:
-            self.assertIn(id, self._manager)
-            self.assertIsNotNone(self._manager.get_task(id))
+    def test_len(self) -> None:
+        self.assertEqual(len(self._manager), 0)
+        self._manager.add_task(0)
+        self._manager.add_task('0')
+        self.assertEqual(len(self._manager), 2)
+
+    def test_iter(self) -> None:
+        tasks = {id: self._manager.add_task(id) for id in range(3)}
         for id, task in self._manager:
-            self.assertIn(id, self._ids)
             self.assertFalse(task.is_ready())
-            self.assertFalse(task.has_progress())
-        with self.assertRaises(RuntimeError):
-            self._manager.add_task(self._ids[0])
-        with self.assertRaises(RuntimeError):
-            self._manager.add_task(None)
+            self.assertIn(id, tasks)
 
-    def test_cancel(self) -> None:
+    def test_contains(self) -> None:
+        self._manager.add_task(0)
+        self.assertIn(0, self._manager)
+
+    def test_get_task(self) -> None:
+        self._manager.add_task(0)
+        self.assertIsNotNone(self._manager.get_task(0))
+        self.assertIsNone(self._manager.get_task(1))
+
+    def test_add_task(self) -> None:
+        task = self._manager.add_task(0)
+        self.assertFalse(task.is_ready())
+        self.assertFalse(task.has_progress())
+
+    def test_cancel_all_tasks(self) -> None:
+        tasks = [self._manager.add_task(i) for i in range(3)]
         error = RequestError('Test cancel all')
         self._manager.cancel_all_tasks(error)
         self.assertEqual(len(self._manager), 0)
-        for task in self._tasks:
+        for task in tasks:
             with self.assertRaises(RequestError) as context:
                 task.get_result()
             self.assertEqual(context.exception, error)
 
-    def test_result(self) -> None:
-        id = self._ids[0]
-        task = self._tasks[0]
-        result = 3
-        self._manager.set_result(id, result)
+    def test_set_result(self) -> None:
+        result = 123
+        task = self._manager.add_task(0)
+        self._manager.set_result(0, result)
+        self.assertEqual(len(self._manager), 0)
         self.assertEqual(task.get_result(), result)
-        self.assertEqual(len(self._manager), len(self._ids) - 1)
-        for id, task in self._manager:
-            self.assertFalse(task.is_ready())
 
     def test_error(self) -> None:
-        id = self._ids[0]
-        task = self._tasks[0]
-        error = RequestError('test')
-        self._manager.set_error(id, error)
-        with self.assertRaises(RequestError):
+        error = RequestError('test', 0, 123)
+        task = self._manager.add_task(0)
+        self._manager.set_error(0, error)
+        self.assertEqual(len(self._manager), 0)
+        with self.assertRaises(RequestError) as context:
             task.get_result()
-        self.assertEqual(len(self._manager), len(self._ids) - 1)
-        for id, task in self._manager:
-            self.assertFalse(task.is_ready())
+        self.assertEqual(context.exception, error)
 
     def test_progress(self) -> None:
-        id = self._ids[0]
-        task = self._tasks[0]
         progress = RequestProgress('test', 0.5)
-        self._manager.add_progress(id, progress)
+        task = self._manager.add_task(0)
+        self._manager.add_progress(0, progress)
+        self.assertEqual(len(self._manager), 1)
         self.assertEqual(task.get_progress(), progress)
-        self.assertEqual(len(self._manager), len(self._ids))
-        for id, task in self._manager:
-            self.assertFalse(task.has_progress())
 
 
 if __name__ == '__main__':
