@@ -68,8 +68,13 @@ class TestScene(unittest.TestCase):
     def test_size(self) -> None:
         self.assertEqual(self._scene.size, self._scene.bounds.size)
 
-    def test_add(self) -> None:
-        instances = self._scene.add(MockModel())
+    def test_get_model(self) -> None:
+        ref = self._client.add_model()
+        model = self._scene.get_model(ref.id)
+        self.assertEqual(ref.id, model.id)
+
+    def test_add_model(self) -> None:
+        instances = self._scene.add_model(MockModel())
         self.assertEqual(len(instances), 1)
         ref = self._client.models[0]
         model = instances[0]
@@ -79,11 +84,11 @@ class TestScene(unittest.TestCase):
         self.assertEqual(model.visible, ref.visible)
         self.assertEqual(model.transform, ref.transform)
 
-    def test_remove(self) -> None:
+    def test_remove_model(self) -> None:
         self._add_some_models()
         count = len(self._scene)
         to_remove = self._client.models[0].id
-        self._scene.remove(to_remove)
+        self._scene.remove_model(to_remove)
         self.assertEqual(len(self._scene), count - 1)
         self.assertNotIn(to_remove, self._scene)
 

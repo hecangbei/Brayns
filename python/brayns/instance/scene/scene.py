@@ -53,7 +53,11 @@ class Scene:
     def size(self) -> Vector3:
         return self.bounds.size
 
-    def add(self, model: ModelProtocol) -> list[ModelInstance]:
+    def get_model(self, id: int) -> ModelInstance:
+        self._check_model_exists(id)
+        return ModelInstance(self._client, id)
+
+    def add_model(self, model: ModelProtocol) -> list[ModelInstance]:
         return [
             self._instance(message)
             for message in self._client.request('add-model', {
@@ -63,7 +67,7 @@ class Scene:
             })
         ]
 
-    def remove(self, id: int) -> None:
+    def remove_model(self, id: int) -> None:
         self._remove_models([id])
 
     def clear(self) -> None:
