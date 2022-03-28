@@ -20,6 +20,7 @@
 
 import asyncio
 import threading
+from concurrent.futures import Future
 from typing import Any, Coroutine, TypeVar
 
 
@@ -35,10 +36,14 @@ class EventLoop:
         )
         self._thread.start()
 
+    @property
+    def closed(self) -> bool:
+        return self._loop.is_closed()
+
     def close(self) -> None:
         self._loop.call_soon_threadsafe(self._loop.stop)
         self._thread.join()
         self._loop.close()
 
-    def run(self, coroutine: Coroutine[Any, Any, T]) -> 'asyncio.Future[T]':
+    def run(self, coroutine: Coroutine[Any, Any, T]) -> 'Future[T]':
         return asyncio.run_coroutine_threadsafe(coroutine, self._loop)

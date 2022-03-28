@@ -23,6 +23,7 @@ import unittest
 from typing import Union
 
 from brayns.client.websocket.web_socket_client import WebSocketClient
+from brayns.client.websocket.web_socket_error import WebSocketError
 from client.websocket.web_socket_server import WebSocketServer
 
 
@@ -38,6 +39,21 @@ class TestWebSocket(unittest.TestCase):
         self._expected_reply = None
         self._request = None
         self._reply = None
+
+    def test_connect_error(self) -> None:
+        with self.assertRaises(WebSocketError):
+            self._connect()
+
+    def test_connect(self) -> None:
+        with self._start_echo_server():
+            with self._connect():
+                pass
+
+    def test_close(self) -> None:
+        with self._start_echo_server():
+            with self._connect() as client:
+                pass
+        self.assertTrue(client.closed)
 
     def test_send_receive_text(self) -> None:
         self._send_and_receive('test')

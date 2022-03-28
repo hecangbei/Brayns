@@ -21,8 +21,8 @@
 import ssl
 from typing import Optional, Union
 
-import websockets
 from brayns.client.websocket.event_loop import EventLoop
+from brayns.client.websocket.web_socket import WebSocket
 from brayns.client.websocket.web_socket_protocol import WebSocketProtocol
 
 
@@ -34,27 +34,22 @@ class WebSocketClient(WebSocketProtocol):
         secure: bool = False,
         cafile: Optional[str] = None
     ) -> 'WebSocketClient':
-        async def _connect():
-            return await websockets.connect(
-                uri=('wss://' if secure else 'ws://') + uri,
-                ssl=ssl.create_default_context(
-                    cafile=cafile
-                ) if secure else None,
-                ping_interval=None,
-                close_timeout=0,
-                max_size=int(2e9)
-            )
         loop = EventLoop()
         return WebSocketClient(
             websocket=loop.run(
-                _connect()
+                WebSocket.connect(
+                    uri=('wss://' if secure else 'ws://') + uri,
+                    ssl=ssl.create_default_context(
+                        cafile=cafile
+                    ) if secure else None,
+                )
             ).result(),
             loop=loop
         )
 
     def __init__(
         self,
-        websocket: websockets.WebSocketClientProtocol,
+        websocket: WebSocket,
         loop: EventLoop
     ) -> None:
         self._websocket = websocket
@@ -66,6 +61,10 @@ class WebSocketClient(WebSocketProtocol):
     def __exit__(self, *_) -> None:
         self.close()
 
+    @property
+    def closed(self) -> bool:
+        return self._websocket.closed or self._loop.closed
+
     def close(self) -> None:
         self._loop.run(
             self._websocket.close()
@@ -74,7 +73,7 @@ class WebSocketClient(WebSocketProtocol):
 
     def receive(self) -> Union[bytes, str]:
         return self._loop.run(
-            self._websocket.recv()
+            self._websocket.receive()
         ).result()
 
     def send(self, data: Union[bytes, str]) -> None:
