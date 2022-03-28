@@ -29,7 +29,7 @@ from brayns.utils.vector3 import Vector3
 class MockSceneModel:
 
     id: int
-    bounds: Box = Box(Vector3.full(-1), Vector3.full(1))
+    bounds: Box = Box(-Vector3.one(), Vector3.one())
     metadata: dict[str, str] = field(default_factory=dict)
     visible: bool = True
     transform: Transform = Transform()

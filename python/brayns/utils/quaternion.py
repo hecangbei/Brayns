@@ -133,7 +133,7 @@ class Quaternion:
     def inverse(self) -> 'Quaternion':
         return self.conjugate / self.square_norm
 
-    def rotate(self, value: Vector3, center=Vector3.full(0)) -> Vector3:
+    def rotate(self, value: Vector3, center=Vector3.zero()) -> Vector3:
         rotation = self.normalized
         quaternion = Quaternion.from_vector(value - center)
         quaternion = rotation * quaternion * rotation.conjugate

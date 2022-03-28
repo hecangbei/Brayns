@@ -27,9 +27,9 @@ from brayns.utils.vector3 import Vector3
 @dataclass(frozen=True)
 class Transform:
 
-    translation: Vector3 = Vector3.full(0.0)
+    translation: Vector3 = Vector3.zero()
     rotation: Quaternion = Quaternion.identity()
-    scale: Vector3 = Vector3.full(1.0)
+    scale: Vector3 = Vector3.one()
 
     @staticmethod
     def from_dict(message: dict) -> 'Transform':
@@ -53,7 +53,7 @@ class Transform:
     def translate(self, translation: Vector3) -> 'Transform':
         return self.update(translation=self.translation + translation)
 
-    def rotate(self, rotation: Quaternion, center=Vector3.full(0)) -> 'Transform':
+    def rotate(self, rotation: Quaternion, center=Vector3.zero()) -> 'Transform':
         return self.update(
             translation=rotation.rotate(self.translation, center),
             rotation=rotation * self.rotation
