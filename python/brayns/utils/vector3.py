@@ -35,6 +35,38 @@ class Vector3:
         return Vector3(value, value, value)
 
     @staticmethod
+    def zero() -> 'Vector3':
+        return Vector3.full(0.0)
+
+    @staticmethod
+    def one() -> 'Vector3':
+        return Vector3.full(1.0)
+
+    @staticmethod
+    def right() -> 'Vector3':
+        return Vector3(1.0, 0.0, 0.0)
+
+    @staticmethod
+    def left() -> 'Vector3':
+        return Vector3(-1.0, 0.0, 0.0)
+
+    @staticmethod
+    def up() -> 'Vector3':
+        return Vector3(0.0, 1.0, 0.0)
+
+    @staticmethod
+    def down() -> 'Vector3':
+        return Vector3(0.0, -1.0, 0.0)
+
+    @staticmethod
+    def forward() -> 'Vector3':
+        return Vector3(0.0, 0.0, 1.0)
+
+    @staticmethod
+    def back() -> 'Vector3':
+        return Vector3(0.0, 0.0, -1.0)
+
+    @staticmethod
     def unpack(values: Iterable[float]) -> 'Vector3':
         return Vector3(*values)
 

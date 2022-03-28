@@ -80,7 +80,7 @@ class ModelInstance:
     def translate(self, translation: Vector3) -> None:
         self.transform = self.transform.translate(translation)
 
-    def rotate(self, rotation: Quaternion, center=Vector3.full(0)) -> None:
+    def rotate(self, rotation: Quaternion, center=Vector3.zero()) -> None:
         self.transform = self.transform.rotate(rotation, center)
 
     def rescale(self, scale: Vector3) -> None:
