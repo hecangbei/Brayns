@@ -21,81 +21,57 @@
 from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
-from brayns.utils.quaternion import Quaternion
 from brayns.utils.transform import Transform
-from brayns.utils.vector3 import Vector3
+from tests.instance.scene.mock_scene import MockScene
+from tests.instance.scene.mock_scene_model import MockSceneModel
 
 
 class MockSceneClient(ClientProtocol):
 
     def __init__(self) -> None:
-        self._scene = {
-            'bounds': {
-                'min': [1, 2, 3],
-                'max': [4, 5, 6]
-            },
-            'models': []
-        }
+        self.scene = MockScene()
+        self.received_params = []
         self._id = 0
-        self._params = []
 
-    def get_received_params(self) -> list:
-        return self._params
+    @property
+    def models(self) -> list[MockSceneModel]:
+        return self.scene.models
 
-    def add_mock_model(self) -> dict:
-        model = self._create_mock_model()
-        self.get_models().append(model)
+    def create_model(self) -> MockSceneModel:
+        self._id += 1
+        return MockSceneModel(id=self._id)
+
+    def add_model(self) -> MockSceneModel:
+        model = self.create_model()
+        self.models.append(model)
         return model
 
-    def get_models(self) -> list[dict]:
-        return self._scene['models']
+    def get_model(self, id: int) -> MockSceneModel:
+        return next(model for model in self.models if model.id == id)
 
-    def get_model_ids(self) -> list[int]:
-        return [model['id'] for model in self.get_models()]
+    def update_model(self, params: dict) -> None:
+        model = self.get_model(params['id'])
+        model.visible = params.get('visible', model.visible)
+        model.transform = Transform.from_dict(
+            params.get('transformation', model.transform.to_dict())
+        )
 
-    def get_model(self, id: int) -> dict:
-        return [
-            model for model in self.get_models()
-            if model['id'] == id
-        ][0]
-
-    def get_bounds(self) -> dict:
-        return self._scene['bounds']
+    def remove_model(self, params: dict) -> None:
+        self.scene.models = [
+            model for model in self.models
+            if model.id not in params['ids']
+        ]
 
     def request(self, method: str, params: Any = None) -> Any:
-        self._params.append(params)
+        self.received_params.append(params)
         if method == 'get-scene':
-            return self._scene
+            return self.scene.to_dict()
         if method == 'get-model':
-            return self.get_model(params['id'])
+            return self.get_model(params['id']).to_dict()
         if method == 'add-model':
-            return [self.add_mock_model()]
+            return [self.add_model().to_dict()]
         if method == 'update-model':
-            return self._update_model(params)
+            return self.update_model(params)
         if method == 'remove-model':
-            return self._remove_model(params)
+            return self.remove_model(params)
         raise RuntimeError('Test error')
-
-    def _create_mock_model(self) -> dict:
-        self._id += 1
-        return {
-            'id': self._id - 1,
-            'bounds': self._scene['bounds'],
-            'metadata': {'test': '123'},
-            'visible': True,
-            'transformation': Transform(
-                Vector3(0, 0, 0),
-                Quaternion(0, 0, 0, 1),
-                Vector3(1, 1, 1)
-            ).to_dict()
-        }
-
-    def _update_model(self, params: dict) -> None:
-        model = self.get_model(params['id'])
-        model.update(params)
-
-    def _remove_model(self, params: dict) -> None:
-        self._scene['models'] = [
-            model for model in self.get_models()
-            if model['id'] not in params['ids']
-        ]

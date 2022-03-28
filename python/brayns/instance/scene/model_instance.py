@@ -61,6 +61,22 @@ class ModelInstance:
     def transform(self, value: Transform) -> None:
         self._update({'transformation': value.to_dict()})
 
+    @property
+    def position(self) -> Vector3:
+        return self.bounds.center + self.transform.translation
+
+    @position.setter
+    def position(self, value: Vector3) -> None:
+        self.translate(value - self.position)
+
+    @property
+    def orientation(self) -> Quaternion:
+        return self.transform.rotation
+
+    @orientation.setter
+    def orientation(self, value: Quaternion) -> None:
+        self.transform = self.transform.update(rotation=value)
+
     def translate(self, translation: Vector3) -> None:
         self.transform = self.transform.translate(translation)
 

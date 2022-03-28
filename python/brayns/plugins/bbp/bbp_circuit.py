@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from brayns.instance.scene.model_protocol import ModelProtocol
 from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_morphology import NeuronMorphology
+from brayns.plugins.common.neuron_radius import NeuronRadius
 
 
 @dataclass
@@ -32,7 +32,10 @@ class BbpCircuit(ModelProtocol):
     path: str
     cells: BbpCells = BbpCells.all()
     report: BbpReport = BbpReport.none()
-    morphology: NeuronMorphology = NeuronMorphology()
+    radius: NeuronRadius = NeuronRadius.default()
+    load_soma: bool = True
+    load_axon: bool = False
+    load_dendrites: bool = False
     load_afferent_synapses: bool = False
     load_efferent_synapses: bool = False
 
@@ -52,5 +55,11 @@ class BbpCircuit(ModelProtocol):
             'spike_transition_time': self.report.spike_transition_time,
             'load_afferent_synapses': self.load_afferent_synapses,
             'load_efferent_synapses': self.load_efferent_synapses,
-            'neuron_morphology_parameters': self.morphology.to_dict()
+            'neuron_morphology_parameters': {
+                'radius_multiplier': self.radius.multiplier,
+                'radius_override': self.radius.value,
+                'load_soma': self.load_soma,
+                'load_axon': self.load_axon,
+                'load_dendrites': self.load_dendrites
+            }
         }

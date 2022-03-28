@@ -18,28 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
+from dataclasses import dataclass, field
 
-from brayns.plugins.common.neuron_morphology import NeuronMorphology
-from brayns.plugins.common.neuron_radius import NeuronRadius
-
-
-class TestNeuronMorphology(unittest.TestCase):
-
-    def test_to_dict(self) -> None:
-        test = NeuronMorphology(
-            radius=NeuronRadius.default(),
-            load_soma=True,
-            load_axon=False,
-            load_dendrites=False
-        )
-        message = test.to_dict()
-        self.assertEqual(message['radius_multiplier'], test.radius.multiplier)
-        self.assertEqual(message['radius_override'], test.radius.value)
-        self.assertEqual(message['load_some'], test.load_soma)
-        self.assertEqual(message['load_axon'], test.load_axon)
-        self.assertEqual(message['load_dendrites'], test.load_dendrites)
+from brayns.utils.box import Box
+from brayns.utils.vector3 import Vector3
+from tests.instance.scene.mock_scene_model import MockSceneModel
 
 
-if __name__ == '__main__':
-    unittest.main()
+@dataclass
+class MockScene:
+
+    bounds: Box = Box(Vector3.full(-5), Vector3.full(5))
+    models: list[MockSceneModel] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return {
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'models': [
+                model.to_dict()
+                for model in self.models
+            ]
+        }

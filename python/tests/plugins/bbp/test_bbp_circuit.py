@@ -20,11 +20,10 @@
 
 import unittest
 
-from brayns.instance.scene.model_registry import ModelRegistry
+from brayns.instance.scene.scene import Scene
 from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_circuit import BbpCircuit
 from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_morphology import NeuronMorphology
 from brayns.plugins.common.neuron_radius import NeuronRadius
 from instance.scene.mock_scene_client import MockSceneClient
 
@@ -33,17 +32,15 @@ class TestBbpCircuit(unittest.TestCase):
 
     def setUp(self) -> None:
         self._client = MockSceneClient()
-        self._models = ModelRegistry(self._client)
+        self._scene = Scene(self._client)
         self._circuit = BbpCircuit(
             path='path',
             cells=BbpCells.all(),
             report=BbpReport.compartment('test'),
-            morphology=NeuronMorphology(
-                radius=NeuronRadius.override(3.0),
-                load_soma=True,
-                load_axon=True,
-                load_dendrites=True
-            ),
+            radius=NeuronRadius.override(3.0),
+            load_soma=True,
+            load_axon=True,
+            load_dendrites=True,
             load_afferent_synapses=True,
             load_efferent_synapses=True
         )
@@ -55,40 +52,24 @@ class TestBbpCircuit(unittest.TestCase):
         self.assertEqual(self._circuit.get_loader(), 'BBP loader')
 
     def test_get_loader_properties(self) -> None:
-        circuit = self._circuit
-        properties = circuit.get_loader_properties()
-        self.assertEqual(properties['percentage'], circuit.cells.density)
-        self.assertEqual(properties['targets'], circuit.cells.targets)
-        self.assertEqual(properties['gids'], circuit.cells.gids)
-        self.assertEqual(properties['report_type'], circuit.report.type)
-        self.assertEqual(properties['report_name'], circuit.report.name)
-        self.assertEqual(
-            properties['spike_transition_time'],
-            circuit.report.spike_transition_time
-        )
-        self.assertEqual(
-            properties['load_afferent_synapses'],
-            circuit.load_afferent_synapses
-        )
-        self.assertEqual(
-            properties['load_efferent_synapses'],
-            circuit.load_efferent_synapses
-        )
-        self.assertEqual(
-            properties['neuron_morphology_parameters'],
-            circuit.morphology.to_dict()
-        )
-
-    def test_add(self) -> None:
-        circuit = self._circuit
-        self._models.add(circuit)
-        params = self._client.get_received_params()[-1]
-        self.assertEqual(params['path'], circuit.path)
-        self.assertEqual(params['loader_name'], circuit.get_loader())
-        self.assertEqual(
-            params['loader_properties'],
-            circuit.get_loader_properties()
-        )
+        ref = {
+            'percentage': 1.0,
+            'targets': [],
+            'gids': [],
+            'report_type': 'compartment',
+            'report_name': 'test',
+            'spike_transition_time': 1.0,
+            'load_afferent_synapses': True,
+            'load_efferent_synapses': True,
+            'neuron_morphology_parameters': {
+                'radius_multiplier': 1.0,
+                'radius_override': 3.0,
+                'load_soma': True,
+                'load_axon': True,
+                'load_dendrites': True
+            }
+        }
+        self.assertEqual(self._circuit.get_loader_properties(), ref)
 
 
 if __name__ == '__main__':

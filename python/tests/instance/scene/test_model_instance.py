@@ -23,6 +23,7 @@ import unittest
 from brayns.instance.scene.model_instance import ModelInstance
 from brayns.utils.box import Box
 from brayns.utils.quaternion import Quaternion
+from brayns.utils.transform import Transform
 from brayns.utils.vector3 import Vector3
 from instance.scene.mock_scene_client import MockSceneClient
 
@@ -31,42 +32,47 @@ class TestModelInstance(unittest.TestCase):
 
     def setUp(self) -> None:
         self._client = MockSceneClient()
-        self._mock = self._client.add_mock_model()
-        self._model = ModelInstance(self._client, self._mock['id'])
+        self._mock = self._client.add_model()
+        self._model = ModelInstance(self._client, self._mock.id)
 
     def test_id(self) -> None:
-        self.assertEqual(self._model.id, self._mock['id'])
+        self.assertEqual(self._model.id, self._mock.id)
 
     def test_bounds(self) -> None:
-        self.assertEqual(
-            self._model.bounds,
-            Box.from_dict(self._mock['bounds'])
-        )
+        self.assertEqual(self._model.bounds, self._mock.bounds)
 
     def test_metadata(self) -> None:
-        self.assertEqual(self._model.metadata, self._mock['metadata'])
+        self.assertEqual(self._model.metadata, self._mock.metadata)
 
     def test_visible(self) -> None:
-        self._mock['visible'] = True
-        self.assertEqual(self._model.visible, True)
+        self.assertEqual(self._model.visible, self._mock.visible)
         self._model.visible = False
         self.assertFalse(self._model.visible)
-        self.assertFalse(self._mock['visible'])
 
     def test_transform(self) -> None:
+        self.assertEqual(self._model.transform, self._mock.transform)
+        transform = Transform(
+            translation=Vector3(1, 2, 3),
+            rotation=Quaternion(1, 2, 3, 4),
+            scale=Vector3(4, 5, 6)
+        )
+        self._model.transform = transform
+        self.assertEqual(self._model.transform, transform)
+
+    def test_position(self) -> None:
+        self.assertEqual(self._model.position, self._mock.bounds.center)
+        position = Vector3(1, 2, 3)
+        self._model.position = position
+        self.assertEqual(self._model.position, position)
+
+    def test_orientation(self) -> None:
         self.assertEqual(
-            self._model.transform.to_dict(),
-            self._mock['transformation']
+            self._model.orientation,
+            self._mock.transform.rotation
         )
-        translation = Vector3(1, 2, 3)
-        self._model.transform = self._model.transform.update(
-            translation=translation
-        )
-        self.assertEqual(self._model.transform.translation, translation)
-        self.assertEqual(
-            self._model.transform.to_dict(),
-            self._mock['transformation']
-        )
+        orientation = Quaternion(1, 2, 3, 4)
+        self._model.orientation = orientation
+        self.assertEqual(self._model.orientation, orientation)
 
     def test_translate(self) -> None:
         ref = self._model.transform.translation
