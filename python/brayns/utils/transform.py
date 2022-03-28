@@ -27,9 +27,9 @@ from brayns.utils.vector3 import Vector3
 @dataclass(frozen=True)
 class Transform:
 
-    translation: Vector3
-    rotation: Quaternion
-    scale: Vector3
+    translation: Vector3 = Vector3.full(0.0)
+    rotation: Quaternion = Quaternion.identity()
+    scale: Vector3 = Vector3.full(1.0)
 
     @staticmethod
     def from_dict(message: dict) -> 'Transform':

@@ -18,24 +18,30 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from brayns.plugins.common.neuron_radius import NeuronRadius
+from brayns.utils.box import Box
+from brayns.utils.transform import Transform
+from brayns.utils.vector3 import Vector3
 
 
 @dataclass
-class NeuronMorphology:
-    
-    radius: NeuronRadius = NeuronRadius.default()
-    load_soma: bool = True
-    load_axon: bool = False
-    load_dendrites: bool = False
+class MockSceneModel:
+
+    id: int
+    bounds: Box = Box(Vector3.full(-1), Vector3.full(1))
+    metadata: dict[str, str] = field(default_factory=dict)
+    visible: bool = True
+    transform: Transform = Transform()
 
     def to_dict(self) -> dict:
         return {
-            'radius_multiplier': self.radius.multiplier,
-            'radius_override': self.radius.value,
-            'load_some': self.load_soma,
-            'load_axon': self.load_axon,
-            'load_dendrites': self.load_dendrites
+            'id': self.id,
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'metadata': self.metadata,
+            'visible': self.visible,
+            'transformation': self.transform.to_dict()
         }
