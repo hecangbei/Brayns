@@ -43,7 +43,7 @@ class Scene:
 
     @property
     def bounds(self) -> Box:
-        return Box.from_dict(self._client.request('get-scene')['bounds'])
+        return Box.from_dict(self._get()['bounds'])
 
     @property
     def center(self) -> Vector3:
@@ -72,8 +72,11 @@ class Scene:
     def _check_model_exists(self, id: int) -> None:
         self._client.request('get-model', {'id': id})
 
+    def _get(self) -> dict:
+        return self._client.request('get-scene')
+
     def _get_models(self) -> list[dict]:
-        return self._client.request('get-scene')['models']
+        return self._get()['models']
 
     def _remove_models(self, ids: list[int]) -> None:
         self._client.request('remove-model', {'ids': ids})
