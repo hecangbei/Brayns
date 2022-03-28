@@ -19,14 +19,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass
-from typing import Any
 
 from brayns.common.error import Error
 
 
 @dataclass
-class RequestError(Error):
+class WebSocketError(Error):
 
-    message: str
-    code: int = 0
-    data: Any = None
+    reason: str
