@@ -24,18 +24,10 @@
 # All rights reserved. Do not distribute without further notice.
 
 import pathlib
-import pkg_resources
+
 import setuptools
 
 DIRECTORY = pathlib.Path(__file__).parent
-
-
-def get_requirements():
-    with (DIRECTORY / 'requirements.txt').open() as requirements:
-        return [
-            str(requirement)
-            for requirement in pkg_resources.parse_requirements(requirements)
-        ]
 
 
 def get_readme():
@@ -45,7 +37,7 @@ def get_readme():
 
 setuptools.setup(
     packages=setuptools.find_packages(),
-    install_requires=get_requirements(),
+    install_requires=['websockets~=9.1'],
     description="The Brayns renderer python API",
     long_description=get_readme(),
     long_description_content_type='text/markdown',

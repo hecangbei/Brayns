@@ -18,16 +18,30 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.instance.scene.model_instance import ModelInstance
-from brayns.instance.scene.model_protocol import ModelProtocol
-from brayns.instance.scene.scene import Scene
+import logging
+import sys
+from typing import Optional
 
-__all__ = [
-    'connect',
-    'Instance',
-    'ModelInstance',
-    'ModelProtocol',
-    'Scene'
-]
+from brayns.client.client import Client
+from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.client.websocket.web_socket_client import WebSocketClient
+
+
+def connect_client(
+    uri: str,
+    secure: bool = False,
+    cafile: Optional[str] = None,
+    loglevel: int = logging.ERROR
+) -> Client:
+    logger = logging.Logger('Brayns', loglevel)
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+    return Client(
+        JsonRpcClient(
+            websocket=WebSocketClient.connect(
+                uri=uri,
+                secure=secure,
+                cafile=cafile
+            ),
+            logger=logger
+        )
+    )

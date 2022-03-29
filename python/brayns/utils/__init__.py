@@ -17,3 +17,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+from brayns.utils.box import Box
+from brayns.utils.camera_path_handler import CameraPathHandler
+from brayns.utils.quaternion import Quaternion
+from brayns.utils.transform import Transform
+from brayns.utils.vector3 import Vector3
+
+__all__ = [
+    'Box',
+    'CameraPathHandler',
+    'Quaternion',
+    'Transform',
+    'Vector3'
+]

@@ -53,13 +53,13 @@ class BbpCircuit(ModelProtocol):
             'report_type': self.report.type,
             'report_name': self.report.name,
             'spike_transition_time': self.report.spike_transition_time,
-            'load_afferent_synapses': self.load_afferent_synapses,
-            'load_efferent_synapses': self.load_efferent_synapses,
             'neuron_morphology_parameters': {
                 'radius_multiplier': self.radius.multiplier,
                 'radius_override': self.radius.value,
                 'load_soma': self.load_soma,
                 'load_axon': self.load_axon,
                 'load_dendrites': self.load_dendrites
-            }
+            },
+            'load_afferent_synapses': self.load_afferent_synapses,
+            'load_efferent_synapses': self.load_efferent_synapses
         }

@@ -18,37 +18,8 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-"""Brayns Python module to connect to a renderer.
-
-Example:
-.. code-block: python
-    import brayns
-
-    with brayns.Client(
-        uri='localhost:5000',  # Renderer URI
-        secure=True,  # Enable SSL, defaults to False
-        cafile='server.pem' # Custom CA if server certificate is self-signed
-    ) as client:
-
-        # Raw request with JSON-RPC method and params
-        schema = client.request('schema', {'endpoint': 'get-camera'})
-
-        # Params defaults to None
-        camera = client.request('get-camera')
-"""
-
-from .client.client import Client
-from .client.request_error import RequestError
-from .client.request_future import RequestFuture
-from .client.request_progress import RequestProgress
-from .instance.instance import Instance
-from .utils.camera_path_handler import CameraPathHandler
-
-__all__ = [
-    'Client',
-    'RequestError',
-    'RequestFuture',
-    'RequestProgress',
-    'Instance',
-    'CameraPathHandler'
-]
+from brayns.client import *
+from brayns.common import *
+from brayns.instance import *
+from brayns.plugins import *
+from brayns.utils import *
