@@ -20,7 +20,7 @@
 
 import unittest
 
-from brayns.utils.camera_path_handler import CameraPathHandler
+from brayns.instance.camera.camera_path_handler import CameraPathHandler
 
 
 class TestCameraPathHandler(unittest.TestCase):

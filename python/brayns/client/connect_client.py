@@ -23,8 +23,8 @@ import sys
 from typing import Optional
 
 from brayns.client.client import Client
-from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
-from brayns.client.websocket.web_socket_client import WebSocketClient
+from brayns.client.jsonrpc import JsonRpcClient
+from brayns.client.websocket import WebSocketClient
 
 
 def connect_client(

@@ -19,7 +19,3 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.common.error import Error
-
-__all__ = [
-    'Error'
-]

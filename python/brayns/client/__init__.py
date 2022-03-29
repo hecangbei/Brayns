@@ -24,12 +24,3 @@ from brayns.client.connect_client import connect_client
 from brayns.client.request_error import RequestError
 from brayns.client.request_future import RequestFuture
 from brayns.client.request_progress import RequestProgress
-
-__all__ = [
-    'Client',
-    'ClientProtocol',
-    'connect_client',
-    'RequestError',
-    'RequestFuture',
-    'RequestProgress'
-]
