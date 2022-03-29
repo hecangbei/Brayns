@@ -18,16 +18,24 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.instance.scene.model_instance import ModelInstance
-from brayns.instance.scene.model_protocol import ModelProtocol
-from brayns.instance.scene.scene import Scene
+import logging
+from typing import Optional
 
-__all__ = [
-    'connect',
-    'Instance',
-    'ModelInstance',
-    'ModelProtocol',
-    'Scene'
-]
+from brayns.client import connect_client
+from brayns.instance.instance import Instance
+
+
+def connect(
+    uri: str,
+    secure: bool = False,
+    cafile: Optional[str] = None,
+    loglevel: int = logging.ERROR
+) -> Instance:
+    return Instance(
+        connect_client(
+            uri=uri,
+            secure=secure,
+            cafile=cafile,
+            loglevel=loglevel
+        )
+    )

@@ -28,6 +28,12 @@ class Instance:
         self._client = client
         self._scene = Scene(client)
 
+    def __enter__(self) -> 'Instance':
+        return self
+    
+    def __exit__(self, *_) -> None:
+        self._client.disconnect()
+
     @property
     def scene(self) -> Scene:
         return self._scene
