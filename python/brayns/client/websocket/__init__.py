@@ -17,3 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+from brayns.client.websocket.web_socket_client import WebSocketClient
+from brayns.client.websocket.web_socket_error import WebSocketError
+from brayns.client.websocket.web_socket_protocol import WebSocketProtocol

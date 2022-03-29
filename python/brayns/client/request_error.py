@@ -21,7 +21,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from brayns.common.error import Error
+from brayns.common import Error
 
 
 @dataclass

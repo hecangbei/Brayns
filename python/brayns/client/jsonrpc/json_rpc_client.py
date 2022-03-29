@@ -26,7 +26,7 @@ from brayns.client.jsonrpc.json_rpc_manager import JsonRpcManager
 from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.client.jsonrpc.json_rpc_task import JsonRpcTask
 from brayns.client.request_error import RequestError
-from brayns.client.websocket.web_socket_protocol import WebSocketProtocol
+from brayns.client.websocket import WebSocketProtocol
 
 
 class JsonRpcClient:

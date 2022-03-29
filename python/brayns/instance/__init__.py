@@ -20,14 +20,4 @@
 
 from brayns.instance.connect import connect
 from brayns.instance.instance import Instance
-from brayns.instance.scene.model_instance import ModelInstance
-from brayns.instance.scene.model_protocol import ModelProtocol
-from brayns.instance.scene.scene import Scene
-
-__all__ = [
-    'connect',
-    'Instance',
-    'ModelInstance',
-    'ModelProtocol',
-    'Scene'
-]
+from brayns.instance.scene import *

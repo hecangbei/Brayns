@@ -20,10 +20,9 @@
 
 from typing import Any
 
-from .client_protocol import ClientProtocol
-from .jsonrpc.json_rpc_client import JsonRpcClient
-from .jsonrpc.json_rpc_request import JsonRpcRequest
-from .request_future import RequestFuture
+from brayns.client.client_protocol import ClientProtocol
+from brayns.client.jsonrpc import JsonRpcClient, JsonRpcRequest
+from brayns.client.request_future import RequestFuture
 
 
 class Client(ClientProtocol):
