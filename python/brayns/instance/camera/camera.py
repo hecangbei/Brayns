@@ -18,9 +18,8 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any
-
 from brayns.client.client import Client
+from brayns.instance.camera.camera_projection import CameraProjection
 from brayns.utils.quaternion import Quaternion
 from brayns.utils.vector3 import Vector3
 
@@ -30,51 +29,46 @@ class Camera:
     def __init__(self, client: Client) -> None:
         self._client = client
 
-    def __getitem__(self, key: str) -> Any:
-        self._client.request('get-camera-params')[key]
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        self._client.request('set-camera-params', {key: value})
-
-    @property
-    def name(self) -> str:
-        return self._get()['current']
-
     @property
     def position(self) -> Vector3:
-        return self._get()['position']
+        return Vector3(*self._get()['position'])
 
     @position.setter
     def position(self, value: Vector3) -> None:
-        return self._update({'position': list(value)})
-
-    @property
-    def orientation(self) -> Quaternion:
-        return self._get()['orientation']
-
-    @orientation.setter
-    def orientation(self, value: Quaternion) -> None:
-        return self._update({'orientation': list(value)})
+        self._update({'position': list(value)})
 
     @property
     def target(self) -> Vector3:
-        return self._get()['target']
+        return Vector3(*self._get()['target'])
 
     @target.setter
     def target(self, value: Vector3) -> None:
-        return self._update({'target': list(value)})
+        self._update({'target': list(value)})
 
-    def rotate_around_target(self, rotation: Quaternion) -> None:
-        self.orientation = rotation * self.orientation
-        self.position = rotation.rotate(self.position, self.target)
+    @property
+    def up(self) -> Vector3:
+        return Vector3(*self._get()['up'])
+
+    @up.setter
+    def up(self, value: Vector3) -> None:
+        self._update({'up': list(value)})
+
+    def set_projection(self, projection: CameraProjection) -> None:
+        self._client.request(
+            method=f'set-camera-{projection.get_name()}',
+            params=projection.get_properties()
+        )
 
     def reset(self) -> None:
         self.position = Vector3.zero()
-        self.orientation = Quaternion.identity()
         self.target = Vector3.zero()
+        self.up = Vector3.up()
+
+    def rotate_around_target(self, rotation: Quaternion) -> None:
+        self.position = rotation.rotate(self.position, self.target)
 
     def _get(self) -> dict:
-        return self._client.request('get-camera')
+        return self._client.request('get-camera-look-at')
 
     def _update(self, values: dict) -> None:
-        self._client.request('set-camera', values)
+        self._client.request('set-camera-look-at', values)

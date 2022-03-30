@@ -18,33 +18,16 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-from typing import Any
-
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.request_future import RequestFuture
-from brayns.instance.camera.camera import Camera
-from brayns.instance.instance import Instance
-from brayns.instance.scene.scene import Scene
+from brayns.instance.camera.camera_projection import CameraProjection
 
 
-class MockClient(ClientProtocol):
+class MockCameraProjection(CameraProjection):
 
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        pass
+    def get_name(self) -> str:
+        return 'test'
 
-
-class TestInstance(unittest.TestCase):
-
-    def setUp(self) -> None:
-        self._instance = Instance(MockClient())
-
-    def test_scene(self) -> None:
-        self.assertIsInstance(self._instance.scene, Scene)
-
-    def test_camera(self) -> None:
-        self.assertIsInstance(self._instance.camera, Camera)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    def get_properties(self) -> dict:
+        return {
+            'test1': 1,
+            'test2': 2
+        }

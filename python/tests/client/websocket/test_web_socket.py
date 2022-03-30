@@ -24,7 +24,7 @@ from typing import Union
 
 from brayns.client.websocket.web_socket_client import WebSocketClient
 from brayns.client.websocket.web_socket_error import WebSocketError
-from client.websocket.web_socket_server import WebSocketServer
+from tests.client.websocket.web_socket_server import WebSocketServer
 
 
 class TestWebSocket(unittest.TestCase):

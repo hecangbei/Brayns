@@ -19,7 +19,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.client.client_protocol import ClientProtocol
-from brayns.instance.scene.scene import Scene
+from brayns.instance.camera import Camera
+from brayns.instance.scene import Scene
 
 
 class Instance:
@@ -27,13 +28,18 @@ class Instance:
     def __init__(self, client: ClientProtocol) -> None:
         self._client = client
         self._scene = Scene(client)
+        self._camera = Camera(client)
 
     def __enter__(self) -> 'Instance':
         return self
-    
+
     def __exit__(self, *_) -> None:
         self._client.disconnect()
 
     @property
     def scene(self) -> Scene:
         return self._scene
+
+    @property
+    def camera(self) -> Camera:
+        return self._camera

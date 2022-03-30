@@ -25,7 +25,7 @@ from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_circuit import BbpCircuit
 from brayns.plugins.bbp.bbp_report import BbpReport
 from brayns.plugins.common.neuron_radius import NeuronRadius
-from instance.scene.mock_scene_client import MockSceneClient
+from tests.instance.scene.mock_scene_client import MockSceneClient
 
 
 class TestBbpCircuit(unittest.TestCase):
