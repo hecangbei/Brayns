@@ -37,8 +37,11 @@ class WebSocketServer:
         websocket: websockets.WebSocketServerProtocol,
         path: str
     ) -> None:
-        data = await websocket.recv()
-        await websocket.send(data)
+        try:
+            data = await websocket.recv()
+            await websocket.send(data)
+        except Exception:
+            pass
 
     @staticmethod
     def start(
