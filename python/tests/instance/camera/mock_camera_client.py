@@ -18,33 +18,26 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
 from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
-from brayns.client.request_future import RequestFuture
-from brayns.instance.camera.camera import Camera
-from brayns.instance.instance import Instance
-from brayns.instance.scene.scene import Scene
+from tests.instance.camera.mock_camera import MockCamera
 
 
-class MockClient(ClientProtocol):
+class MockCameraClient(ClientProtocol):
 
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        pass
+    def __init__(self) -> None:
+        self.camera = MockCamera()
+        self.projection_name = 'perspective'
+        self.projection_properties = {}
 
-
-class TestInstance(unittest.TestCase):
-
-    def setUp(self) -> None:
-        self._instance = Instance(MockClient())
-
-    def test_scene(self) -> None:
-        self.assertIsInstance(self._instance.scene, Scene)
-
-    def test_camera(self) -> None:
-        self.assertIsInstance(self._instance.camera, Camera)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    def request(self, method: str, params: Any = None) -> Any:
+        if method == 'get-camera-look-at':
+            return self.camera.to_dict()
+        if method == 'set-camera-look-at':
+            self.camera = MockCamera.from_dict(params)
+            return
+        if not method.startswith('set-camera-'):
+            raise RuntimeError('Invalid request')
+        self.projection_name = method.split('-')[2]
+        self.projection_properties = params

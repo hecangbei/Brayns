@@ -22,7 +22,7 @@ import unittest
 
 from brayns.instance.scene.model_protocol import ModelProtocol
 from brayns.instance.scene.scene import Scene
-from instance.scene.mock_scene_client import MockSceneClient
+from tests.instance.scene.mock_scene_client import MockSceneClient
 
 
 class MockModel(ModelProtocol):

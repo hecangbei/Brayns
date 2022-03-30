@@ -25,7 +25,7 @@ from brayns.utils.box import Box
 from brayns.utils.quaternion import Quaternion
 from brayns.utils.transform import Transform
 from brayns.utils.vector3 import Vector3
-from instance.scene.mock_scene_client import MockSceneClient
+from tests.instance.scene.mock_scene_client import MockSceneClient
 
 
 class TestModelInstance(unittest.TestCase):

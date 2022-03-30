@@ -34,17 +34,17 @@ class Quaternion:
     w: float
 
     @staticmethod
-    def from_euler(rpy: Vector3, degrees: bool = False) -> 'Quaternion':
+    def from_euler(euler: Vector3, degrees: bool = False) -> 'Quaternion':
         if degrees:
-            rpy = Vector3.unpack(math.radians(i) for i in rpy)
-        rpy /= 2
-        cr, cp, cy = Vector3.unpack(math.cos(i) for i in rpy)
-        sr, sp, sy = Vector3.unpack(math.sin(i) for i in rpy)
+            euler = Vector3.unpack(math.radians(i) for i in euler)
+        euler /= 2
+        cx, cy, cz = Vector3.unpack(math.cos(i) for i in euler)
+        sx, sy, sz = Vector3.unpack(math.sin(i) for i in euler)
         return Quaternion(
-            sr * cp * cy - cr * sp * sy,
-            cr * sp * cy + sr * cp * sy,
-            cr * cp * sy - sr * sp * cy,
-            cr * cp * cy + sr * sp * sy
+            sx * cy * cz - cx * sy * sz,
+            cx * sy * cz + sx * cy * sz,
+            cx * cy * sz - sx * sy * cz,
+            cx * cy * cz + sx * sy * sz
         )
 
     @staticmethod

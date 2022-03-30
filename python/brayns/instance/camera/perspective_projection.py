@@ -18,7 +18,37 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.instance.camera.camera import Camera
-from brayns.instance.camera.camera_path_handler import CameraPathHandler
+import math
+
 from brayns.instance.camera.camera_projection import CameraProjection
-from brayns.instance.camera.perspective_projection import PerspectiveProjection
+from brayns.utils.box import Box
+from brayns.utils.vector3 import Vector3
+
+
+class PerspectiveProjection(CameraProjection):
+
+    def __init__(
+        self,
+        fovy: float = math.radians(45),
+        aperture_radius: float = 0.0,
+        focus_distance: float = 1.0,
+        degrees=False
+    ) -> None:
+        self._fovy = math.radians(fovy) if degrees else fovy
+        self._aperture_radius = aperture_radius
+        self._focus_distance = focus_distance
+
+    def get_name(self) -> str:
+        return 'perspective'
+
+    def get_properties(self) -> dict:
+        return {
+            'fovy': math.degrees(self._fovy),
+            'aperture_radius': self._aperture_radius,
+            'focus_distance': self._focus_distance
+        }
+
+    def look_at(self, bounds: Box) -> Vector3:
+        position = bounds.center
+        dezoom = bounds.size.y / 2 / math.tan(self._fovy / 2)
+        return position + dezoom * Vector3.forward()
