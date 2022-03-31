@@ -34,6 +34,9 @@ class TestCamera(unittest.TestCase):
         self._client = MockCameraClient()
         self._camera = Camera(self._client)
 
+    def test_view(self) -> None:
+        self.assertEqual(self._camera.view, self._client.camera)
+
     def test_position(self) -> None:
         self.assertEqual(self._camera.position, self._client.camera.position)
         position = Vector3(1, 2, 3)
@@ -70,7 +73,7 @@ class TestCamera(unittest.TestCase):
     def test_rotate_around_target(self) -> None:
         self._camera.target = Vector3(1, 1, 0)
         rotation = Quaternion.from_euler(Vector3(0, 0, 180), degrees=True)
-        self._camera.rotate_around_target(rotation)
+        self._camera.rotate(rotation)
         self.assertAlmostEqual(self._camera.position, Vector3(2, 2, 0))
 
 

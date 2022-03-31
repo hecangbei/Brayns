@@ -20,34 +20,35 @@
 
 import unittest
 
-from brayns.instance.camera.perspective_projection import PerspectiveProjection
-from brayns.utils.box import Box
+from brayns.instance.camera.camera_view import CameraView
 from brayns.utils.vector3 import Vector3
 
 
-class TestPerspectiveProjection(unittest.TestCase):
+class TestCameraView(unittest.TestCase):
 
-    def test_get_name(self) -> None:
-        self.assertEqual(PerspectiveProjection().get_name(), 'perspective')
-
-    def test_get_properties(self) -> None:
-        projection = PerspectiveProjection(
-            fovy=45,
-            aperture_radius=1.5,
-            focus_distance=5.5,
-            degrees=True
+    def setUp(self) -> None:
+        self._view = CameraView(
+            Vector3(1, 2, 3),
+            Vector3(4, 5, 6),
+            Vector3(7, 8, 9)
         )
-        ref = {
-            'fovy': 45,
-            'aperture_radius': 1.5,
-            'focus_distance': 5.5
+        self._message = {
+            'position': [1, 2, 3],
+            'target': [4, 5, 6],
+            'up': [7, 8, 9]
         }
-        self.assertEqual(projection.get_properties(), ref)
 
-    def test_get_full_screen_distance(self) -> None:
-        projection = PerspectiveProjection(90, degrees=True)
-        distance = projection.get_full_screen_distance(2)
-        self.assertAlmostEqual(distance, 1)
+    def test_from_dict(self) -> None:
+        self.assertEqual(CameraView.from_dict(self._message), self._view)
+
+    def test_to_dict(self) -> None:
+        self.assertEqual(self._view.to_dict(), self._message)
+
+    def test_update(self, **kwargs) -> None:
+        view = CameraView()
+        position = Vector3(1, 2, 3)
+        test = view.update(position=position)
+        self.assertEqual(test.position, position)
 
 
 if __name__ == '__main__':
