@@ -21,8 +21,6 @@
 import math
 
 from brayns.instance.camera.camera_projection import CameraProjection
-from brayns.utils.box import Box
-from brayns.utils.vector3 import Vector3
 
 
 class PerspectiveProjection(CameraProjection):
@@ -48,7 +46,5 @@ class PerspectiveProjection(CameraProjection):
             'focus_distance': self._focus_distance
         }
 
-    def look_at(self, bounds: Box) -> Vector3:
-        position = bounds.center
-        dezoom = bounds.size.y / 2 / math.tan(self._fovy / 2)
-        return position + dezoom * Vector3.forward()
+    def get_full_screen_distance(self, object_height: float) -> float:
+        return object_height / 2 / math.tan(self._fovy / 2)

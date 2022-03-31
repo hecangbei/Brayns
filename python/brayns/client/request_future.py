@@ -27,19 +27,6 @@ from brayns.client.request_progress import RequestProgress
 class RequestFuture:
     """Object used to monitor a request."""
 
-    @staticmethod
-    def for_notification() -> 'RequestFuture':
-        """Create a dummy future for notifications.
-
-        :return: future that returns None immediately
-        :rtype: RequestFuture
-        """
-        return RequestFuture(
-            cancel=lambda: None,
-            poll=lambda: None,
-            task=JsonRpcTask.from_result(None)
-        )
-
     def __init__(
         self,
         cancel: Callable[[], None],
