@@ -20,6 +20,7 @@
 
 from brayns.client.client import Client
 from brayns.instance.camera.camera_projection import CameraProjection
+from brayns.instance.camera.camera_view import CameraView
 from brayns.utils.quaternion import Quaternion
 from brayns.utils.vector3 import Vector3
 
@@ -30,28 +31,36 @@ class Camera:
         self._client = client
 
     @property
+    def view(self) -> CameraView:
+        return CameraView.from_dict(self._client.request('get-camera-look-at'))
+
+    @view.setter
+    def view(self, value: CameraView) -> None:
+        self._client.request('set-camera-look-at', value.to_dict())
+
+    @property
     def position(self) -> Vector3:
-        return Vector3(*self._get()['position'])
+        return self.view.position
 
     @position.setter
     def position(self, value: Vector3) -> None:
-        self._update({'position': list(value)})
+        self.view = self.view.update(position=value)
 
     @property
     def target(self) -> Vector3:
-        return Vector3(*self._get()['target'])
+        return self.view.target
 
     @target.setter
     def target(self, value: Vector3) -> None:
-        self._update({'target': list(value)})
+        self.view = self.view.update(target=value)
 
     @property
     def up(self) -> Vector3:
-        return Vector3(*self._get()['up'])
+        return self.view.up
 
     @up.setter
     def up(self, value: Vector3) -> None:
-        self._update({'up': list(value)})
+        self.view = self.view.update(up=value)
 
     def set_projection(self, projection: CameraProjection) -> None:
         self._client.request(
@@ -60,15 +69,7 @@ class Camera:
         )
 
     def reset(self) -> None:
-        self.position = Vector3.zero()
-        self.target = Vector3.zero()
-        self.up = Vector3.up()
+        self.view = CameraView()
 
-    def rotate_around_target(self, rotation: Quaternion) -> None:
+    def rotate(self, rotation: Quaternion) -> None:
         self.position = rotation.rotate(self.position, self.target)
-
-    def _get(self) -> dict:
-        return self._client.request('get-camera-look-at')
-
-    def _update(self, values: dict) -> None:
-        self._client.request('set-camera-look-at', values)
