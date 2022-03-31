@@ -45,9 +45,9 @@ class TestPerspectiveProjection(unittest.TestCase):
         self.assertEqual(projection.get_properties(), ref)
 
     def test_look_at(self) -> None:
-        bounds = Box(-Vector3.one(), Vector3.one())
         projection = PerspectiveProjection(90, degrees=True)
-        self.assertAlmostEqual(projection.look_at(bounds), Vector3(0, 0, 1))
+        distance = projection.get_full_screen_distance(2)
+        self.assertAlmostEqual(distance, 1)
 
 
 if __name__ == '__main__':

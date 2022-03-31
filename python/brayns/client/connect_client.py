@@ -35,13 +35,14 @@ def connect_client(
 ) -> Client:
     logger = logging.Logger('Brayns', loglevel)
     logger.addHandler(logging.StreamHandler(sys.stdout))
+    websocket = WebSocketClient.connect(
+        uri=uri,
+        secure=secure,
+        cafile=cafile
+    )
     return Client(
         JsonRpcClient(
-            websocket=WebSocketClient.connect(
-                uri=uri,
-                secure=secure,
-                cafile=cafile
-            ),
+            websocket=websocket,
             logger=logger
         )
     )

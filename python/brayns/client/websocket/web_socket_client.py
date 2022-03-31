@@ -34,16 +34,19 @@ class WebSocketClient(WebSocketProtocol):
         secure: bool = False,
         cafile: Optional[str] = None
     ) -> 'WebSocketClient':
+        uri = ('wss://' if secure else 'ws://') + uri
+        context = ssl.create_default_context(
+            cafile=cafile
+        ) if secure else None
         loop = EventLoop()
+        websocket = loop.run(
+            WebSocket.connect(
+                uri=uri,
+                ssl=context
+            )
+        ).result()
         return WebSocketClient(
-            websocket=loop.run(
-                WebSocket.connect(
-                    uri=('wss://' if secure else 'ws://') + uri,
-                    ssl=ssl.create_default_context(
-                        cafile=cafile
-                    ) if secure else None,
-                )
-            ).result(),
+            websocket=websocket,
             loop=loop
         )
 

@@ -39,9 +39,8 @@ class JsonRpcClient:
         self._websocket = websocket
         self._logger = logger
         self._manager = JsonRpcManager()
-        self._dispatcher = JsonRpcDispatcher(
-            JsonRpcHandler(self._manager, self._logger)
-        )
+        reply_handler = JsonRpcHandler(self._manager, self._logger)
+        self._dispatcher = JsonRpcDispatcher(reply_handler)
 
     def __enter__(self) -> 'JsonRpcClient':
         return self
@@ -52,9 +51,8 @@ class JsonRpcClient:
     def disconnect(self) -> None:
         self._logger.debug('Disconnection from JSON-RPC server.')
         self._websocket.close()
-        self._manager.cancel_all_tasks(
-            RequestError('Disconnection from client side')
-        )
+        error = RequestError('Disconnection from client side')
+        self._manager.cancel_all_tasks(error)
 
     def send(self, request: JsonRpcRequest) -> JsonRpcTask:
         self._logger.debug('Send JSON-RPC request: %s.', request)
@@ -65,9 +63,8 @@ class JsonRpcClient:
 
     def poll(self) -> None:
         self._logger.debug('Poll incoming JSON-RPC messages.')
-        self._dispatcher.dispatch(
-            self._websocket.receive()
-        )
+        data = self._websocket.receive()
+        self._dispatcher.dispatch(data)
 
     def get_active_tasks(self) -> JsonRpcManager:
         return self._manager

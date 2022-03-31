@@ -52,7 +52,7 @@ class JsonRpcDispatcher:
             return
         if self._dispatch_progress(message):
             return
-        raise ValueError('Message is not supported JSON-RPC')
+        raise ValueError('Unsupported JSON-RPC message')
 
     def _parse(self, data: str) -> dict:
         message = json.loads(data)
@@ -63,23 +63,20 @@ class JsonRpcDispatcher:
     def _dispatch_error(self, message: dict) -> bool:
         if 'error' not in message:
             return False
-        self._protocol.on_error(
-            JsonRpcError.from_dict(message)
-        )
+        error = JsonRpcError.from_dict(message)
+        self._protocol.on_error(error)
         return True
 
     def _dispatch_reply(self, message: dict) -> bool:
         if 'result' not in message:
             return False
-        self._protocol.on_reply(
-            JsonRpcReply.from_dict(message)
-        )
+        reply = JsonRpcReply.from_dict(message)
+        self._protocol.on_reply(reply)
         return True
 
     def _dispatch_progress(self, message: dict) -> bool:
         if 'id' in message:
             return False
-        self._protocol.on_progress(
-            JsonRpcProgress.from_dict(message)
-        )
+        progress = JsonRpcProgress.from_dict(message)
+        self._protocol.on_progress(progress)
         return True
