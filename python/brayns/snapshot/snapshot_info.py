@@ -21,26 +21,25 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from brayns.camera.camera_view import CameraView
-from brayns.image.image_info import ImageInfo
+from brayns.image.image_format import ImageFormat
 
 
 @dataclass
 class SnapshotInfo:
 
     path: Optional[str] = None
-    image_info: ImageInfo = ImageInfo()
-    camera: Optional[CameraView] = None
-    animation_frame: Optional[int] = None
+    format: ImageFormat = ImageFormat.PNG
+    quality: int = 100
+    size: Optional[tuple[int, int]] = None
+    frame: Optional[int] = None
 
     def to_dict(self) -> dict:
-        message = {
-            'image_settings': self.image_info
+        return {
+            'path': self.path,
+            'image_settings': {
+                'format': self.format.value,
+                'quality': self.quality,
+                'size': self.size
+            },
+            'animation_frame': self.frame
         }
-        if self.path is not None:
-            message['path'] = self.path
-        if self.camera is not None:
-            message['camera_view'] = self.path
-        if self.animation_frame is not None:
-            message['animation_frame'] = self.animation_frame
-        return message

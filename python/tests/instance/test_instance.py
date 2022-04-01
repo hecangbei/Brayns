@@ -21,11 +21,12 @@
 import unittest
 from typing import Any
 
+from brayns.camera.camera import Camera
 from brayns.client.client_protocol import ClientProtocol
 from brayns.client.request_future import RequestFuture
-from brayns.camera.camera import Camera
 from brayns.instance.instance import Instance
 from brayns.scene.scene import Scene
+from brayns.snapshot.snapshot import Snapshot
 
 
 class MockClient(ClientProtocol):
@@ -44,6 +45,9 @@ class TestInstance(unittest.TestCase):
 
     def test_camera(self) -> None:
         self.assertIsInstance(self._instance.camera, Camera)
+
+    def test_snapshot(self) -> None:
+        self.assertIsInstance(self._instance.snapshot, Snapshot)
 
 
 if __name__ == '__main__':
