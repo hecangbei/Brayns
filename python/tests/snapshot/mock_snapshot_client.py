@@ -18,31 +18,20 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-from typing import Optional
+import base64
+from typing import Any
 
-from brayns.image.image_format import ImageFormat
+from brayns.client.client_protocol import ClientProtocol
 
 
-@dataclass
-class ImageInfo:
+class MockSnapshotClient(ClientProtocol):
 
-    format: ImageFormat = ImageFormat.PNG
-    jpeg_quality: int = 100
-    resolution: Optional[tuple[int, int]] = None
+    def __init__(self) -> None:
+        self.data = b'123456789'
+        self.params = {}
 
-    @staticmethod
-    def from_path(path: str) -> 'ImageInfo':
-        return ImageInfo(
-            format=ImageFormat.from_path(path)
-        )
-
-    def to_dict(self) -> dict:
-        message = {
-            'format': self.format.value
-        }
-        if self.format == ImageFormat.JPEG:
-            message['quality'] = self.jpeg_quality
-        if self.resolution is not None:
-            message['size'] = list(self.resolution)
-        return message
+    def request(self, method: str, params: Any = None) -> Any:
+        if method == 'snapshot':
+            self.params = params
+            return {'data': base64.b64encode(self.data)}
+        raise RuntimeError('Invalid request method')

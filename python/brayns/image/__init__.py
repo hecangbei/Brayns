@@ -19,4 +19,3 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.image.image_format import ImageFormat
-from brayns.image.image_info import ImageInfo
