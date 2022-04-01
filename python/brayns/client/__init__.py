@@ -18,7 +18,6 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
 from brayns.client.client_protocol import ClientProtocol
 from brayns.client.connect_client import connect_client
 from brayns.client.request_error import RequestError

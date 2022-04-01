@@ -23,6 +23,7 @@ import sys
 from typing import Optional
 
 from brayns.client.client import Client
+from brayns.client.client_protocol import ClientProtocol
 from brayns.client.jsonrpc import JsonRpcClient
 from brayns.client.websocket import WebSocketClient
 
@@ -32,7 +33,7 @@ def connect_client(
     secure: bool = False,
     cafile: Optional[str] = None,
     loglevel: int = logging.ERROR
-) -> Client:
+) -> ClientProtocol:
     logger = logging.Logger('Brayns', loglevel)
     logger.addHandler(logging.StreamHandler(sys.stdout))
     websocket = WebSocketClient.connect(

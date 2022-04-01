@@ -19,6 +19,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.camera.camera import Camera
+from brayns.camera.camera_controller import CameraController
 from brayns.camera.camera_path_handler import CameraPathHandler
 from brayns.camera.camera_projection import CameraProjection
+from brayns.camera.create_camera import create_camera
 from brayns.camera.perspective_projection import PerspectiveProjection
+from brayns.camera.projection_registry import ProjectionRegistry

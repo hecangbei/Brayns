@@ -20,15 +20,29 @@
 
 from brayns.camera.camera_projection import CameraProjection
 from brayns.camera.camera_view import CameraView
-from brayns.client.client import Client
-from brayns.geometry.quaternion import Quaternion
+from brayns.camera.projection_registry import ProjectionRegistry
+from brayns.client.client_protocol import ClientProtocol
+from brayns.geometry.box import Box
 from brayns.geometry.vector3 import Vector3
 
 
 class Camera:
 
-    def __init__(self, client: Client) -> None:
+    def __init__(
+        self,
+        client: ClientProtocol,
+        projections: ProjectionRegistry
+    ) -> None:
         self._client = client
+        self._projections = projections
+
+    @property
+    def projection(self) -> CameraProjection:
+        return self._projections.get_current_projection()
+
+    @projection.setter
+    def projection(self, value: CameraProjection) -> None:
+        self._projections.set_current_projection(value)
 
     @property
     def view(self) -> CameraView:
@@ -37,6 +51,10 @@ class Camera:
     @view.setter
     def view(self, value: CameraView) -> None:
         self._client.request('set-camera-look-at', value.to_dict())
+
+    @property
+    def name(self) -> str:
+        return self.projection.get_name()
 
     @property
     def position(self) -> Vector3:
@@ -62,14 +80,5 @@ class Camera:
     def up(self, value: Vector3) -> None:
         self.view = self.view.update(up=value)
 
-    def set_projection(self, projection: CameraProjection) -> None:
-        self._client.request(
-            method=f'set-camera-{projection.get_name()}',
-            params=projection.get_properties()
-        )
-
-    def reset(self) -> None:
-        self.view = CameraView()
-
-    def rotate(self, rotation: Quaternion) -> None:
-        self.position = rotation.rotate(self.position, self.target)
+    def get_full_screen_distance(self, bounds: Box) -> float:
+        return self.projection.get_full_screen_distance(bounds)
