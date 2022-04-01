@@ -41,9 +41,11 @@ class MockCameraClient(ClientProtocol):
         if method == 'get-camera-type':
             return self.name
         if method.startswith('get-camera-'):
+            if method.split('-')[2] != self.name:
+                raise RuntimeError('Not the current camera type')
             return self.projection
         if method.startswith('set-camera-'):
-            self.projection_name = method.split('-')[2]
+            self.name = method.split('-')[2]
             self.projection = params
             return
         raise RuntimeError('Invalid request')

@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import TypeVar
+from typing import Iterator, TypeVar
 
 from brayns.camera.camera_projection import CameraProjection
 from brayns.client.client_protocol import ClientProtocol
@@ -32,8 +32,19 @@ class ProjectionRegistry:
         self._client = client
         self._types = dict[str, ProjectionRegistry.ProjectionType]()
 
+    def __contains__(self, name: str) -> bool:
+        return name in self._types
+
+    def __len__(self) -> int:
+        return len(self._types)
+
+    def __iter__(self) -> Iterator[str]:
+        yield from self._types.keys()
+
     def add_projection_type(self, projection_type: ProjectionType) -> None:
         name = projection_type.get_name()
+        if name in self._types:
+            raise RuntimeError(f'{name} registered twice')
         self._types[name] = projection_type
 
     def get_current_projection_name(self) -> str:

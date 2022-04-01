@@ -24,7 +24,6 @@ from brayns.camera.camera import Camera
 from brayns.camera.camera_view import CameraView
 from brayns.camera.projection_registry import ProjectionRegistry
 from brayns.geometry.box import Box
-from brayns.geometry.quaternion import Quaternion
 from brayns.geometry.vector3 import Vector3
 from tests.camera.mock_camera_client import MockCameraClient
 from tests.camera.mock_camera_projection import MockCameraProjection
