@@ -18,31 +18,43 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-from typing import Optional
+import unittest
 
 from brayns.image.image_format import ImageFormat
+from brayns.image.image_info import ImageInfo
 
 
-@dataclass
-class ImageInfo:
+class TestImageInfo(unittest.TestCase):
 
-    format: ImageFormat = ImageFormat.PNG
-    jpeg_quality: int = 100
-    resolution: Optional[tuple[int, int]] = None
+    def test_from_path(self) -> None:
+        path = 'test/test.png'
+        test = ImageInfo.from_path(path)
+        self.assertIs(test.format, ImageFormat.PNG)
 
-    @staticmethod
-    def from_path(path: str) -> 'ImageInfo':
-        return ImageInfo(
-            format=ImageFormat.from_path(path)
+    def test_to_dict_png(self) -> None:
+        test = ImageInfo(
+            format=ImageFormat.PNG,
+            resolution=(1920, 1080)
         )
-
-    def to_dict(self) -> dict:
-        message = {
-            'format': self.format.value
+        message = test.to_dict()
+        ref = {
+            'format': 'png',
+            'size': [1920, 1080]
         }
-        if self.format == ImageFormat.JPEG:
-            message['quality'] = self.jpeg_quality
-        if self.resolution is not None:
-            message['size'] = list(self.resolution)
-        return message
+        self.assertEqual(message, ref)
+
+    def test_to_dict_jpeg(self) -> None:
+        test = ImageInfo(
+            format=ImageFormat.JPEG,
+            jpeg_quality=50
+        )
+        message = test.to_dict()
+        ref = {
+            'format': 'jpg',
+            'quality': 50
+        }
+        self.assertEqual(message, ref)
+
+
+if __name__ == '__main__':
+    unittest.main()
