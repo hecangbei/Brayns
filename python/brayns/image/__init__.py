@@ -20,4 +20,3 @@
 
 from brayns.image.image_format import ImageFormat
 from brayns.image.image_info import ImageInfo
-from brayns.image.jpeg_quality import JpegQuality
