@@ -19,15 +19,31 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.camera.camera_projection import CameraProjection
+from brayns.geometry.box import Box
 
 
 class MockCameraProjection(CameraProjection):
 
-    def get_name(self) -> str:
+    @staticmethod
+    def get_name() -> str:
         return 'test'
 
-    def get_properties(self) -> dict:
+    @staticmethod
+    def from_dict(message: dict) -> 'CameraProjection':
+        return MockCameraProjection(
+            message['test1'],
+            message['test2'],
+        )
+
+    def __init__(self, test1: int = 1, test2: int = 2) -> None:
+        self.test1 = test1
+        self.test2 = test2
+
+    def to_dict(self) -> dict:
         return {
-            'test1': 1,
-            'test2': 2
+            'test1': self.test1,
+            'test2': self.test2
         }
+
+    def get_full_screen_distance(self, bounds: Box) -> float:
+        return bounds.center

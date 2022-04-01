@@ -20,24 +20,30 @@
 
 from typing import Any
 
-from brayns.client.client_protocol import ClientProtocol
 from brayns.camera.camera_view import CameraView
+from brayns.client.client_protocol import ClientProtocol
+from tests.camera.mock_camera_projection import MockCameraProjection
 
 
 class MockCameraClient(ClientProtocol):
 
     def __init__(self) -> None:
-        self.camera = CameraView()
-        self.projection_name = 'perspective'
-        self.projection_properties = {}
+        self.view = CameraView()
+        self.name = MockCameraProjection.get_name()
+        self.projection = MockCameraProjection().to_dict()
 
     def request(self, method: str, params: Any = None) -> Any:
         if method == 'get-camera-look-at':
-            return self.camera.to_dict()
+            return self.view.to_dict()
         if method == 'set-camera-look-at':
-            self.camera = CameraView.from_dict(params)
+            self.view = CameraView.from_dict(params)
             return
-        if not method.startswith('set-camera-'):
-            raise RuntimeError('Invalid request')
-        self.projection_name = method.split('-')[2]
-        self.projection_properties = params
+        if method == 'get-camera-type':
+            return self.name
+        if method.startswith('get-camera-'):
+            return self.projection
+        if method.startswith('set-camera-'):
+            self.projection_name = method.split('-')[2]
+            self.projection = params
+            return
+        raise RuntimeError('Invalid request')

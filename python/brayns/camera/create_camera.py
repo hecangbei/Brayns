@@ -18,15 +18,13 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-from typing import Any
+from brayns.camera.camera import Camera
+from brayns.camera.perspective_projection import PerspectiveProjection
+from brayns.camera.projection_registry import ProjectionRegistry
+from brayns.client.client_protocol import ClientProtocol
 
-from brayns.error.error import Error
 
-
-@dataclass
-class RequestError(Error):
-
-    message: str
-    code: int = 0
-    data: Any = None
+def create_camera(client: ClientProtocol) -> Camera:
+    projections = ProjectionRegistry(client)
+    projections.add_projection_type(PerspectiveProjection)
+    return Camera(client, projections)

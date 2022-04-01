@@ -18,29 +18,32 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.camera.camera import Camera
-from brayns.camera.create_camera import create_camera
+from typing import TypeVar
+
+from brayns.camera.camera_projection import CameraProjection
 from brayns.client.client_protocol import ClientProtocol
-from brayns.scene.scene import Scene
 
 
-class Instance:
+class ProjectionRegistry:
+
+    ProjectionType = TypeVar('ProjectionType', bound=CameraProjection)
 
     def __init__(self, client: ClientProtocol) -> None:
         self._client = client
-        self._scene = Scene(client)
-        self._camera = create_camera(client)
+        self._types = dict[str, ProjectionRegistry.ProjectionType]()
 
-    def __enter__(self) -> 'Instance':
-        return self
+    def add_projection_type(self, projection_type: ProjectionType) -> None:
+        name = projection_type.get_name()
+        self._types[name] = projection_type
 
-    def __exit__(self, *_) -> None:
-        self._client.disconnect()
+    def get_current_projection_name(self) -> str:
+        return self._client.request('get-camera-type')
 
-    @property
-    def scene(self) -> Scene:
-        return self._scene
+    def get_current_projection(self) -> CameraProjection:
+        name = self.get_current_projection_name()
+        message = self._client.request(f'get-camera-{name}')
+        return self._types[name].from_dict(message)
 
-    @property
-    def camera(self) -> Camera:
-        return self._camera
+    def set_current_projection(self, projection: CameraProjection) -> None:
+        name = projection.get_name()
+        self._client.request(f'set-camera-{name}', projection.to_dict())

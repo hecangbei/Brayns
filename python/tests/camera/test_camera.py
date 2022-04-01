@@ -21,6 +21,8 @@
 import unittest
 
 from brayns.camera.camera import Camera
+from brayns.camera.camera_view import CameraView
+from brayns.camera.projection_registry import ProjectionRegistry
 from brayns.geometry.box import Box
 from brayns.geometry.quaternion import Quaternion
 from brayns.geometry.vector3 import Vector3
@@ -32,49 +34,56 @@ class TestCamera(unittest.TestCase):
 
     def setUp(self) -> None:
         self._client = MockCameraClient()
-        self._camera = Camera(self._client)
+        projections = ProjectionRegistry(self._client)
+        projections.add_projection_type(MockCameraProjection())
+        self._camera = Camera(self._client, projections)
 
-    def test_view(self) -> None:
-        self.assertEqual(self._camera.view, self._client.camera)
+    def test_view_get(self) -> None:
+        self.assertEqual(self._camera.view, self._client.view)
+
+    def test_view_set(self) -> None:
+        test = CameraView(position=3 * Vector3.one())
+        self._camera.view = test
+        self.assertEqual(self._camera.view, test)
+
+    def test_projection_get(self) -> None:
+        projection = self._camera.projection
+        self.assertEqual(projection.to_dict(), self._client.projection)
+        self.assertEqual(projection.get_name(), self._client.name)
+
+    def test_projection_set(self) -> None:
+        test = MockCameraProjection(3, 4)
+        self._camera.projection = test
+        projection = self._camera.projection
+        self.assertEqual(projection.to_dict(), test.to_dict())
+        self.assertEqual(projection.get_name(), test.get_name())
+
+    def test_name(self) -> None:
+        self.assertEqual(self._camera.name, self._client.name)
 
     def test_position(self) -> None:
-        self.assertEqual(self._camera.position, self._client.camera.position)
+        self.assertEqual(self._camera.position, self._client.view.position)
         position = Vector3(1, 2, 3)
         self._camera.position = position
-        self.assertEqual(self._client.camera.position, position)
+        self.assertEqual(self._client.view.position, position)
 
     def test_target(self) -> None:
-        self.assertEqual(self._camera.target, self._client.camera.target)
+        self.assertEqual(self._camera.target, self._client.view.target)
         target = Vector3(1, 2, 3)
         self._camera.target = target
-        self.assertEqual(self._client.camera.target, target)
+        self.assertEqual(self._client.view.target, target)
 
     def test_up(self) -> None:
-        self.assertEqual(self._camera.up, self._client.camera.up)
+        self.assertEqual(self._camera.up, self._client.view.up)
         up = Vector3(1, 2, 3)
         self._camera.up = up
-        self.assertEqual(self._client.camera.up, up)
+        self.assertEqual(self._client.view.up, up)
 
-    def test_set_projection(self) -> None:
-        projection = MockCameraProjection()
-        self._camera.set_projection(projection)
-        self.assertEqual(self._client.projection_name, projection.get_name())
-        self.assertEqual(
-            self._client.projection_properties,
-            projection.get_properties()
-        )
-
-    def test_reset(self) -> None:
-        self._camera.reset()
-        self.assertEqual(self._camera.position, Vector3.zero())
-        self.assertEqual(self._camera.target, Vector3.zero())
-        self.assertEqual(self._camera.up, Vector3.up())
-
-    def test_rotate_around_target(self) -> None:
-        self._camera.target = Vector3(1, 1, 0)
-        rotation = Quaternion.from_euler(Vector3(0, 0, 180), degrees=True)
-        self._camera.rotate(rotation)
-        self.assertAlmostEqual(self._camera.position, Vector3(2, 2, 0))
+    def test_get_full_screen_distance(self) -> None:
+        test = Box(Vector3.zero(), Vector3.one())
+        distance = self._camera.get_full_screen_distance(test)
+        ref = self._camera.projection.get_full_screen_distance(test)
+        self.assertEqual(distance, ref)
 
 
 if __name__ == '__main__':

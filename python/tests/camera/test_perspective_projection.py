@@ -28,25 +28,32 @@ from brayns.geometry.vector3 import Vector3
 class TestPerspectiveProjection(unittest.TestCase):
 
     def test_get_name(self) -> None:
-        self.assertEqual(PerspectiveProjection().get_name(), 'perspective')
+        self.assertEqual(PerspectiveProjection.get_name(), 'perspective')
 
-    def test_get_properties(self) -> None:
-        projection = PerspectiveProjection(
-            fovy=45,
-            aperture_radius=1.5,
-            focus_distance=5.5,
-            degrees=True
-        )
+    def test_from_dict(self) -> None:
+        ref = {
+            'fovy': 45,
+            'aperture_radius': 0,
+            'focus_distance': 1
+        }
+        projection = PerspectiveProjection.from_dict(ref)
+        self.assertEqual(projection.fovy_degrees, 45)
+        self.assertEqual(projection.aperture_radius, 0)
+        self.assertEqual(projection.focus_distance, 1)
+
+    def test_to_dict(self) -> None:
         ref = {
             'fovy': 45,
             'aperture_radius': 1.5,
             'focus_distance': 5.5
         }
-        self.assertEqual(projection.get_properties(), ref)
+        projection = PerspectiveProjection.from_dict(ref)
+        self.assertEqual(projection.to_dict(), ref)
 
     def test_get_full_screen_distance(self) -> None:
         projection = PerspectiveProjection(90, degrees=True)
-        distance = projection.get_full_screen_distance(2)
+        test = Box(-Vector3.one(), Vector3.one())
+        distance = projection.get_full_screen_distance(test)
         self.assertAlmostEqual(distance, 1)
 
 

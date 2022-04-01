@@ -18,23 +18,33 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Protocol
-
+from brayns.camera.camera import Camera
+from brayns.camera.camera_view import CameraView
 from brayns.geometry.box import Box
+from brayns.geometry.quaternion import Quaternion
+from brayns.geometry.vector3 import Vector3
 
 
-class CameraProjection(Protocol):
+class CameraController:
 
-    @staticmethod
-    def get_name() -> str:
-        raise NotImplementedError()
+    def __init__(self, camera: Camera) -> None:
+        self._camera = camera
 
-    @staticmethod
-    def from_dict(message: dict) -> 'CameraProjection':
-        raise NotImplementedError()
+    def reset(self) -> None:
+        self._camera.view = CameraView()
 
-    def to_dict(self) -> dict:
-        raise NotImplementedError()
+    def translate(self, translation: Vector3) -> None:
+        self._camera.position += translation
 
-    def get_full_screen_distance(self, bounds: Box) -> float:
-        raise NotImplementedError()
+    def rotate_around_target(self, rotation: Quaternion) -> None:
+        self._camera.position = rotation.rotate(
+            self._camera.position,
+            self._camera.target
+        )
+
+    def look_at(self, bounds: Box) -> None:
+        center = bounds.center
+        distance = self._camera.get_full_screen_distance(bounds)
+        self._camera.position = center + distance * Vector3.forward()
+        self._camera.target = center
+        self._camera.up = Vector3.up()
