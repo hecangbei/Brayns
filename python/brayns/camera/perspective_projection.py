@@ -18,11 +18,33 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+import math
+
+from brayns.camera.camera_projection import CameraProjection
+
+
+class PerspectiveProjection(CameraProjection):
+
+    def __init__(
+        self,
+        fovy: float = math.radians(45),
+        aperture_radius: float = 0.0,
+        focus_distance: float = 1.0,
+        degrees=False
+    ) -> None:
+        self._fovy = math.radians(fovy) if degrees else fovy
+        self._aperture_radius = aperture_radius
+        self._focus_distance = focus_distance
+
+    def get_name(self) -> str:
+        return 'perspective'
+
+    def get_properties(self) -> dict:
+        return {
+            'fovy': math.degrees(self._fovy),
+            'aperture_radius': self._aperture_radius,
+            'focus_distance': self._focus_distance
+        }
+
+    def get_full_screen_distance(self, object_height: float) -> float:
+        return object_height / 2 / math.tan(self._fovy / 2)

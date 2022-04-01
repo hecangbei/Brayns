@@ -18,11 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from dataclasses import dataclass
+
+from brayns.geometry.vector3 import Vector3
+
+
+@dataclass(frozen=True)
+class Box:
+
+    min: Vector3
+    max: Vector3
+
+    @staticmethod
+    def from_dict(message: dict) -> 'Box':
+        return Box(
+            Vector3(*message['min']),
+            Vector3(*message['max'])
+        )
+
+    @property
+    def center(self) -> Vector3:
+        return (self.min + self.max) / 2
+
+    @property
+    def size(self) -> Vector3:
+        return self.max - self.min

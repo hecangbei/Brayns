@@ -18,11 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from brayns.camera.camera import Camera
+from brayns.camera.camera_path_handler import CameraPathHandler
+from brayns.camera.camera_projection import CameraProjection
+from brayns.camera.perspective_projection import PerspectiveProjection
