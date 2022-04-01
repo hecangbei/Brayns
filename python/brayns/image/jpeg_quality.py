@@ -18,11 +18,18 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class JpegQuality:
+
+    value: int
+
+    @staticmethod
+    def highest() -> 'JpegQuality':
+        return JpegQuality(100)
+
+    @staticmethod
+    def lowest() -> 'JpegQuality':
+        return JpegQuality(0)

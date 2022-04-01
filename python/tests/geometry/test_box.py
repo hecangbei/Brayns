@@ -18,11 +18,34 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+import unittest
+
+from brayns.geometry.box import Box
+from brayns.geometry.quaternion import Quaternion
+from brayns.geometry.vector3 import Vector3
+
+
+class TestBox(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self._box = Box(
+            min=Vector3(1, 2, 3),
+            max=Vector3(4, 5, 6)
+        )
+        self._template = {
+            'min': [1, 2, 3],
+            'max': [4, 5, 6]
+        }
+
+    def test_from_dict(self) -> None:
+        self.assertEqual(Box.from_dict(self._template), self._box)
+
+    def test_center(self) -> None:
+        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
+
+    def test_size(self) -> None:
+        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -19,31 +19,36 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
-from typing import Any
 
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.request_future import RequestFuture
-from brayns.camera.camera import Camera
-from brayns.instance.instance import Instance
-from brayns.scene.scene import Scene
+from brayns.camera.camera_view import CameraView
+from brayns.geometry.vector3 import Vector3
 
 
-class MockClient(ClientProtocol):
-
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        pass
-
-
-class TestInstance(unittest.TestCase):
+class TestCameraView(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._instance = Instance(MockClient())
+        self._view = CameraView(
+            Vector3(1, 2, 3),
+            Vector3(4, 5, 6),
+            Vector3(7, 8, 9)
+        )
+        self._message = {
+            'position': [1, 2, 3],
+            'target': [4, 5, 6],
+            'up': [7, 8, 9]
+        }
 
-    def test_scene(self) -> None:
-        self.assertIsInstance(self._instance.scene, Scene)
+    def test_from_dict(self) -> None:
+        self.assertEqual(CameraView.from_dict(self._message), self._view)
 
-    def test_camera(self) -> None:
-        self.assertIsInstance(self._instance.camera, Camera)
+    def test_to_dict(self) -> None:
+        self.assertEqual(self._view.to_dict(), self._message)
+
+    def test_update(self, **kwargs) -> None:
+        view = CameraView()
+        position = Vector3(1, 2, 3)
+        test = view.update(position=position)
+        self.assertEqual(test.position, position)
 
 
 if __name__ == '__main__':

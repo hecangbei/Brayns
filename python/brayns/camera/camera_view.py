@@ -18,11 +18,32 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from dataclasses import dataclass, replace
+
+from brayns.geometry.vector3 import Vector3
+
+
+@dataclass(frozen=True)
+class CameraView:
+
+    position: Vector3 = Vector3.zero()
+    target: Vector3 = Vector3.zero()
+    up: Vector3 = Vector3.up()
+
+    @staticmethod
+    def from_dict(message: dict) -> 'CameraView':
+        return CameraView(
+            position=Vector3(*message['position']),
+            target=Vector3(*message['target']),
+            up=Vector3(*message['up'])
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'position': list(self.position),
+            'target': list(self.target),
+            'up': list(self.up)
+        }
+
+    def update(self, **kwargs) -> 'CameraView':
+        return replace(self, **kwargs)

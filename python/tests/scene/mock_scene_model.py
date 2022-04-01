@@ -18,11 +18,30 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from dataclasses import dataclass, field
+
+from brayns.geometry.box import Box
+from brayns.geometry.transform import Transform
+from brayns.geometry.vector3 import Vector3
+
+
+@dataclass
+class MockSceneModel:
+
+    id: int
+    bounds: Box = Box(-Vector3.one(), Vector3.one())
+    metadata: dict[str, str] = field(default_factory=dict)
+    visible: bool = True
+    transform: Transform = Transform()
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'metadata': self.metadata,
+            'visible': self.visible,
+            'transformation': self.transform.to_dict()
+        }

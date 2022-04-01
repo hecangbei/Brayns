@@ -18,11 +18,15 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+import pathlib
+from enum import Enum
+
+
+class ImageFormat(Enum):
+
+    PNG = 'png'
+    JPEG = 'jpg'
+
+    @staticmethod
+    def from_path(path: str) -> 'ImageFormat':
+        return ImageFormat(pathlib.Path(path).suffix[1:].lower().strip())

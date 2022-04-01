@@ -18,11 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from dataclasses import dataclass, field
+
+from brayns.geometry.box import Box
+from brayns.geometry.vector3 import Vector3
+from tests.scene.mock_scene_model import MockSceneModel
+
+
+@dataclass
+class MockScene:
+
+    bounds: Box = Box(Vector3.full(-5), Vector3.full(5))
+    models: list[MockSceneModel] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return {
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'models': [
+                model.to_dict()
+                for model in self.models
+            ]
+        }

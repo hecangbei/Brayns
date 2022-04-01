@@ -18,9 +18,9 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from brayns.camera import Camera
 from brayns.client.client_protocol import ClientProtocol
-from brayns.instance.camera import Camera
-from brayns.instance.scene import Scene
+from brayns.scene import Scene
 
 
 class Instance:

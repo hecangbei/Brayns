@@ -19,31 +19,35 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
-from typing import Any
 
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.request_future import RequestFuture
-from brayns.camera.camera import Camera
-from brayns.instance.instance import Instance
-from brayns.scene.scene import Scene
+from brayns.camera.perspective_projection import PerspectiveProjection
+from brayns.geometry.box import Box
+from brayns.geometry.vector3 import Vector3
 
 
-class MockClient(ClientProtocol):
+class TestPerspectiveProjection(unittest.TestCase):
 
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        pass
+    def test_get_name(self) -> None:
+        self.assertEqual(PerspectiveProjection().get_name(), 'perspective')
 
+    def test_get_properties(self) -> None:
+        projection = PerspectiveProjection(
+            fovy=45,
+            aperture_radius=1.5,
+            focus_distance=5.5,
+            degrees=True
+        )
+        ref = {
+            'fovy': 45,
+            'aperture_radius': 1.5,
+            'focus_distance': 5.5
+        }
+        self.assertEqual(projection.get_properties(), ref)
 
-class TestInstance(unittest.TestCase):
-
-    def setUp(self) -> None:
-        self._instance = Instance(MockClient())
-
-    def test_scene(self) -> None:
-        self.assertIsInstance(self._instance.scene, Scene)
-
-    def test_camera(self) -> None:
-        self.assertIsInstance(self._instance.camera, Camera)
+    def test_get_full_screen_distance(self) -> None:
+        projection = PerspectiveProjection(90, degrees=True)
+        distance = projection.get_full_screen_distance(2)
+        self.assertAlmostEqual(distance, 1)
 
 
 if __name__ == '__main__':

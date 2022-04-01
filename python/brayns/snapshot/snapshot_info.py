@@ -18,11 +18,29 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client import *
-from brayns.common import *
-from brayns.geometry import *
-from brayns.image import *
-from brayns.instance import *
-from brayns.plugins import *
-from brayns.scene import *
-from brayns.snapshot import *
+from dataclasses import dataclass
+from typing import Optional
+
+from brayns.camera.camera_view import CameraView
+from brayns.image.image_info import ImageInfo
+
+
+@dataclass
+class SnapshotInfo:
+
+    path: Optional[str] = None
+    image_info: ImageInfo = ImageInfo()
+    camera: Optional[CameraView] = None
+    animation_frame: Optional[int] = None
+
+    def to_dict(self) -> dict:
+        message = {
+            'image_settings': self.image_info
+        }
+        if self.path is not None:
+            message['path'] = self.path
+        if self.camera is not None:
+            message['camera_view'] = self.path
+        if self.animation_frame is not None:
+            message['animation_frame'] = self.animation_frame
+        return message
