@@ -30,15 +30,14 @@ class WebSocket:
     @staticmethod
     async def connect(uri: str, ssl: Optional[ssl.SSLContext]) -> 'WebSocket':
         try:
-            return WebSocket(
-                await websockets.connect(
-                    uri=uri,
-                    ssl=ssl,
-                    ping_interval=None,
-                    close_timeout=0,
-                    max_size=int(2e9)
-                )
+            websocket = await websockets.connect(
+                uri=uri,
+                ssl=ssl,
+                ping_interval=None,
+                close_timeout=0,
+                max_size=int(2e9)
             )
+            return WebSocket(websocket)
         except Exception as e:
             raise WebSocketError(str(e))
 

@@ -21,20 +21,20 @@
 import unittest
 
 from brayns.common.image.image_format import ImageFormat
-from brayns.instance.snapshot.snapshot import Snapshot
-from tests.instance.snapshot.mock_snapshot_client import MockSnapshotClient
+from brayns.core.snapshot import Snapshot
+from brayns.instance.instance import Instance
+from tests.core.mock_snapshot_client import MockSnapshotClient
 
 
 class TestSnapshot(unittest.TestCase):
 
     def setUp(self) -> None:
         self._client = MockSnapshotClient()
-        self._snapshot = Snapshot(self._client)
+        self._instance = Instance(self._client)
 
     def test_save(self) -> None:
-        self._snapshot.save(
-            path='test.jpg'
-        )
+        snapshot = Snapshot()
+        snapshot.save(self._instance, 'test.jpg')
         params = self._client.params
         image: dict = params['image_settings']
         self.assertEqual(params['path'], 'test.jpg')
@@ -43,11 +43,12 @@ class TestSnapshot(unittest.TestCase):
         self.assertIsNone(params.get('animation_frame'))
 
     def test_download(self) -> None:
-        data = self._snapshot.download(
-            format=ImageFormat.PNG,
-            resolution=(1920, 1080),
+        snapshot = Snapshot(
+            quality=100,
+            size=(1920, 1080),
             frame=12
         )
+        data = snapshot.download(self._instance, ImageFormat.PNG)
         self.assertEqual(data, self._client.data)
         params = self._client.params
         image: dict = params['image_settings']

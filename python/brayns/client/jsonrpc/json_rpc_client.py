@@ -49,13 +49,13 @@ class JsonRpcClient:
         self.disconnect()
 
     def disconnect(self) -> None:
-        self._logger.debug('Disconnection from JSON-RPC server.')
+        self._logger.info('Disconnection from JSON-RPC server.')
         self._websocket.close()
         error = RequestError('Disconnection from client side')
         self._manager.cancel_all_tasks(error)
 
     def send(self, request: JsonRpcRequest) -> JsonRpcTask:
-        self._logger.debug('Send JSON-RPC request: %s.', request)
+        self._logger.info('Send JSON-RPC request: %s.', request)
         self._websocket.send(request.to_json())
         if request.is_notification():
             return JsonRpcTask.from_result(None)

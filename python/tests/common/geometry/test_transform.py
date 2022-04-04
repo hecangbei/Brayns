@@ -46,44 +46,6 @@ class TestTransform(unittest.TestCase):
     def test_to_dict(self) -> None:
         self.assertEqual(self._transform.to_dict(), self._template)
 
-    def test_update(self) -> None:
-        translation = Vector3(3, 2, 1)
-        transform = self._transform.update(translation=translation)
-        self.assertEqual(transform.translation, translation)
-        self.assertEqual(transform.rotation, self._transform.rotation)
-        self.assertEqual(transform.scale, self._transform.scale)
-
-    def test_translate(self) -> None:
-        translation = Vector3(1, 2, 3)
-        transform = self._transform.translate(translation)
-        self.assertEqual(
-            transform.translation,
-            self._transform.translation + translation
-        )
-        self.assertEqual(transform.rotation, self._transform.rotation)
-        self.assertEqual(transform.scale, self._transform.scale)
-
-    def test_rotate(self) -> None:
-        rotation = Quaternion.from_euler(Vector3(90, 0, 0), degrees=True)
-        center = Vector3(4, 5, 6)
-        transform = self._transform.rotate(rotation, center)
-        self.assertEqual(
-            transform.rotation,
-            rotation * self._transform.rotation
-        )
-        self.assertEqual(
-            transform.translation,
-            rotation.rotate(self._transform.translation, center)
-        )
-        self.assertEqual(transform.scale, self._transform.scale)
-
-    def test_rescale(self) -> None:
-        scale = Vector3(1, 2, 3)
-        transform = self._transform.rescale(scale)
-        self.assertEqual(transform.translation, self._transform.translation)
-        self.assertEqual(transform.rotation, self._transform.rotation)
-        self.assertEqual(transform.scale, scale * self._transform.scale)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 from brayns.common.geometry.vector3 import Vector3
 
@@ -44,6 +44,3 @@ class CameraView:
             'target': list(self.target),
             'up': list(self.up)
         }
-
-    def update(self, **kwargs) -> 'CameraView':
-        return replace(self, **kwargs)

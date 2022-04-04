@@ -22,9 +22,7 @@ from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
 from brayns.common.geometry.transform import Transform
-from brayns.common.geometry.vector3 import Vector3
 
 
 class ModelInstance:
@@ -60,31 +58,6 @@ class ModelInstance:
     @transform.setter
     def transform(self, value: Transform) -> None:
         self._update({'transformation': value.to_dict()})
-
-    @property
-    def position(self) -> Vector3:
-        return self.bounds.center + self.transform.translation
-
-    @position.setter
-    def position(self, value: Vector3) -> None:
-        self.translate(value - self.position)
-
-    @property
-    def orientation(self) -> Quaternion:
-        return self.transform.rotation
-
-    @orientation.setter
-    def orientation(self, value: Quaternion) -> None:
-        self.transform = self.transform.update(rotation=value)
-
-    def translate(self, translation: Vector3) -> None:
-        self.transform = self.transform.translate(translation)
-
-    def rotate(self, rotation: Quaternion, center=Vector3.zero()) -> None:
-        self.transform = self.transform.rotate(rotation, center)
-
-    def rescale(self, scale: Vector3) -> None:
-        self.transform = self.transform.rescale(scale)
 
     def _get(self) -> Any:
         return self._client.request('get-model', {'id': self._id})

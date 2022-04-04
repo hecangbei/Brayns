@@ -18,43 +18,45 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import math
 import unittest
 
-from brayns.instance.camera.perspective_projection import PerspectiveProjection
-from brayns.common.geometry.box import Box
-from brayns.common.geometry.vector3 import Vector3
+from brayns.instance.camera.perspective_camera import PerspectiveCamera
 
 
 class TestPerspectiveProjection(unittest.TestCase):
 
-    def test_get_name(self) -> None:
-        self.assertEqual(PerspectiveProjection.get_name(), 'perspective')
+    def setUp(self) -> None:
+        self._camera = PerspectiveCamera()
 
-    def test_from_dict(self) -> None:
+    def test_fovy_radians(self) -> None:
+        camera = PerspectiveCamera(math.radians(60))
+        self.assertEqual(camera.fovy_radians, math.radians(60))
+
+    def test_fovy_degrees(self) -> None:
+        camera = PerspectiveCamera(60, degrees=True)
+        self.assertAlmostEqual(camera.fovy_degrees, 60)
+
+    def test_aperture_radius(self) -> None:
+        camera = PerspectiveCamera(aperture_radius=1.5)
+        self.assertEqual(camera.aperture_radius, 1.5)
+
+    def test_focus_distance(self) -> None:
+        camera = PerspectiveCamera(focus_distance=1.5)
+        self.assertEqual(camera.focus_distance, 1.5)
+
+    def test_get_name(self) -> None:
+        camera = PerspectiveCamera()
+        self.assertEqual(camera.get_name(), 'perspective')
+
+    def test_get_properties(self) -> None:
+        camera = PerspectiveCamera()
         ref = {
             'fovy': 45,
             'aperture_radius': 0,
             'focus_distance': 1
         }
-        projection = PerspectiveProjection.from_dict(ref)
-        self.assertEqual(projection.fovy_degrees, 45)
-        self.assertEqual(projection.aperture_radius, 0)
-        self.assertEqual(projection.focus_distance, 1)
-
-    def test_to_dict(self) -> None:
-        ref = {
-            'fovy': 45,
-            'aperture_radius': 1.5,
-            'focus_distance': 5.5
-        }
-        projection = PerspectiveProjection.from_dict(ref)
-        self.assertEqual(projection.to_dict(), ref)
-
-    def test_get_full_screen_distance(self) -> None:
-        projection = PerspectiveProjection(90, degrees=True)
-        test = Box(-Vector3.one(), Vector3.one())
-        distance = projection.get_full_screen_distance(test)
-        self.assertAlmostEqual(distance, 1)
+        self.assertEqual(camera.get_properties(), ref)
 
 
 if __name__ == '__main__':

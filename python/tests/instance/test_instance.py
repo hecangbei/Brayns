@@ -19,35 +19,30 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
-from typing import Any
 
 from brayns.instance.camera.camera import Camera
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.request_future import RequestFuture
 from brayns.instance.instance import Instance
 from brayns.instance.scene.scene import Scene
-from brayns.instance.snapshot.snapshot import Snapshot
-
-
-class MockClient(ClientProtocol):
-
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        pass
+from tests.instance.camera.mock_camera import MockCamera
+from tests.instance.camera.mock_camera_client import MockCameraClient
+from tests.instance.scene.mock_scene_client import MockSceneClient
 
 
 class TestInstance(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = Instance(MockClient())
-
     def test_scene(self) -> None:
-        self.assertIsInstance(self._instance.scene, Scene)
+        client = MockSceneClient()
+        instance = Instance(client)
+        self.assertIsInstance(instance.scene, Scene)
 
     def test_camera(self) -> None:
-        self.assertIsInstance(self._instance.camera, Camera)
-
-    def test_snapshot(self) -> None:
-        self.assertIsInstance(self._instance.snapshot, Snapshot)
+        client = MockCameraClient()
+        instance = Instance(client)
+        self.assertIsInstance(instance.camera, Camera)
+        test = MockCamera()
+        instance.camera = test
+        self.assertEqual(client.name, test.get_name())
+        self.assertEqual(client.properties, test.get_properties())
 
 
 if __name__ == '__main__':

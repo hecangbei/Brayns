@@ -42,64 +42,13 @@ class TestScene(unittest.TestCase):
     def setUp(self) -> None:
         self._client = MockSceneClient()
         self._scene = Scene(self._client)
+        self._client.add_model()
 
-    def test_len(self) -> None:
-        self._add_some_models()
-        self.assertEqual(len(self._scene), len(self._client.models))
-
-    def test_contains(self) -> None:
-        self._add_some_models()
-        for model in self._client.models:
-            self.assertIn(model.id, self._scene)
-
-    def test_iter(self) -> None:
-        self._add_some_models()
-        self.assertEqual(
-            list(model.id for model in self._scene),
-            list(model.id for model in self._client.models)
-        )
+    def test_models(self) -> None:
+        self.assertEqual(len(self._scene.models), len(self._client.models))
 
     def test_bounds(self) -> None:
         self.assertEqual(self._scene.bounds, self._client.scene.bounds)
-
-    def test_center(self) -> None:
-        self.assertEqual(self._scene.center, self._scene.bounds.center)
-
-    def test_size(self) -> None:
-        self.assertEqual(self._scene.size, self._scene.bounds.size)
-
-    def test_get_model(self) -> None:
-        ref = self._client.add_model()
-        model = self._scene.get_model(ref.id)
-        self.assertEqual(ref.id, model.id)
-
-    def test_add_model(self) -> None:
-        instances = self._scene.add_model(MockModel())
-        self.assertEqual(len(instances), 1)
-        ref = self._client.models[0]
-        model = instances[0]
-        self.assertEqual(model.id, ref.id)
-        self.assertEqual(model.bounds, ref.bounds)
-        self.assertEqual(model.metadata, ref.metadata)
-        self.assertEqual(model.visible, ref.visible)
-        self.assertEqual(model.transform, ref.transform)
-
-    def test_remove_model(self) -> None:
-        self._add_some_models()
-        count = len(self._scene)
-        to_remove = self._client.models[0].id
-        self._scene.remove_model(to_remove)
-        self.assertEqual(len(self._scene), count - 1)
-        self.assertNotIn(to_remove, self._scene)
-
-    def test_clear(self) -> None:
-        self._add_some_models()
-        self._scene.clear()
-        self.assertEqual(len(self._scene), 0)
-
-    def _add_some_models(self) -> None:
-        for _ in range(3):
-            self._client.add_model()
 
 
 if __name__ == '__main__':

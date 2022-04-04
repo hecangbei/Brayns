@@ -37,7 +37,9 @@ def get_readme():
 
 setuptools.setup(
     packages=setuptools.find_packages(),
-    install_requires=['websockets~=9.1'],
+    install_requires=[
+        'websockets~=9.1'
+    ],
     description="The Brayns renderer python API",
     long_description=get_readme(),
     long_description_content_type='text/markdown',

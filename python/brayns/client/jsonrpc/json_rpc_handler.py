@@ -39,18 +39,18 @@ class JsonRpcHandler(JsonRpcProtocol):
         self._logger = logger
 
     def on_binary(self, data: bytes) -> None:
-        self._logger.debug('Binary frame of %s bytes received.', len(data))
+        self._logger.info('Binary frame of %s bytes received.', len(data))
 
     def on_reply(self, reply: JsonRpcReply) -> None:
-        self._logger.debug('JSON-RPC reply received: %s.', reply)
+        self._logger.info('JSON-RPC reply received: %s.', reply)
         self._manager.set_result(reply.id, reply.result)
 
     def on_error(self, error: JsonRpcError) -> None:
-        self._logger.debug('JSON-RPC error message received: %s.', error)
+        self._logger.info('JSON-RPC error message received: %s.', error)
         self._manager.set_error(error.id, error.error)
 
     def on_progress(self, progress: JsonRpcProgress) -> None:
-        self._logger.debug('JSON-RPC progress message received: %s.', progress)
+        self._logger.info('JSON-RPC progress message received: %s.', progress)
         self._manager.add_progress(progress.id, progress.params)
 
     def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
