@@ -18,21 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
-from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
+from dataclasses import dataclass
+
 from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+
+
+@dataclass(frozen=True)
+class Box:
+
+    min: Vector3
+    max: Vector3
+
+    @staticmethod
+    def from_dict(message: dict) -> 'Box':
+        return Box(
+            Vector3(*message['min']),
+            Vector3(*message['max'])
+        )
+
+    @property
+    def center(self) -> Vector3:
+        return (self.min + self.max) / 2
+
+    @property
+    def size(self) -> Vector3:
+        return self.max - self.min

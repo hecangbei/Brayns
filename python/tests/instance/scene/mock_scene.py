@@ -18,21 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
+from dataclasses import dataclass, field
+
 from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
 from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+from tests.instance.scene.mock_scene_model import MockSceneModel
+
+
+@dataclass
+class MockScene:
+
+    bounds: Box = Box(Vector3.full(-5), Vector3.full(5))
+    models: list[MockSceneModel] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return {
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'models': [
+                model.to_dict()
+                for model in self.models
+            ]
+        }

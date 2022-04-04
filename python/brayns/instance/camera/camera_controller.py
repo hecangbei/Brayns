@@ -18,21 +18,33 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
 from brayns.common.geometry.box import Box
 from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
 from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+from brayns.instance.camera.camera import Camera
+from brayns.instance.camera.camera_view import CameraView
+
+
+class CameraController:
+
+    def __init__(self, camera: Camera) -> None:
+        self._camera = camera
+
+    def reset(self) -> None:
+        self._camera.view = CameraView()
+
+    def translate(self, translation: Vector3) -> None:
+        self._camera.position += translation
+
+    def rotate_around_target(self, rotation: Quaternion) -> None:
+        self._camera.position = rotation.rotate(
+            self._camera.position,
+            self._camera.target
+        )
+
+    def look_at(self, bounds: Box) -> None:
+        center = bounds.center
+        distance = self._camera.get_full_screen_distance(bounds)
+        self._camera.position = center + distance * Vector3.forward()
+        self._camera.target = center
+        self._camera.up = Vector3.up()

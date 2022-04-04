@@ -21,7 +21,8 @@
 from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
-from brayns.client.jsonrpc import JsonRpcClient, JsonRpcRequest
+from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.client.request_future import RequestFuture
 
 

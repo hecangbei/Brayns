@@ -21,12 +21,12 @@
 import unittest
 from typing import Any
 
-from brayns.camera.camera import Camera
+from brayns.instance.camera.camera import Camera
 from brayns.client.client_protocol import ClientProtocol
 from brayns.client.request_future import RequestFuture
 from brayns.instance.instance import Instance
-from brayns.scene.scene import Scene
-from brayns.snapshot.snapshot import Snapshot
+from brayns.instance.scene.scene import Scene
+from brayns.instance.snapshot.snapshot import Snapshot
 
 
 class MockClient(ClientProtocol):

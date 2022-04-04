@@ -20,7 +20,7 @@
 
 from dataclasses import dataclass
 
-from brayns.scene.model_protocol import ModelProtocol
+from brayns.instance.scene.model_protocol import ModelProtocol
 from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_report import BbpReport
 from brayns.plugins.common.neuron_radius import NeuronRadius

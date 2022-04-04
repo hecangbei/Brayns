@@ -18,21 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
-from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
-from brayns.common.geometry.vector3 import Vector3
+from dataclasses import dataclass
+from typing import Optional
+
 from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+
+
+@dataclass
+class SnapshotInfo:
+
+    path: Optional[str] = None
+    format: ImageFormat = ImageFormat.PNG
+    quality: int = 100
+    size: Optional[tuple[int, int]] = None
+    frame: Optional[int] = None
+
+    def to_dict(self) -> dict:
+        return {
+            'path': self.path,
+            'image_settings': {
+                'format': self.format.value,
+                'quality': self.quality,
+                'size': self.size
+            },
+            'animation_frame': self.frame
+        }

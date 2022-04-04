@@ -20,7 +20,7 @@
 
 from typing import Any, Callable, Iterator
 
-from brayns.client.jsonrpc import JsonRpcTask
+from brayns.client.jsonrpc.json_rpc_task import JsonRpcTask
 from brayns.client.request_progress import RequestProgress
 
 

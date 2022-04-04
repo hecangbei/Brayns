@@ -18,21 +18,30 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
+from dataclasses import dataclass, field
+
 from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
 from brayns.common.geometry.transform import Transform
 from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+
+
+@dataclass
+class MockSceneModel:
+
+    id: int
+    bounds: Box = Box(-Vector3.one(), Vector3.one())
+    metadata: dict[str, str] = field(default_factory=dict)
+    visible: bool = True
+    transform: Transform = Transform()
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'metadata': self.metadata,
+            'visible': self.visible,
+            'transformation': self.transform.to_dict()
+        }

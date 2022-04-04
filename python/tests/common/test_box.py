@@ -18,21 +18,34 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
+import unittest
+
 from brayns.common.geometry.box import Box
 from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
 from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+
+
+class TestBox(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self._box = Box(
+            min=Vector3(1, 2, 3),
+            max=Vector3(4, 5, 6)
+        )
+        self._template = {
+            'min': [1, 2, 3],
+            'max': [4, 5, 6]
+        }
+
+    def test_from_dict(self) -> None:
+        self.assertEqual(Box.from_dict(self._template), self._box)
+
+    def test_center(self) -> None:
+        self.assertEqual(self._box.center, Vector3(2.5, 3.5, 4.5))
+
+    def test_size(self) -> None:
+        self.assertEqual(self._box.size, Vector3(3, 3, 3))
+
+
+if __name__ == '__main__':
+    unittest.main()
