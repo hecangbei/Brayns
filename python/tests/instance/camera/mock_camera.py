@@ -18,13 +18,20 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.instance.camera.camera import Camera
-from brayns.instance.camera.perspective_projection import PerspectiveProjection
-from brayns.instance.camera.projection_registry import ProjectionRegistry
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.camera.camera_protocol import CameraProtocol
 
 
-def create_camera(client: ClientProtocol) -> Camera:
-    projections = ProjectionRegistry(client)
-    projections.add_projection_type(PerspectiveProjection)
-    return Camera(client, projections)
+class MockCamera(CameraProtocol):
+
+    def __init__(self, test1: int = 1, test2: int = 2) -> None:
+        self.test1 = test1
+        self.test2 = test2
+
+    def get_name(self) -> str:
+        return 'test'
+
+    def get_properties(self) -> dict:
+        return {
+            'test1': self.test1,
+            'test2': self.test2
+        }

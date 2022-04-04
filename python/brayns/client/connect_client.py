@@ -32,18 +32,11 @@ def connect_client(
     uri: str,
     secure: bool = False,
     cafile: Optional[str] = None,
-    loglevel: int = logging.ERROR
+    logger: Optional[logging.Logger] = None
 ) -> ClientProtocol:
-    logger = logging.Logger('Brayns', loglevel)
-    logger.addHandler(logging.StreamHandler(sys.stdout))
-    websocket = WebSocketClient.connect(
-        uri=uri,
-        secure=secure,
-        cafile=cafile
-    )
-    return Client(
-        JsonRpcClient(
-            websocket=websocket,
-            logger=logger
-        )
-    )
+    websocket = WebSocketClient.connect(uri, secure, cafile)
+    if logger is None:
+        logger = logging.Logger('Brayns', logging.WARN)
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+    json_rpc_client = JsonRpcClient(websocket, logger)
+    return Client(json_rpc_client)

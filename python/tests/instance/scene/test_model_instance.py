@@ -20,11 +20,10 @@
 
 import unittest
 
-from brayns.instance.scene.model_instance import ModelInstance
-from brayns.common.geometry.box import Box
 from brayns.common.geometry.quaternion import Quaternion
 from brayns.common.geometry.transform import Transform
 from brayns.common.geometry.vector3 import Vector3
+from brayns.instance.scene.model_instance import ModelInstance
 from tests.instance.scene.mock_scene_client import MockSceneClient
 
 
@@ -45,9 +44,10 @@ class TestModelInstance(unittest.TestCase):
         self.assertEqual(self._model.metadata, self._mock.metadata)
 
     def test_visible(self) -> None:
-        self.assertEqual(self._model.visible, self._mock.visible)
+        self._mock.visible = True
+        self.assertTrue(self._model.visible)
         self._model.visible = False
-        self.assertFalse(self._model.visible)
+        self.assertFalse(self._mock.visible)
 
     def test_transform(self) -> None:
         self.assertEqual(self._model.transform, self._mock.transform)
@@ -57,59 +57,7 @@ class TestModelInstance(unittest.TestCase):
             scale=Vector3(4, 5, 6)
         )
         self._model.transform = transform
-        self.assertEqual(self._model.transform, transform)
-
-    def test_position(self) -> None:
-        self.assertEqual(self._model.position, self._mock.bounds.center)
-        position = Vector3(1, 2, 3)
-        self._model.position = position
-        self.assertEqual(self._model.position, position)
-
-    def test_orientation(self) -> None:
-        self.assertEqual(
-            self._model.orientation,
-            self._mock.transform.rotation
-        )
-        orientation = Quaternion(1, 2, 3, 4)
-        self._model.orientation = orientation
-        self.assertEqual(self._model.orientation, orientation)
-
-    def test_translate(self) -> None:
-        ref = self._model.transform.translation
-        translation = Vector3(1, 2, 3)
-        self._model.translate(translation)
-        self.assertEqual(self._model.transform.translation, ref + translation)
-
-    def test_rotate(self) -> None:
-        rotation = Quaternion(4, 5, 6, 7)
-        center = Vector3(1, 2, 3)
-        orientation = self._model.transform.rotation
-        translation = self._model.transform.translation
-        self._model.rotate(rotation)
-        self.assertAlmostEqual(
-            self._model.transform.translation,
-            rotation.rotate(translation)
-        )
-        self.assertAlmostEqual(
-            self._model.transform.rotation,
-            rotation * orientation
-        )
-        self._model.rotate(rotation.inverse)
-        self._model.rotate(rotation, center)
-        self.assertAlmostEqual(
-            self._model.transform.translation,
-            rotation.rotate(translation, center)
-        )
-        self.assertAlmostEqual(
-            self._model.transform.rotation,
-            rotation * orientation
-        )
-
-    def test_rescale(self) -> None:
-        scale = Vector3(1, 2, 3)
-        ref = self._model.transform.scale
-        self._model.rescale(scale)
-        self.assertEqual(self._model.transform.scale, ref * scale)
+        self.assertEqual(self._mock.transform, transform)
 
 
 if __name__ == '__main__':

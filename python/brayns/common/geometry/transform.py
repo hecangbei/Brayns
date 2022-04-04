@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 from brayns.common.geometry.quaternion import Quaternion
 from brayns.common.geometry.vector3 import Vector3
@@ -46,18 +46,3 @@ class Transform:
             'scale': list(self.scale),
             'rotation_center': list(self.translation)
         }
-
-    def update(self, **kwargs) -> 'Transform':
-        return replace(self, **kwargs)
-
-    def translate(self, translation: Vector3) -> 'Transform':
-        return self.update(translation=self.translation + translation)
-
-    def rotate(self, rotation: Quaternion, center=Vector3.zero()) -> 'Transform':
-        return self.update(
-            translation=rotation.rotate(self.translation, center),
-            rotation=rotation * self.rotation
-        )
-
-    def rescale(self, scale: Vector3) -> 'Transform':
-        return self.update(scale=self.scale * scale)

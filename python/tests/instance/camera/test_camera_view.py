@@ -20,8 +20,8 @@
 
 import unittest
 
-from brayns.instance.camera.camera_view import CameraView
 from brayns.common.geometry.vector3 import Vector3
+from brayns.instance.camera.camera_view import CameraView
 
 
 class TestCameraView(unittest.TestCase):
@@ -43,12 +43,6 @@ class TestCameraView(unittest.TestCase):
 
     def test_to_dict(self) -> None:
         self.assertEqual(self._view.to_dict(), self._message)
-
-    def test_update(self, **kwargs) -> None:
-        view = CameraView()
-        position = Vector3(1, 2, 3)
-        test = view.update(position=position)
-        self.assertEqual(test.position, position)
 
 
 if __name__ == '__main__':

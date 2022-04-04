@@ -20,9 +20,8 @@
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.instance.camera.camera import Camera
-from brayns.instance.camera.create_camera import create_camera
+from brayns.instance.camera.camera_protocol import CameraProtocol
 from brayns.instance.scene.scene import Scene
-from brayns.instance.snapshot.snapshot import Snapshot
 
 
 class Instance:
@@ -30,14 +29,17 @@ class Instance:
     def __init__(self, client: ClientProtocol) -> None:
         self._client = client
         self._scene = Scene(client)
-        self._camera = create_camera(client)
-        self._snapshot = Snapshot(client)
+        self._camera = Camera(client)
 
     def __enter__(self) -> 'Instance':
         return self
 
     def __exit__(self, *_) -> None:
         self._client.disconnect()
+
+    @property
+    def client(self) -> ClientProtocol:
+        return self._client
 
     @property
     def scene(self) -> Scene:
@@ -47,6 +49,8 @@ class Instance:
     def camera(self) -> Camera:
         return self._camera
 
-    @property
-    def snapshot(self) -> Snapshot:
-        return self._snapshot
+    @camera.setter
+    def camera(self, value: CameraProtocol) -> None:
+        name = value.get_name()
+        properties = value.get_properties()
+        self._client.request(f'set-camera-{name}', properties)

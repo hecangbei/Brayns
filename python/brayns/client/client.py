@@ -27,57 +27,23 @@ from brayns.client.request_future import RequestFuture
 
 
 class Client(ClientProtocol):
-    """Brayns client implementation to connect to a renderer."""
 
     def __init__(self, client: JsonRpcClient) -> None:
-        """Low level initialization with dependencies.
-
-        :param client: JSON-RPC client
-        :type client: JsonRpcClient
-        """
         self._client = client
 
     def __enter__(self) -> 'Client':
-        """Allow using Brayns client in context manager."""
         return self
 
     def __exit__(self, *_) -> None:
-        """Disconnect from Brayns renderer when exiting context manager."""
         self.disconnect()
 
     def disconnect(self) -> None:
-        """Disconnect the client from the renderer.
-
-        The client should not be used anymore after disconnection.
-        """
         self._client.disconnect()
 
     def request(self, method: str, params: Any = None) -> Any:
-        """Send a JSON-RPC request to the renderer.
-
-        Raise a RequestError if an error message is received.
-
-        :param method: method name
-        :type method: str
-        :param params: request params, defaults to None
-        :type params: Any, optional
-        :return: reply result
-        :rtype: Any
-        """
         return self.task(method, params).wait_for_result()
 
     def task(self, method: str, params: Any = None) -> RequestFuture:
-        """Send a JSON-RPC request to the renderer with progress support.
-
-        Raise a RequestError if an error message is received.
-
-        :param method: method name
-        :type method: str
-        :param params: request params, defaults to None
-        :type params: Any, optional
-        :return: future to monitor the request
-        :rtype: RequestFuture
-        """
         id = 0
         while id in self._client.get_active_tasks():
             id += 1

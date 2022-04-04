@@ -20,24 +20,8 @@
 
 import math
 
-from brayns.instance.camera.camera_projection import CameraProjection
-from brayns.common.geometry.box import Box
 
-
-class PerspectiveProjection(CameraProjection):
-
-    @staticmethod
-    def get_name() -> str:
-        return 'perspective'
-
-    @staticmethod
-    def from_dict(message: dict) -> 'PerspectiveProjection':
-        return PerspectiveProjection(
-            fovy=message['fovy'],
-            aperture_radius=message['aperture_radius'],
-            focus_distance=message['focus_distance'],
-            degrees=True
-        )
+class PerspectiveCamera:
 
     def __init__(
         self,
@@ -66,12 +50,12 @@ class PerspectiveProjection(CameraProjection):
     def focus_distance(self) -> float:
         return self._focus_distance
 
-    def to_dict(self) -> dict:
+    def get_name(self) -> str:
+        return 'perspective'
+
+    def get_properties(self) -> dict:
         return {
             'fovy': self.fovy_degrees,
             'aperture_radius': self.aperture_radius,
             'focus_distance': self.focus_distance
         }
-
-    def get_full_screen_distance(self, bounds: Box) -> float:
-        return bounds.size.y / 2 / math.tan(self._fovy / 2)

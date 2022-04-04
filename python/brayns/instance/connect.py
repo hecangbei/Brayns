@@ -29,13 +29,7 @@ def connect(
     uri: str,
     secure: bool = False,
     cafile: Optional[str] = None,
-    loglevel: int = logging.ERROR
+    logger: Optional[logging.Logger] = None
 ) -> Instance:
-    return Instance(
-        connect_client(
-            uri=uri,
-            secure=secure,
-            cafile=cafile,
-            loglevel=loglevel
-        )
-    )
+    client = connect_client(uri, secure, cafile, logger)
+    return Instance(client)

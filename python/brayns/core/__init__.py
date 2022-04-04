@@ -18,28 +18,8 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-from typing import Optional
+from brayns.core.snapshot import Snapshot
 
-from brayns.common.image.image_format import ImageFormat
-
-
-@dataclass
-class SnapshotInfo:
-
-    path: Optional[str] = None
-    format: ImageFormat = ImageFormat.PNG
-    quality: int = 100
-    size: Optional[tuple[int, int]] = None
-    frame: Optional[int] = None
-
-    def to_dict(self) -> dict:
-        return {
-            'path': self.path,
-            'image_settings': {
-                'format': self.format.value,
-                'quality': self.quality,
-                'size': self.size
-            },
-            'animation_frame': self.frame
-        }
+__all__ = [
+    'Snapshot'
+]
