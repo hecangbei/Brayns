@@ -17,7 +17,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport

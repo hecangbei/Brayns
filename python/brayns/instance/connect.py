@@ -21,7 +21,7 @@
 import logging
 from typing import Optional
 
-from brayns.client import connect_client
+from brayns.client.connect_client import connect_client
 from brayns.instance.instance import Instance
 
 

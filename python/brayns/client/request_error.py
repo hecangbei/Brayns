@@ -21,11 +21,12 @@
 from dataclasses import dataclass
 from typing import Any
 
-from brayns.error.error import Error
+from brayns.error import Error
 
 
 @dataclass
 class RequestError(Error):
+    """Exception raised when the renderer replies an error."""
 
     message: str
     code: int = 0

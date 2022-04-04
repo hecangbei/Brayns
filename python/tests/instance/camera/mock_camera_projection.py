@@ -18,21 +18,32 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
+from brayns.instance.camera.camera_projection import CameraProjection
 from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
-from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+
+
+class MockCameraProjection(CameraProjection):
+
+    @staticmethod
+    def get_name() -> str:
+        return 'test'
+
+    @staticmethod
+    def from_dict(message: dict) -> 'CameraProjection':
+        return MockCameraProjection(
+            message['test1'],
+            message['test2'],
+        )
+
+    def __init__(self, test1: int = 1, test2: int = 2) -> None:
+        self.test1 = test1
+        self.test2 = test2
+
+    def to_dict(self) -> dict:
+        return {
+            'test1': self.test1,
+            'test2': self.test2
+        }
+
+    def get_full_screen_distance(self, bounds: Box) -> float:
+        return bounds.center

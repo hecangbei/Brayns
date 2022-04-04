@@ -18,11 +18,11 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.camera.camera import Camera
-from brayns.camera.create_camera import create_camera
 from brayns.client.client_protocol import ClientProtocol
-from brayns.scene.scene import Scene
-from brayns.snapshot.snapshot import Snapshot
+from brayns.instance.camera.camera import Camera
+from brayns.instance.camera.create_camera import create_camera
+from brayns.instance.scene.scene import Scene
+from brayns.instance.snapshot.snapshot import Snapshot
 
 
 class Instance:

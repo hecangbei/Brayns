@@ -18,21 +18,38 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
-from brayns.common.geometry.box import Box
-from brayns.common.geometry.quaternion import Quaternion
-from brayns.common.geometry.transform import Transform
+import unittest
+
+from brayns.instance.camera.camera_view import CameraView
 from brayns.common.geometry.vector3 import Vector3
-from brayns.common.image.image_format import ImageFormat
-from brayns.error import Error
-from brayns.instance.connect import connect
-from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+
+
+class TestCameraView(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self._view = CameraView(
+            Vector3(1, 2, 3),
+            Vector3(4, 5, 6),
+            Vector3(7, 8, 9)
+        )
+        self._message = {
+            'position': [1, 2, 3],
+            'target': [4, 5, 6],
+            'up': [7, 8, 9]
+        }
+
+    def test_from_dict(self) -> None:
+        self.assertEqual(CameraView.from_dict(self._message), self._view)
+
+    def test_to_dict(self) -> None:
+        self.assertEqual(self._view.to_dict(), self._message)
+
+    def test_update(self, **kwargs) -> None:
+        view = CameraView()
+        position = Vector3(1, 2, 3)
+        test = view.update(position=position)
+        self.assertEqual(test.position, position)
+
+
+if __name__ == '__main__':
+    unittest.main()
