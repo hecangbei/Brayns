@@ -20,6 +20,5 @@
 
 from brayns.client import *
 from brayns.common import *
-from brayns.core import *
 from brayns.instance import *
 from brayns.plugins import *

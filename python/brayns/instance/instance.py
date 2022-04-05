@@ -51,6 +51,4 @@ class Instance:
 
     @camera.setter
     def camera(self, value: CameraProtocol) -> None:
-        name = value.get_name()
-        properties = value.get_properties()
-        self._client.request(f'set-camera-{name}', properties)
+        self._camera.update(value.get_name(), value.get_properties())

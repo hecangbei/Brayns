@@ -59,6 +59,36 @@ class TestModelInstance(unittest.TestCase):
         self._model.transform = transform
         self.assertEqual(self._mock.transform, transform)
 
+    def test_translation(self) -> None:
+        self.assertEqual(
+            self._model.translation,
+            self._mock.transform.translation
+        )
+        test = Vector3.one()
+        self._model.translation = test
+        self.assertEqual(self._mock.transform.translation, test)
+
+    def test_rotation(self) -> None:
+        self.assertEqual(
+            self._model.rotation,
+            self._mock.transform.rotation
+        )
+        test = Quaternion.from_euler(
+            Vector3(0, 0, 90),
+            degrees=True
+        )
+        self._model.rotation = test
+        self.assertEqual(self._mock.transform.rotation, test)
+
+    def test_scale(self) -> None:
+        self.assertEqual(
+            self._model.scale,
+            self._mock.transform.scale
+        )
+        test = 2 * Vector3.one()
+        self._model.scale = test
+        self.assertEqual(self._mock.transform.scale, test)
+
 
 if __name__ == '__main__':
     unittest.main()

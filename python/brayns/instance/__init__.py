@@ -23,11 +23,13 @@ from brayns.instance.instance import Instance
 from brayns.instance.scene.model_instance import ModelInstance
 from brayns.instance.scene.model_manager import ModelManager
 from brayns.instance.scene.scene import Scene
+from brayns.instance.snapshot.snapshot import Snapshot
 
 __all__ = [
     'connect',
     'Instance',
     'ModelInstance',
     'ModelManager',
-    'Scene'
+    'Scene',
+    'Snapshot'
 ]
