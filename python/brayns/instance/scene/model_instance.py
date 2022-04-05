@@ -18,11 +18,13 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import dataclasses
 from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.common.geometry.box import Box
 from brayns.common.geometry.transform import Transform
+from brayns.common.geometry.vector3 import Vector3
 
 
 class ModelInstance:
@@ -58,6 +60,30 @@ class ModelInstance:
     @transform.setter
     def transform(self, value: Transform) -> None:
         self._update({'transformation': value.to_dict()})
+
+    @property
+    def translation(self) -> Vector3:
+        return self.transform.translation
+
+    @translation.setter
+    def translation(self, value: Vector3) -> None:
+        self.transform = dataclasses.replace(self.transform, translation=value)
+
+    @property
+    def rotation(self) -> Vector3:
+        return self.transform.rotation
+
+    @rotation.setter
+    def rotation(self, value: Vector3) -> None:
+        self.transform = dataclasses.replace(self.transform, rotation=value)
+
+    @property
+    def scale(self) -> Vector3:
+        return self.transform.scale
+
+    @scale.setter
+    def scale(self, value: Vector3) -> None:
+        self.transform = dataclasses.replace(self.transform, scale=value)
 
     def _get(self) -> Any:
         return self._client.request('get-model', {'id': self._id})

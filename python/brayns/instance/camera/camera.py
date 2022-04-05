@@ -18,7 +18,10 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import dataclasses
+
 from brayns.client.client_protocol import ClientProtocol
+from brayns.common.geometry.vector3 import Vector3
 from brayns.instance.camera.camera_view import CameraView
 
 
@@ -39,3 +42,34 @@ class Camera:
     @view.setter
     def view(self, value: CameraView) -> None:
         self._client.request('set-camera-look-at', value.to_dict())
+
+    @property
+    def position(self) -> Vector3:
+        return self.view.position
+
+    @position.setter
+    def position(self, value: Vector3) -> None:
+        self.view = dataclasses.replace(self.view, position=value)
+
+    @property
+    def target(self) -> Vector3:
+        return self.view.target
+
+    @target.setter
+    def target(self, value: Vector3) -> None:
+        self.view = dataclasses.replace(self.view, target=value)
+
+    @property
+    def up(self) -> Vector3:
+        return self.view.up
+
+    @up.setter
+    def up(self, value: Vector3) -> None:
+        self.view = dataclasses.replace(self.view, up=value)
+
+    @property
+    def direction(self) -> Vector3:
+        return self.target - self.position
+
+    def update(self, name: str, properties: dict) -> None:
+        self._client.request(f'set-camera-{name}', properties)

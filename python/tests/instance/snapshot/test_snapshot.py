@@ -21,9 +21,9 @@
 import unittest
 
 from brayns.common.image.image_format import ImageFormat
-from brayns.core.snapshot import Snapshot
 from brayns.instance.instance import Instance
-from tests.core.mock_snapshot_client import MockSnapshotClient
+from brayns.instance.snapshot.snapshot import Snapshot
+from tests.instance.snapshot.mock_snapshot_client import MockSnapshotClient
 
 
 class TestSnapshot(unittest.TestCase):

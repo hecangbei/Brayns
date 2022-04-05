@@ -46,6 +46,39 @@ class TestCamera(unittest.TestCase):
         self._camera.view = test
         self.assertEqual(self._client.view, test)
 
+    def test_position(self) -> None:
+        test = Vector3.one()
+        self._client.view = CameraView(position=test)
+        self.assertEqual(self._camera.position, test)
+        test *= 3
+        self._camera.position = test
+        self.assertEqual(self._client.view.position, test)
+
+    def test_target(self) -> None:
+        test = Vector3.one()
+        self._client.view = CameraView(target=test)
+        self.assertEqual(self._camera.target, test)
+        test *= 3
+        self._camera.target = test
+        self.assertEqual(self._client.view.target, test)
+
+    def test_up(self) -> None:
+        test = Vector3.one()
+        self._client.view = CameraView(up=test)
+        self.assertEqual(self._camera.up, test)
+        test *= 3
+        self._camera.up = test
+        self.assertEqual(self._client.view.up, test)
+
+    def test_direction(self) -> None:
+        self._client.view = CameraView(-Vector3.one(), Vector3.one())
+        self.assertEqual(self._camera.direction, 2 * Vector3.one())
+
+    def test_update(self) -> None:
+        self._camera.update('test', {'test': 1})
+        self.assertEqual(self._client.name, 'test')
+        self.assertEqual(self._client.properties, {'test': 1})
+
 
 if __name__ == '__main__':
     unittest.main()
