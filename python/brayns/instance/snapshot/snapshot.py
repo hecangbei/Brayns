@@ -24,29 +24,28 @@ from typing import Optional
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.common.image.image_format import ImageFormat
-from brayns.instance.instance import Instance
 
 
 @dataclass
 class Snapshot:
 
     quality: int = 100
-    size: Optional[tuple[int, int]] = None
+    resolution: Optional[tuple[int, int]] = None
     frame: Optional[int] = None
 
-    def save(self, instance: Instance, path: str) -> None:
+    def save(self, client: ClientProtocol, path: str) -> None:
         format = ImageFormat.from_path(path)
         params = self._get_params(format, path)
-        self._request(instance.client, params)
+        self._request(client, params)
 
-    def download(self, instance: Instance, format: ImageFormat = ImageFormat.PNG) -> bytes:
+    def download(self, client: ClientProtocol, format: ImageFormat = ImageFormat.PNG) -> bytes:
         params = self._get_params(format)
-        result = self._request(instance.client, params)
+        result = self._request(client, params)
         return base64.b64decode(result['data'])
 
-    def download_and_save(self, instance: Instance, path: str) -> None:
+    def download_and_save(self, client: ClientProtocol, path: str) -> None:
         format = ImageFormat.from_path(path)
-        data = self.download(instance, format)
+        data = self.download(client, format)
         with open(path, 'wb') as file:
             file.write(data)
 
@@ -56,7 +55,7 @@ class Snapshot:
             'image_settings': {
                 'format': format.value,
                 'quality': self.quality,
-                'size': self.size
+                'size': self.resolution
             },
             'animation_frame': self.frame
         }

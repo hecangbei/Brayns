@@ -22,7 +22,6 @@ from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.instance.camera.camera_view import CameraView
-from tests.instance.camera.mock_camera import MockCamera
 
 
 class MockCameraClient(ClientProtocol):
