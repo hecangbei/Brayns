@@ -18,44 +18,35 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import base64
+from dataclasses import dataclass
+from typing import Optional
+
 from brayns.client.client_protocol import ClientProtocol
 from brayns.common.image.image_format import ImageFormat
-from brayns.instance.snapshot.snapshot_request import SnapshotRequest
 from brayns.instance.snapshot.snapshot_settings import SnapshotSettings
 
 
-class Snapshot:
+@dataclass
+class SnapshotRequest:
 
-    def __init__(self, client: ClientProtocol) -> None:
-        self._client = client
+    format: ImageFormat = ImageFormat.PNG
+    save_as: Optional[str] = None
+    settings: SnapshotSettings = SnapshotSettings()
 
-    def save(
-        self,
-        path: str,
-        settings: SnapshotSettings = SnapshotSettings()
-    ) -> None:
-        SnapshotRequest(
-            format=ImageFormat.from_path(path),
-            save_as=path,
-            settings=settings
-        ).send(self._client)
+    def to_dict(self) -> dict:
+        return {
+            'path': self.save_as,
+            'image_settings': {
+                'format': self.format.value,
+                'quality': self.settings.jpeg_quality,
+                'size': self.settings.resolution
+            },
+            'animation_frame': self.settings.frame
+        }
 
-    def download(
-        self,
-        format: ImageFormat = ImageFormat.PNG,
-        settings: SnapshotSettings = SnapshotSettings()
-    ) -> bytes:
-        return SnapshotRequest(
-            format=format,
-            settings=settings
-        ).send(self._client)
-
-    def download_and_save(
-        self,
-        path: str,
-        settings: SnapshotSettings = SnapshotSettings()
-    ) -> None:
-        format = ImageFormat.from_path(path)
-        data = self.download(format, settings)
-        with open(path, 'wb') as file:
-            file.write(data)
+    def send(self, client: ClientProtocol) -> bytes:
+        result = client.request('snapshot', self.to_dict())
+        if self.save_as is not None:
+            return b''
+        return base64.b64decode(result['data'])
