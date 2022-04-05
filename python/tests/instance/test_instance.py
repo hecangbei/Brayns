@@ -23,9 +23,11 @@ import unittest
 from brayns.instance.camera.camera import Camera
 from brayns.instance.instance import Instance
 from brayns.instance.scene.scene import Scene
+from brayns.instance.snapshot.snapshot import Snapshot
 from tests.instance.camera.mock_camera import MockCamera
 from tests.instance.camera.mock_camera_client import MockCameraClient
 from tests.instance.scene.mock_scene_client import MockSceneClient
+from tests.instance.snapshot.mock_snapshot_client import MockSnapshotClient
 
 
 class TestInstance(unittest.TestCase):
@@ -43,6 +45,11 @@ class TestInstance(unittest.TestCase):
         instance.camera = test
         self.assertEqual(client.name, test.get_name())
         self.assertEqual(client.properties, test.get_properties())
+
+    def test_snapshot(self) -> None:
+        client = MockSnapshotClient()
+        instance = Instance(client)
+        self.assertIsInstance(instance.snapshot, Snapshot)
 
 
 if __name__ == '__main__':
