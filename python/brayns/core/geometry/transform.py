@@ -20,10 +20,18 @@
 
 from dataclasses import dataclass
 
-from brayns.core.error import Error
+from brayns.core.geometry.quaternion import Quaternion
+from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass
-class WebSocketError(Error):
+class Transform:
 
-    reason: str
+    translation: Vector3 = Vector3.zero
+    rotation: Quaternion = Quaternion.identity
+    scale: Vector3 = Vector3.one
+
+    @classmethod
+    @property
+    def identity(cls) -> 'Transform':
+        return Transform()

@@ -18,12 +18,34 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
-from brayns.core.error import Error
+from brayns.core.geometry.quaternion import Quaternion
+from brayns.core.geometry.transform import Transform
+from brayns.core.geometry.vector3 import Vector3
 
 
-@dataclass
-class WebSocketError(Error):
+class TestTransform(unittest.TestCase):
 
-    reason: str
+    def setUp(self) -> None:
+        self._transform = Transform(
+            translation=Vector3(1, 2, 3),
+            rotation=Quaternion(1, 2, 3, 4),
+            scale=Vector3(1, 1, 1)
+        )
+        self._template = {
+            'translation': [1, 2, 3],
+            'scale': [1, 1, 1],
+            'rotation': [1, 2, 3, 4],
+            'rotation_center': [1, 2, 3]
+        }
+
+    def test_from_dict(self) -> None:
+        self.assertEqual(Transform.from_dict(self._template), self._transform)
+
+    def test_to_dict(self) -> None:
+        self.assertEqual(self._transform.to_dict(), self._template)
+
+
+if __name__ == '__main__':
+    unittest.main()

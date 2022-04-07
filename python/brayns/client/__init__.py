@@ -19,14 +19,14 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect_client import connect_client
+from brayns.client.connect import connect
 from brayns.client.request_error import RequestError
 from brayns.client.request_future import RequestFuture
 from brayns.client.request_progress import RequestProgress
 
 __all__ = [
     'ClientProtocol',
-    'connect_client',
+    'connect',
     'RequestError',
     'RequestFuture',
     'RequestProgress'

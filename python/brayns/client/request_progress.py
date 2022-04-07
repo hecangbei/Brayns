@@ -26,7 +26,7 @@ class RequestProgress:
     """Progress info about a running request."""
 
     operation: str
-    """Description of the current step as str."""
+    """Description of the current step."""
 
     amount: float
     """Progress of the request between 0 and 1."""

@@ -18,12 +18,37 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-
-from brayns.core.error import Error
+from brayns.core.geometry.vector3 import Vector3
 
 
-@dataclass
-class WebSocketError(Error):
+class Axis:
 
-    reason: str
+    @classmethod
+    @property
+    def right(cls) -> Vector3:
+        return Vector3(1.0, 0.0, 0.0)
+
+    @classmethod
+    @property
+    def left(cls) -> Vector3:
+        return Vector3(-1.0, 0.0, 0.0)
+
+    @classmethod
+    @property
+    def up(cls) -> Vector3:
+        return Vector3(0.0, 1.0, 0.0)
+
+    @classmethod
+    @property
+    def down(cls) -> Vector3:
+        return Vector3(0.0, -1.0, 0.0)
+
+    @classmethod
+    @property
+    def forward(cls) -> Vector3:
+        return Vector3(0.0, 0.0, 1.0)
+
+    @classmethod
+    @property
+    def back(cls) -> Vector3:
+        return Vector3(0.0, 0.0, -1.0)

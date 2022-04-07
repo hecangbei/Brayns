@@ -18,12 +18,30 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from brayns.core.error import Error
+from brayns.core.geometry.box import Box
+from brayns.core.geometry.transform import Transform
+from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass
-class WebSocketError(Error):
+class MockSceneModel:
 
-    reason: str
+    id: int
+    bounds: Box = Box(-Vector3.one, Vector3.one)
+    metadata: dict[str, str] = field(default_factory=dict)
+    visible: bool = True
+    transform: Transform = Transform()
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'bounds': {
+                'min': list(self.bounds.min),
+                'max': list(self.bounds.max)
+            },
+            'metadata': self.metadata,
+            'visible': self.visible,
+            'transformation': self.transform.to_dict()
+        }

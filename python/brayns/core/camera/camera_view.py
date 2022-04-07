@@ -20,10 +20,13 @@
 
 from dataclasses import dataclass
 
-from brayns.core.error import Error
+from brayns.core.geometry.axis import Axis
+from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass
-class WebSocketError(Error):
+class CameraView:
 
-    reason: str
+    position: Vector3
+    target: Vector3 = Vector3.zero
+    up: Vector3 = Axis.up

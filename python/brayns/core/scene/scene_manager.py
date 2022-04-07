@@ -18,12 +18,16 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from brayns.client.client_protocol import ClientProtocol
+from brayns.core.geometry.box import Box
+from brayns.core.scene.model import ModelInstance
+from brayns.core.scene.model_manager import ModelManager
+from brayns.core.scene.model_protocol import ModelProtocol
 
-from brayns.core.error import Error
 
+class SceneManager:
 
-@dataclass
-class WebSocketError(Error):
+    def __init__(self, client: ClientProtocol) -> None:
+        self._client = client
 
-    reason: str
+    def
