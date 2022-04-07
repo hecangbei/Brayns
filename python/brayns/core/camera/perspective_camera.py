@@ -18,12 +18,33 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-
-from brayns.core.error import Error
+import math
+from dataclasses import InitVar, dataclass
 
 
 @dataclass
-class WebSocketError(Error):
+class PerspectiveCamera:
 
-    reason: str
+    fovy: InitVar[float] = math.radians(45)
+    aperture_radius: float = 0.0,
+    focus_distance: float = 1.0,
+    degrees: InitVar[bool] = False
+
+    def __post_init__(self, fovy: float, degrees: bool) -> None:
+        self._fovy = math.radians(fovy) if degrees else fovy
+
+    @property
+    def fovy_radians(self) -> float:
+        return self._fovy
+
+    @fovy_radians.setter
+    def fovy_radians(self, value: float) -> None:
+        self._fovy = value
+
+    @property
+    def fovy_degrees(self) -> float:
+        return math.degrees(self._fovy)
+
+    @fovy_degrees.setter
+    def fovy_degrees(self, value: float) -> None:
+        self._fovy = math.radians(value)

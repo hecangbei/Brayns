@@ -18,12 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-
-from brayns.core.error import Error
+from brayns.core.scene.model import Model
 
 
-@dataclass
-class WebSocketError(Error):
-
-    reason: str
+class Scene:

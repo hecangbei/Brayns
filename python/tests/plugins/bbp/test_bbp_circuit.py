@@ -20,12 +20,12 @@
 
 import unittest
 
-from brayns.instance.scene.scene import Scene
+from brayns.core.scene.scene_manager import Scene
 from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_circuit import BbpCircuit
 from brayns.plugins.bbp.bbp_report import BbpReport
 from brayns.plugins.common.neuron_radius import NeuronRadius
-from tests.instance.scene.mock_scene_client import MockSceneClient
+from tests.core.scene.mock_scene_client import MockSceneClient
 
 
 class TestBbpCircuit(unittest.TestCase):

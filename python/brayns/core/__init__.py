@@ -18,12 +18,14 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from brayns.core.scene.model import ModelInstance
+from brayns.core.scene.model_manager import ModelManager
+from brayns.core.scene.scene_manager import Scene
+from brayns.core.snapshot.snapshot import Snapshot
 
-from brayns.core.error import Error
-
-
-@dataclass
-class WebSocketError(Error):
-
-    reason: str
+__all__ = [
+    'ModelInstance',
+    'ModelManager',
+    'Scene',
+    'Snapshot'
+]

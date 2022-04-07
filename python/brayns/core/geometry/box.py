@@ -20,10 +20,36 @@
 
 from dataclasses import dataclass
 
-from brayns.core.error import Error
+from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass
-class WebSocketError(Error):
+class Box:
 
-    reason: str
+    min: Vector3 = Vector3.zero
+    max: Vector3 = Vector3.zero
+
+    @classmethod
+    @property
+    def empty(cls) -> 'Box':
+        return Box()
+
+    @property
+    def center(self) -> Vector3:
+        return (self.min + self.max) / 2
+
+    @property
+    def size(self) -> Vector3:
+        return self.max - self.min
+
+    @property
+    def width(self) -> float:
+        return self.size.x
+
+    @property
+    def height(self) -> float:
+        return self.size.y
+
+    @property
+    def depth(self) -> float:
+        return self.size.z

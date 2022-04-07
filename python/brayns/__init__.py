@@ -19,6 +19,5 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.client import *
-from brayns.common import *
-from brayns.instance import *
+from brayns.core import *
 from brayns.plugins import *

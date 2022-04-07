@@ -18,12 +18,25 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import logging
+import sys
+from typing import Optional
 
-from brayns.core.error import Error
+from brayns.client.client import Client
+from brayns.client.client_protocol import ClientProtocol
+from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.client.websocket.web_socket_client import WebSocketClient
 
 
-@dataclass
-class WebSocketError(Error):
-
-    reason: str
+def connect(
+    uri: str,
+    secure: bool = False,
+    cafile: Optional[str] = None,
+    logger: Optional[logging.Logger] = None
+) -> ClientProtocol:
+    websocket = WebSocketClient.connect(uri, secure, cafile)
+    if logger is None:
+        logger = logging.Logger('Brayns', logging.WARN)
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+    json_rpc_client = JsonRpcClient(websocket, logger)
+    return Client(json_rpc_client)

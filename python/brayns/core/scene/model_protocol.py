@@ -18,12 +18,23 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-
-from brayns.core.error import Error
+from typing import Protocol
 
 
-@dataclass
-class WebSocketError(Error):
+class ModelProtocol(Protocol):
 
-    reason: str
+    def get_path(self) -> str:
+        raise NotImplementedError()
+
+    def get_loader(self) -> str:
+        return ''
+
+    def get_loader_properties(self) -> dict:
+        return {}
+
+    def to_dict(self) -> dict:
+        return {
+            'path': self.get_path(),
+            'loader_name': self.get_loader(),
+            'loader_properties': self.get_loader_properties()
+        }

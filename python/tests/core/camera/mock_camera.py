@@ -20,10 +20,28 @@
 
 from dataclasses import dataclass
 
-from brayns.core.error import Error
+from brayns.core.camera.camera_protocol import CameraProtocol
 
 
 @dataclass
-class WebSocketError(Error):
+class MockCamera(CameraProtocol):
 
-    reason: str
+    test1: float = 1.0
+    test2: float = 2.0
+
+    @staticmethod
+    def get_name() -> str:
+        return 'test'
+
+    @staticmethod
+    def from_dict(message: dict) -> 'MockCamera':
+        return MockCamera(
+            test1=message['test1'],
+            test2=message['test2']
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            'test1': self.test1,
+            'test2': self.test2
+        }

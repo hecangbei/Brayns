@@ -18,12 +18,34 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
-from brayns.core.error import Error
+from brayns.core.camera.camera_view import CameraView
+from brayns.core.geometry.vector3 import Vector3
 
 
-@dataclass
-class WebSocketError(Error):
+class TestCameraView(unittest.TestCase):
 
-    reason: str
+    def setUp(self) -> None:
+        self._view = CameraView(
+            Vector3(1, 2, 3),
+            Vector3(4, 5, 6),
+            Vector3(7, 8, 9)
+        )
+        self._message = {
+            'position': [1, 2, 3],
+            'target': [4, 5, 6],
+            'up': [7, 8, 9]
+        }
+
+    def test_from_dict(self) -> None:
+        test = CameraView.from_dict(self._message)
+        self.assertEqual(test, self._view)
+
+    def test_to_dict(self) -> None:
+        test = self._view.to_dict()
+        self.assertEqual(test, self._message)
+
+
+if __name__ == '__main__':
+    unittest.main()

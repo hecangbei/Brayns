@@ -18,12 +18,35 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import base64
 from dataclasses import dataclass
+from typing import Optional
 
-from brayns.core.error import Error
+from brayns.client.client_protocol import ClientProtocol
+from brayns.common.image.image_format import ImageFormat
+from brayns.core.snapshot.snapshot_settings import SnapshotSettings
 
 
 @dataclass
-class WebSocketError(Error):
+class SnapshotRequest:
 
-    reason: str
+    format: ImageFormat = ImageFormat.PNG
+    save_as: Optional[str] = None
+    settings: SnapshotSettings = SnapshotSettings()
+
+    def to_dict(self) -> dict:
+        return {
+            'path': self.save_as,
+            'image_settings': {
+                'format': self.format.value,
+                'quality': self.settings.jpeg_quality,
+                'size': self.settings.resolution
+            },
+            'animation_frame': self.settings.frame
+        }
+
+    def send(self, client: ClientProtocol) -> bytes:
+        result = client.request('snapshot', self.to_dict())
+        if self.save_as is not None:
+            return b''
+        return base64.b64decode(result['data'])
