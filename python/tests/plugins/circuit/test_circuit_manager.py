@@ -20,24 +20,23 @@
 
 import unittest
 
-from brayns.core.scene.scene_manager import Scene
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_circuit import BbpCircuit
-from brayns.plugins.bbp.bbp_report import BbpReport
-from brayns.plugins.common.neuron_radius import NeuronRadius
+from brayns.plugins.circuit.cells import Cells
+from brayns.plugins.circuit.circuit_info import CircuitInfo
+from brayns.plugins.circuit.circuit_manager import CircuitManager
+from brayns.plugins.circuit.radius import Radius
+from brayns.plugins.circuit.report import Report
 from tests.core.scene.mock_scene_client import MockSceneClient
 
 
-class TestBbpCircuit(unittest.TestCase):
+class TestCircuit(unittest.TestCase):
 
     def setUp(self) -> None:
         self._client = MockSceneClient()
-        self._scene = Scene(self._client)
-        self._circuit = BbpCircuit(
-            path='path',
-            cells=BbpCells.all(),
-            report=BbpReport.compartment('test'),
-            radius=NeuronRadius.override(3.0),
+        self._manager = CircuitManager(self._client)
+        self._info = CircuitInfo(
+            cells=Cells.all(),
+            report=Report.compartment('test'),
+            radius=Radius.override(3.0),
             load_soma=True,
             load_axon=True,
             load_dendrites=True,
@@ -45,13 +44,8 @@ class TestBbpCircuit(unittest.TestCase):
             load_efferent_synapses=True
         )
 
-    def test_get_path(self) -> None:
-        self.assertEqual(self._circuit.get_path(), self._circuit.path)
-
-    def test_get_loader(self) -> None:
-        self.assertEqual(self._circuit.get_loader(), 'BBP loader')
-
-    def test_get_loader_properties(self) -> None:
+    def test_load_circuit(self) -> None:
+        self._manager.load_circuit('path', self._info)
         ref = {
             'percentage': 1.0,
             'targets': [],
@@ -69,7 +63,10 @@ class TestBbpCircuit(unittest.TestCase):
                 'load_dendrites': True
             }
         }
-        self.assertEqual(self._circuit.get_loader_properties(), ref)
+        test = self._client.received_params[0]
+        self.assertEqual(test['path'], 'path')
+        self.assertEqual(test['loader'], '')
+        self.assertEqual(test['loader_properties'], ref)
 
 
 if __name__ == '__main__':

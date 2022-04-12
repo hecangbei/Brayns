@@ -18,7 +18,14 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from dataclasses import dataclass, field
+
+from brayns.core.geometry.box import Box
 from brayns.core.scene.model import Model
 
 
+@dataclass
 class Scene:
+
+    bounds: Box = Box.empty
+    models: list[Model] = field(default_factory=list)

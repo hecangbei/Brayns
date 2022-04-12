@@ -18,23 +18,23 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Protocol
+from dataclasses import dataclass
 
 
-class ModelProtocol(Protocol):
+@dataclass
+class Radius:
 
-    def get_path(self) -> str:
-        raise NotImplementedError()
+    multiplier: float = 1.0
+    value: float = 0.0
 
-    def get_loader(self) -> str:
-        return ''
+    @staticmethod
+    def default() -> 'Radius':
+        return Radius()
 
-    def get_loader_properties(self) -> dict:
-        return {}
+    @staticmethod
+    def multiply(value: float) -> 'Radius':
+        return Radius(multiplier=value)
 
-    def to_dict(self) -> dict:
-        return {
-            'path': self.get_path(),
-            'loader_name': self.get_loader(),
-            'loader_properties': self.get_loader_properties()
-        }
+    @staticmethod
+    def override(value: float) -> 'Radius':
+        return Radius(value=value)

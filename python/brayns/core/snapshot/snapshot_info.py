@@ -18,38 +18,13 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from brayns.core.scene.model_protocol import ModelProtocol
-from brayns.core.scene.scene_manager import Scene
-from tests.core.scene.mock_scene_client import MockSceneClient
+from dataclasses import dataclass
+from typing import Optional
 
 
-class MockModel(ModelProtocol):
+@dataclass
+class SnapshotInfo:
 
-    def get_path(self) -> str:
-        return 'path'
-
-    def get_loader(self) -> str:
-        return 'loader'
-
-    def get_loader_properties(self) -> dict:
-        return 'properties'
-
-
-class TestScene(unittest.TestCase):
-
-    def setUp(self) -> None:
-        self._client = MockSceneClient()
-        self._scene = Scene(self._client)
-        self._client.add_model()
-
-    def test_models(self) -> None:
-        self.assertEqual(len(self._scene.models), len(self._client.models))
-
-    def test_bounds(self) -> None:
-        self.assertEqual(self._scene.bounds, self._client.scene.bounds)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    jpeg_quality: int = 100
+    resolution: Optional[tuple[int, int]] = None
+    frame: Optional[int] = None

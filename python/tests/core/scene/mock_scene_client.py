@@ -21,39 +21,75 @@
 from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
+from brayns.core.geometry.box import Box
 from brayns.core.geometry.transform import Transform
-from tests.core.scene.mock_scene import MockScene
-from tests.core.scene.mock_scene_model import MockSceneModel
+from brayns.core.geometry.vector3 import Vector3
+from brayns.core.scene.model import Model
+from brayns.core.scene.scene import Scene
+from brayns.core.serializers.transform_serializer import TransformSerializer
+
+
+def serialize_box(box: Box) -> dict:
+    return {
+        'min': list(box.min),
+        'max': list(box.max)
+    }
+
+
+def serialize_model(model: Model) -> dict:
+    return {
+        'id': model.id,
+        'bounds': serialize_box(model.bounds),
+        'metadata': model.metadata,
+        'visible': model.visible,
+        'transformation': TransformSerializer().serialize(model.transform)
+    }
+
+
+def serialize_scene(scene: Scene) -> dict:
+    return {
+        'bounds': serialize_box(scene.bounds),
+        'models': [serialize_model(model) for model in scene.models]
+    }
 
 
 class MockSceneClient(ClientProtocol):
 
     def __init__(self) -> None:
-        self.scene = MockScene()
+        self.scene = Scene()
         self.received_params = []
         self._id = 0
 
     @property
-    def models(self) -> list[MockSceneModel]:
+    def models(self) -> list[Model]:
         return self.scene.models
 
-    def create_model(self) -> MockSceneModel:
+    def create_model(self) -> Model:
         self._id += 1
-        return MockSceneModel(id=self._id)
+        return Model(
+            id=self._id,
+            bounds=Box(-Vector3.one, Vector3.one),
+            metadata={},
+            visible=True,
+            transform=Transform.identity
+        )
 
-    def add_model(self) -> MockSceneModel:
+    def get_scene(self) -> dict:
+        return serialize_scene(self.scene)
+
+    def add_model(self) -> Model:
         model = self.create_model()
         self.models.append(model)
         return model
 
-    def get_model(self, id: int) -> MockSceneModel:
+    def get_model(self, id: int) -> Model:
         return next(model for model in self.models if model.id == id)
 
     def update_model(self, params: dict) -> None:
         model = self.get_model(params['id'])
-        model.visible = params.get('visible', model.visible)
-        model.transform = Transform.from_dict(
-            params.get('transformation', model.transform.to_dict())
+        model.visible = params['visible']
+        model.transform = TransformSerializer().deserialize(
+            params['transformation']
         )
 
     def remove_model(self, params: dict) -> None:
@@ -65,11 +101,13 @@ class MockSceneClient(ClientProtocol):
     def request(self, method: str, params: Any = None) -> Any:
         self.received_params.append(params)
         if method == 'get-scene':
-            return self.scene.to_dict()
+            return self.get_scene()
         if method == 'get-model':
-            return self.get_model(params['id']).to_dict()
+            model = self.get_model(params['id'])
+            return serialize_model(model)
         if method == 'add-model':
-            return [self.add_model().to_dict()]
+            model = self.add_model()
+            return [serialize_model(model)]
         if method == 'update-model':
             return self.update_model(params)
         if method == 'remove-model':

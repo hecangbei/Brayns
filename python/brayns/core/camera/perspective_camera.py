@@ -26,8 +26,8 @@ from dataclasses import InitVar, dataclass
 class PerspectiveCamera:
 
     fovy: InitVar[float] = math.radians(45)
-    aperture_radius: float = 0.0,
-    focus_distance: float = 1.0,
+    aperture_radius: float = 0.0
+    focus_distance: float = 1.0
     degrees: InitVar[bool] = False
 
     def __post_init__(self, fovy: float, degrees: bool) -> None:

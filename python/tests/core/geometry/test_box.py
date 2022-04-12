@@ -31,13 +31,6 @@ class TestBox(unittest.TestCase):
             min=Vector3(1, 2, 3),
             max=Vector3(3, 6, 9)
         )
-        self._template = {
-            'min': [1, 2, 3],
-            'max': [2, 5, 7]
-        }
-
-    def test_from_dict(self) -> None:
-        self.assertEqual(Box.from_dict(self._template), self._box)
 
     def test_center(self) -> None:
         self.assertEqual(self._box.center, Vector3(2, 4, 6))

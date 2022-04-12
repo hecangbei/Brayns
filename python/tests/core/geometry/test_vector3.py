@@ -32,24 +32,6 @@ class TestVector3(unittest.TestCase):
     def test_one(self) -> None:
         self.assertEqual(list(Vector3.one), 3 * [1])
 
-    def test_left(self) -> None:
-        self.assertEqual(list(Vector3.left), [-1, 0, 0])
-
-    def test_right(self) -> None:
-        self.assertEqual(list(Vector3.right), [1, 0, 0])
-
-    def test_up(self) -> None:
-        self.assertEqual(list(Vector3.up), [0, 1, 0])
-
-    def test_down(self) -> None:
-        self.assertEqual(list(Vector3.down), [0, -1, 0])
-
-    def test_forward(self) -> None:
-        self.assertEqual(list(Vector3.forward), [0, 0, 1])
-
-    def test_back(self) -> None:
-        self.assertEqual(list(Vector3.back), [0, 0, -1])
-
     def test_full(self) -> None:
         self.assertEqual(list(Vector3.full(5)), 3 * [5])
 

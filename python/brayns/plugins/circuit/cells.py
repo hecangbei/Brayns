@@ -18,34 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.vector3 import Vector3
+from dataclasses import dataclass, field
 
 
-class TestCameraView(unittest.TestCase):
+@dataclass
+class Cells:
 
-    def setUp(self) -> None:
-        self._view = CameraView(
-            Vector3(1, 2, 3),
-            Vector3(4, 5, 6),
-            Vector3(7, 8, 9)
-        )
-        self._message = {
-            'position': [1, 2, 3],
-            'target': [4, 5, 6],
-            'up': [7, 8, 9]
-        }
+    density: float = 1.0
+    targets: list[str] = field(default_factory=list)
+    gids: list[int] = field(default_factory=list)
 
-    def test_from_dict(self) -> None:
-        test = CameraView.from_dict(self._message)
-        self.assertEqual(test, self._view)
+    @staticmethod
+    def all() -> 'Cells':
+        return Cells.from_density(1.0)
 
-    def test_to_dict(self) -> None:
-        test = self._view.to_dict()
-        self.assertEqual(test, self._message)
+    @staticmethod
+    def from_density(density: float) -> 'Cells':
+        return Cells(density=density)
 
+    @staticmethod
+    def from_targets(targets: list[str], density: float = 1.0) -> 'Cells':
+        return Cells(density=density, targets=targets)
 
-if __name__ == '__main__':
-    unittest.main()
+    @staticmethod
+    def from_gids(gids: list[int]) -> 'Cells':
+        return Cells(gids=gids)

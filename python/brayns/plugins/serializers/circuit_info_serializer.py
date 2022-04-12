@@ -18,30 +18,26 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, field
-
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.transform import Transform
-from brayns.core.geometry.vector3 import Vector3
+from brayns.plugins.circuit.circuit_info import CircuitInfo
 
 
-@dataclass
-class MockSceneModel:
+class CircuitInfoSerializer:
 
-    id: int
-    bounds: Box = Box(-Vector3.one, Vector3.one)
-    metadata: dict[str, str] = field(default_factory=dict)
-    visible: bool = True
-    transform: Transform = Transform()
-
-    def to_dict(self) -> dict:
+    def serialize(self, circuit: CircuitInfo) -> dict:
         return {
-            'id': self.id,
-            'bounds': {
-                'min': list(self.bounds.min),
-                'max': list(self.bounds.max)
+            'percentage': circuit.cells.density,
+            'targets': circuit.cells.targets,
+            'gids': circuit.cells.gids,
+            'report_type': circuit.report.type,
+            'report_name': circuit.report.name,
+            'spike_transition_time': circuit.report.spike_transition_time,
+            'neuron_morphology_parameters': {
+                'radius_multiplier': circuit.radius.multiplier,
+                'radius_override': circuit.radius.value,
+                'load_soma': circuit.load_soma,
+                'load_axon': circuit.load_axon,
+                'load_dendrites': circuit.load_dendrites
             },
-            'metadata': self.metadata,
-            'visible': self.visible,
-            'transformation': self.transform.to_dict()
+            'load_afferent_synapses': circuit.load_afferent_synapses,
+            'load_efferent_synapses': circuit.load_efferent_synapses
         }
