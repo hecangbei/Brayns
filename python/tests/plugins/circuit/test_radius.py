@@ -18,30 +18,29 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
-from brayns.core.camera.camera_protocol import CameraProtocol
+from brayns.plugins.circuit.radius import Radius
 
 
-@dataclass
-class MockCamera(CameraProtocol):
+class TestNeuronRadius(unittest.TestCase):
 
-    test1: float = 1.0
-    test2: float = 2.0
+    def test_default(self) -> None:
+        test = Radius.default()
+        self.assertEqual(test.multiplier, 1.0)
+        self.assertEqual(test.value, 0.0)
 
-    @staticmethod
-    def get_name() -> str:
-        return 'test'
+    def test_multiply(self) -> None:
+        factor = 3.0
+        test = Radius.multiply(factor)
+        self.assertEqual(test.multiplier, factor)
+        self.assertEqual(test.value, 0.0)
 
-    @staticmethod
-    def from_dict(message: dict) -> 'MockCamera':
-        return MockCamera(
-            test1=message['test1'],
-            test2=message['test2']
-        )
+    def test_override(self) -> None:
+        value = 2.0
+        test = Radius.override(value)
+        self.assertEqual(test.value, value)
 
-    def to_dict(self) -> dict:
-        return {
-            'test1': self.test1,
-            'test2': self.test2
-        }
+
+if __name__ == '__main__':
+    unittest.main()

@@ -18,16 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Iterator
-
 from brayns.client.client_protocol import ClientProtocol
-from brayns.core.scene.model import ModelInstance
-from brayns.core.scene.model_protocol import ModelProtocol
+from brayns.core.scene.model import Model
+from brayns.core.scene.model_info import ModelInfo
+from brayns.core.scene.scene_manager import SceneManager
+from brayns.plugins.circuit.circuit_info import CircuitInfo
+from brayns.plugins.serializers.circuit_info_serializer import \
+    CircuitInfoSerializer
 
 
-class ModelManager:
+class CircuitManager(SceneManager):
 
     def __init__(self, client: ClientProtocol) -> None:
-        self._client = client
+        super().__init__(client)
+        self._serializer = CircuitInfoSerializer()
 
-    def get_bounds()
+    def load_circuit(
+        self,
+        path: str,
+        info: CircuitInfo = CircuitInfo()
+    ) -> Model:
+        model = ModelInfo(
+            path=path,
+            loader_properties=self._serializer.serialize(info)
+        )
+        return self.add_model(model)

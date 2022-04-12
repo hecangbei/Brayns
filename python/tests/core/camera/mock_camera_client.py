@@ -22,6 +22,7 @@ from typing import Any
 
 from brayns.client.client_protocol import ClientProtocol
 from brayns.core.camera.camera_view import CameraView
+from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
 
 
 class MockCameraClient(ClientProtocol):
@@ -30,13 +31,14 @@ class MockCameraClient(ClientProtocol):
         self.view = CameraView()
         self.name = ''
         self.properties = {}
+        self._serializer = CameraViewSerializer()
 
     def request(self, method: str, params: Any = None) -> Any:
         if method == 'get-camera-look-at':
-            return self.view.to_dict()
+            return self._serializer.serialize(self.view)
         if method == 'set-camera-look-at':
-            self.view = CameraView.from_dict(params)
-            return
+            self.view = self._serializer.deserialize(params)
+            return None
         if method == 'get-camera-type':
             return self.name
         if method.startswith('get-camera-'):
@@ -47,5 +49,5 @@ class MockCameraClient(ClientProtocol):
         if method.startswith('set-camera-'):
             self.name = method.split('-')[2]
             self.properties = params
-            return
+            return None
         raise RuntimeError('Invalid request')

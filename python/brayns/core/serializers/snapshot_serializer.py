@@ -18,27 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+
+from typing import Optional
+
+from brayns.core.image.image_format import ImageFormat
+from brayns.core.snapshot.snapshot_info import SnapshotInfo
 
 
-@dataclass
-class BbpReport:
+class SnapshotSerializer:
 
-    type: str
-    name: str = ''
-    spike_transition_time: float = 1.0
-
-    @staticmethod
-    def none() -> 'BbpReport':
-        return BbpReport(type='none')
-
-    @staticmethod
-    def spikes(spike_transition_time: float = 1.0) -> 'BbpReport':
-        return BbpReport(
-            type='spikes',
-            spike_transition_time=spike_transition_time
-        )
-
-    @staticmethod
-    def compartment(name: str) -> 'BbpReport':
-        return BbpReport(type='compartment', name=name)
+    def serialize(
+        self,
+        path: Optional[str],
+        format: ImageFormat,
+        info: SnapshotInfo
+    ) -> dict:
+        return {
+            'path': path,
+            'image_settings': {
+                'format': format.value,
+                'quality': info.jpeg_quality,
+                'size': info.resolution
+            },
+            'animation_frame': info.frame
+        }

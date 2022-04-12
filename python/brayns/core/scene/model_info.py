@@ -20,25 +20,10 @@
 
 from dataclasses import dataclass, field
 
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.vector3 import Vector3
-from tests.core.scene.mock_scene_model import MockSceneModel
-
 
 @dataclass
-class MockScene:
+class ModelInfo:
 
-    bounds: Box = Box(Vector3.full(-5), Vector3.full(5))
-    models: list[MockSceneModel] = field(default_factory=list)
-
-    def to_dict(self) -> dict:
-        return {
-            'bounds': {
-                'min': list(self.bounds.min),
-                'max': list(self.bounds.max)
-            },
-            'models': [
-                model.to_dict()
-                for model in self.models
-            ]
-        }
+    path: str
+    loader: str = ''
+    loader_properties: dict = field(default_factory=dict)

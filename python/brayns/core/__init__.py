@@ -18,14 +18,25 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.scene.model import ModelInstance
-from brayns.core.scene.model_manager import ModelManager
-from brayns.core.scene.scene_manager import Scene
-from brayns.core.snapshot.snapshot import Snapshot
+from brayns.core.camera.camera_view import CameraView
+from brayns.core.camera.perspective_camera import PerspectiveCamera
+from brayns.core.camera.perspective_camera_manager import \
+    PerspectiveCameraManager
+from brayns.core.scene.model import Model
+from brayns.core.scene.model_info import ModelInfo
+from brayns.core.scene.scene import Scene
+from brayns.core.scene.scene_manager import SceneManager
+from brayns.core.snapshot.snapshot_info import SnapshotInfo
+from brayns.core.snapshot.snapshot_manager import SnapshotManager
 
 __all__ = [
-    'ModelInstance',
-    'ModelManager',
+    'CameraView',
+    'PerspectiveCamera',
+    'PerspectiveCameraManager',
+    'Model',
+    'ModelInfo',
     'Scene',
-    'Snapshot'
+    'SceneManager',
+    'SnapshotInfo',
+    'SnapshotManager'
 ]

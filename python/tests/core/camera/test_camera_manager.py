@@ -22,8 +22,8 @@ import unittest
 
 from brayns.core.camera.camera_manager import CameraManager
 from brayns.core.camera.camera_view import CameraView
+from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.vector3 import Vector3
-from tests.core.camera.mock_camera import MockCamera
 from tests.core.camera.mock_camera_client import MockCameraClient
 
 
@@ -33,43 +33,29 @@ class TestCameraManager(unittest.TestCase):
         self._client = MockCameraClient()
         self._manager = CameraManager(self._client)
 
-    def test_get_camera_name(self) -> None:
-        test = self._manager.get_camera_name()
+    def test_get_camera_type(self) -> None:
+        test = self._manager.get_camera_type()
         ref = self._client.name
         self.assertEqual(test, ref)
 
-    def test_get_camera(self) -> None:
-        camera = MockCamera()
-        self._client.name = camera.get_name()
-        self._client.properties = camera.to_dict()
-        test = self._manager.get_camera(MockCamera)
-        ref = self._client.properties
-        self.assertEqual(test.to_dict(), ref)
-
-    def test_set_camera(self) -> None:
-        camera = MockCamera()
-        self._manager.set_camera(camera)
-        self.assertEqual(self._client.name, camera.get_name())
-        self.assertEqual(self._client.properties, camera.to_dict())
-
     def test_get_camera_view(self) -> None:
-        ref = CameraView(
+        self._client.view = CameraView(
             position=Vector3.one,
-            target=3*Vector3.one,
-            up=Vector3.right
+            target=Vector3.zero,
+            up=Axis.right
         )
-        self._client.view = ref
         test = self._manager.get_camera_view()
+        ref = self._client.view
         self.assertEqual(test, ref)
 
     def test_set_camera_view(self) -> None:
-        ref = CameraView(
+        test = CameraView(
             position=Vector3.one,
-            target=3*Vector3.one,
-            up=Vector3.right
+            target=Vector3.zero,
+            up=Axis.right
         )
-        self._manager.set_camera_view(ref)
-        test = self._client.view
+        self._manager.set_camera_view(test)
+        ref = self._client.view
         self.assertEqual(test, ref)
 
 

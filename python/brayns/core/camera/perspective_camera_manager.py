@@ -18,23 +18,24 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from brayns.client.client_protocol import ClientProtocol
+from brayns.core.camera.camera_manager import CameraManager
+from brayns.core.camera.perspective_camera import PerspectiveCamera
+from brayns.core.serializers.perspective_camera_serializer import \
+    PerspectiveCameraSerializer
 
 
-@dataclass
-class NeuronRadius:
+class PerspectiveCameraManager(CameraManager):
 
-    multiplier: float = 1.0
-    value: float = 0.0
+    def __init__(self, client: ClientProtocol) -> None:
+        super().__init__(client)
+        self._client = client
+        self._serializer = PerspectiveCameraSerializer()
 
-    @staticmethod
-    def default() -> 'NeuronRadius':
-        return NeuronRadius()
+    def get_camera(self) -> PerspectiveCamera:
+        result = self._client.request('get-camera-perspective')
+        return self._serializer.deserialize(result)
 
-    @staticmethod
-    def multiply(value: float) -> 'NeuronRadius':
-        return NeuronRadius(multiplier=value)
-
-    @staticmethod
-    def override(value: float) -> 'NeuronRadius':
-        return NeuronRadius(value=value)
+    def set_camera(self, camera: PerspectiveCamera) -> None:
+        params = self._serializer.serialize(camera)
+        self._client.request('set-camera-perspective', params)

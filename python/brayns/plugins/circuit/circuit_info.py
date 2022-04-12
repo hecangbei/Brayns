@@ -18,5 +18,21 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-class Error(Exception):
-    """Base class of all exceptions raised by brayns."""
+from dataclasses import dataclass
+
+from brayns.plugins.circuit.cells import Cells
+from brayns.plugins.circuit.radius import Radius
+from brayns.plugins.circuit.report import Report
+
+
+@dataclass
+class CircuitInfo:
+
+    cells: Cells = Cells.all()
+    report: Report = Report.none()
+    radius: Radius = Radius.default()
+    load_soma: bool = True
+    load_axon: bool = False
+    load_dendrites: bool = False
+    load_afferent_synapses: bool = False
+    load_efferent_synapses: bool = False

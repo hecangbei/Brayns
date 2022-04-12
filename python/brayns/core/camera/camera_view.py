@@ -27,6 +27,6 @@ from brayns.core.geometry.vector3 import Vector3
 @dataclass
 class CameraView:
 
-    position: Vector3
+    position: Vector3 = Vector3.zero
     target: Vector3 = Vector3.zero
     up: Vector3 = Axis.up

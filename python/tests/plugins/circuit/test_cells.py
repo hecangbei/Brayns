@@ -20,25 +20,25 @@
 
 import unittest
 
-from brayns.plugins.bbp.bbp_cells import BbpCells
+from brayns.plugins.circuit.cells import Cells
 
 
-class TestBbpCells(unittest.TestCase):
+class TestCells(unittest.TestCase):
 
     def test_all(self) -> None:
-        cells = BbpCells.all()
-        self.assertEqual(cells, BbpCells.from_density(1.0))
+        cells = Cells.all()
+        self.assertEqual(cells, Cells.from_density(1.0))
 
     def test_from_density(self) -> None:
         density = 0.5
-        cells = BbpCells.from_density(density)
+        cells = Cells.from_density(density)
         self.assertEqual(cells.density, density)
         self.assertEqual(cells.targets, [])
         self.assertEqual(cells.gids, [])
 
     def test_from_targets(self) -> None:
         targets = ['1', '2', '3']
-        cells = BbpCells.from_targets(targets)
+        cells = Cells.from_targets(targets)
         self.assertEqual(cells.density, 1.0)
         self.assertEqual(cells.targets, targets)
         self.assertEqual(cells.gids, [])
@@ -46,14 +46,14 @@ class TestBbpCells(unittest.TestCase):
     def test_from_targets_and_density(self) -> None:
         targets = ['1', '2', '3']
         density = 0.5
-        cells = BbpCells.from_targets(targets, density)
+        cells = Cells.from_targets(targets, density)
         self.assertEqual(cells.density, density)
         self.assertEqual(cells.targets, targets)
         self.assertEqual(cells.gids, [])
 
     def test_from_gids(self) -> None:
         gids = [1, 2, 3]
-        cells = BbpCells.from_gids(gids)
+        cells = Cells.from_gids(gids)
         self.assertEqual(cells.gids, gids)
 
 

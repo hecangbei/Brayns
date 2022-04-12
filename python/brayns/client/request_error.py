@@ -21,11 +21,9 @@
 from dataclasses import dataclass
 from typing import Any
 
-from brayns.core.error import Error
-
 
 @dataclass
-class RequestError(Error):
+class RequestError(Exception):
     """Exception raised when the renderer replies an error."""
 
     message: str

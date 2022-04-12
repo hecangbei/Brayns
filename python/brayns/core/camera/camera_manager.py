@@ -19,28 +19,23 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.client.client_protocol import ClientProtocol
-from brayns.core.camera.camera_helper import CameraHelper
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.camera.perspective_camera import PerspectiveCamera
+from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
 
 
 class CameraManager:
 
     def __init__(self, client: ClientProtocol) -> None:
-        self._client = client
+        self.__client = client
+        self.__serializer = CameraViewSerializer()
 
-    def get_perspective_camera(self) -> PerspectiveCamera:
-        result = self._client.request('get-camera-perspective')
-        return CameraHelper.deserialize_perspective(result)
-
-    def set_perspective_camera(self, camera: PerspectiveCamera) -> None:
-        params = CameraHelper.serialize_perspective(camera)
-        self._client.request('set-camera-perspective', params)
+    def get_camera_type(self) -> str:
+        return self.__client.request('get-camera-type')
 
     def get_camera_view(self) -> CameraView:
-        result = self._client.request('get-camera-look-at')
-        return CameraHelper.deserialize_view(result)
+        result = self.__client.request('get-camera-look-at')
+        return self.__serializer.deserialize(result)
 
     def set_camera_view(self, view: CameraView) -> None:
-        params = CameraHelper.serialize_view(view)
-        self._client.request('set-camera-look-at', params)
+        params = self.__serializer.serialize(view)
+        self.__client.request('set-camera-look-at', params)

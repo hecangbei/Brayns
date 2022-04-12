@@ -18,29 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from brayns.plugins.common.neuron_radius import NeuronRadius
+from dataclasses import dataclass
 
 
-class TestNeuronRadius(unittest.TestCase):
+@dataclass
+class Report:
 
-    def test_default(self) -> None:
-        test = NeuronRadius.default()
-        self.assertEqual(test.multiplier, 1.0)
-        self.assertEqual(test.value, 0.0)
+    type: str
+    name: str = ''
+    spike_transition_time: float = 1.0
 
-    def test_multiply(self) -> None:
-        factor = 3.0
-        test = NeuronRadius.multiply(factor)
-        self.assertEqual(test.multiplier, factor)
-        self.assertEqual(test.value, 0.0)
+    @staticmethod
+    def none() -> 'Report':
+        return Report(type='none')
 
-    def test_override(self) -> None:
-        value = 2.0
-        test = NeuronRadius.override(value)
-        self.assertEqual(test.value, value)
+    @staticmethod
+    def spikes(spike_transition_time: float = 1.0) -> 'Report':
+        return Report(
+            type='spikes',
+            spike_transition_time=spike_transition_time
+        )
 
-
-if __name__ == '__main__':
-    unittest.main()
+    @staticmethod
+    def compartment(name: str) -> 'Report':
+        return Report(type='compartment', name=name)
