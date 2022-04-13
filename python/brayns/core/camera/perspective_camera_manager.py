@@ -21,8 +21,7 @@
 from brayns.client.client_protocol import ClientProtocol
 from brayns.core.camera.camera_manager import CameraManager
 from brayns.core.camera.perspective_camera import PerspectiveCamera
-from brayns.core.serializers.perspective_camera_serializer import \
-    PerspectiveCameraSerializer
+from brayns.core.serializers.perspective_camera_serializer import PerspectiveCameraSerializer
 
 
 class PerspectiveCameraManager(CameraManager):
