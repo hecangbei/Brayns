@@ -21,13 +21,11 @@
 from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.circuit_info import CircuitInfo
 from brayns.plugins.circuit.circuit_manager import CircuitManager
-from brayns.plugins.circuit.radius import Radius
 from brayns.plugins.circuit.report import Report
 
 __all__ = [
     'Cells',
     'CircuitInfo',
     'CircuitManager',
-    'Radius',
     'Report'
 ]

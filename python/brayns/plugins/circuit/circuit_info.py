@@ -21,7 +21,6 @@
 from dataclasses import dataclass
 
 from brayns.plugins.circuit.cells import Cells
-from brayns.plugins.circuit.radius import Radius
 from brayns.plugins.circuit.report import Report
 
 
@@ -30,7 +29,7 @@ class CircuitInfo:
 
     cells: Cells = Cells.all()
     report: Report = Report.none()
-    radius: Radius = Radius.default()
+    radius_multiplier: float = 1.0
     load_soma: bool = True
     load_axon: bool = False
     load_dendrites: bool = False
