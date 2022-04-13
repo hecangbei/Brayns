@@ -23,8 +23,7 @@ from brayns.core.scene.model import Model
 from brayns.core.scene.model_info import ModelInfo
 from brayns.core.scene.scene_manager import SceneManager
 from brayns.plugins.circuit.circuit_info import CircuitInfo
-from brayns.plugins.serializers.circuit_info_serializer import \
-    CircuitInfoSerializer
+from brayns.plugins.serializers.circuit_info_serializer import CircuitInfoSerializer
 
 
 class CircuitManager(SceneManager):
