@@ -23,7 +23,6 @@ import unittest
 from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.circuit_info import CircuitInfo
 from brayns.plugins.circuit.circuit_manager import CircuitManager
-from brayns.plugins.circuit.radius import Radius
 from brayns.plugins.circuit.report import Report
 from tests.core.scene.mock_scene_client import MockSceneClient
 
@@ -36,7 +35,7 @@ class TestCircuit(unittest.TestCase):
         self._info = CircuitInfo(
             cells=Cells.all(),
             report=Report.compartment('test'),
-            radius=Radius.override(3.0),
+            radius_multiplier=3,
             load_soma=True,
             load_axon=True,
             load_dendrites=True,
@@ -56,8 +55,7 @@ class TestCircuit(unittest.TestCase):
             'load_afferent_synapses': True,
             'load_efferent_synapses': True,
             'neuron_morphology_parameters': {
-                'radius_multiplier': 1.0,
-                'radius_override': 3.0,
+                'radius_multiplier': 3.0,
                 'load_soma': True,
                 'load_axon': True,
                 'load_dendrites': True

@@ -32,8 +32,7 @@ class CircuitInfoSerializer:
             'report_name': circuit.report.name,
             'spike_transition_time': circuit.report.spike_transition_time,
             'neuron_morphology_parameters': {
-                'radius_multiplier': circuit.radius.multiplier,
-                'radius_override': circuit.radius.value,
+                'radius_multiplier': circuit.radius_multiplier,
                 'load_soma': circuit.load_soma,
                 'load_axon': circuit.load_axon,
                 'load_dendrites': circuit.load_dendrites
