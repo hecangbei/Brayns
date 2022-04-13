@@ -18,29 +18,9 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import math
-import unittest
-
-from brayns.core.camera.perspective_camera import PerspectiveCamera
+from enum import Enum
 
 
-class TestPerspectiveCamera(unittest.TestCase):
+class CameraType(Enum):
 
-    def test_fovy_radians(self) -> None:
-        fovy = math.radians(45)
-        camera = PerspectiveCamera(fovy)
-        self.assertEqual(camera.fovy_radians, fovy)
-
-    def test_fovy_degrees(self) -> None:
-        fovy = 45
-        camera = PerspectiveCamera(fovy, degrees=True)
-        self.assertEqual(camera.fovy_degrees, fovy)
-
-    def test_get_full_screen_distance(self) -> None:
-        camera = PerspectiveCamera(90, degrees=True)
-        test = camera.get_full_screen_distance(2)
-        self.assertAlmostEqual(test, 1)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    PERSPECTIVE = 'perspective'

@@ -48,6 +48,3 @@ class PerspectiveCamera:
     @fovy_degrees.setter
     def fovy_degrees(self, value: float) -> None:
         self._fovy = math.radians(value)
-
-    def get_full_screen_distance(self, height: float) -> float:
-        return height / 2 / math.tan(self.fovy_radians / 2)
