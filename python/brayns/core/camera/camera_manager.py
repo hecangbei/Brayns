@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.client.client_protocol import ClientProtocol
+from brayns.core.camera.camera_type import CameraType
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
 
@@ -29,8 +30,9 @@ class CameraManager:
         self.__client = client
         self.__serializer = CameraViewSerializer()
 
-    def get_camera_type(self) -> str:
-        return self.__client.request('get-camera-type')
+    def get_camera_type(self) -> CameraType:
+        result = self.__client.request('get-camera-type')
+        return CameraType(result)
 
     def get_camera_view(self) -> CameraView:
         result = self.__client.request('get-camera-look-at')

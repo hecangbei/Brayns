@@ -21,6 +21,7 @@
 import unittest
 
 from brayns.core.camera.camera_manager import CameraManager
+from brayns.core.camera.camera_type import CameraType
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.vector3 import Vector3
@@ -34,9 +35,9 @@ class TestCameraManager(unittest.TestCase):
         self._manager = CameraManager(self._client)
 
     def test_get_camera_type(self) -> None:
+        self._client.name = CameraType.PERSPECTIVE.value
         test = self._manager.get_camera_type()
-        ref = self._client.name
-        self.assertEqual(test, ref)
+        self.assertEqual(test, CameraType.PERSPECTIVE)
 
     def test_get_camera_view(self) -> None:
         self._client.view = CameraView(
