@@ -33,18 +33,18 @@ class SnapshotManager:
         self._client = client
         self._serializer = SnapshotSerializer()
 
-    def save(self, path: str, info: SnapshotInfo = SnapshotInfo()) -> None:
-        self._request(path, ImageFormat.from_path(path), info)
+    def save(self, path: str, info: SnapshotInfo = SnapshotInfo(), remote: bool = False) -> None:
+        format = ImageFormat.from_path(path)
+        if remote:
+            self._request(path, format, info)
+            return
+        data = self.download(format, info)
+        with open(path, 'wb') as file:
+            file.write(data)
 
     def download(self, format: ImageFormat = ImageFormat.PNG, info: SnapshotInfo = SnapshotInfo()) -> bytes:
         result = self._request(None, format, info)
         return base64.b64decode(result['data'])
-
-    def download_and_save(self, path: str, info: SnapshotInfo = SnapshotInfo()) -> None:
-        format = ImageFormat.from_path(path)
-        data = self.download(format, info)
-        with open(path, 'wb') as file:
-            file.write(data)
 
     def _request(self, path: Optional[str], format: ImageFormat, info: SnapshotInfo) -> dict:
         params = self._serializer.serialize(path, format, info)

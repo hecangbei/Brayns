@@ -33,7 +33,11 @@ class TestSnapshot(unittest.TestCase):
         self._manager = SnapshotManager(self._client)
 
     def test_save(self) -> None:
-        self._manager.save('test.jpg', SnapshotInfo(jpeg_quality=50))
+        self._manager.save(
+            path='test.jpg',
+            info=SnapshotInfo(jpeg_quality=50),
+            remote=True
+        )
         params = self._client.params
         image: dict = params['image_settings']
         self.assertEqual(params['path'], 'test.jpg')
