@@ -26,10 +26,10 @@ from brayns.plugins.circuit.circuit_info import CircuitInfo
 from brayns.plugins.serializers.circuit_info_serializer import CircuitInfoSerializer
 
 
-class CircuitManager(SceneManager):
+class CircuitManager:
 
     def __init__(self, client: ClientProtocol) -> None:
-        super().__init__(client)
+        self._scene = SceneManager(client)
         self._serializer = CircuitInfoSerializer()
 
     def load_circuit(
@@ -41,4 +41,4 @@ class CircuitManager(SceneManager):
             path=path,
             loader_properties=self._serializer.serialize(info)
         )
-        return self.add_model(model)
+        return self._scene.add_model(model)

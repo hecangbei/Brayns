@@ -27,17 +27,17 @@ from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
 class CameraManager:
 
     def __init__(self, client: ClientProtocol) -> None:
-        self.__client = client
-        self.__serializer = CameraViewSerializer()
+        self._client = client
+        self._serializer = CameraViewSerializer()
 
     def get_camera_type(self) -> CameraType:
-        result = self.__client.request('get-camera-type')
+        result = self._client.request('get-camera-type')
         return CameraType(result)
 
     def get_camera_view(self) -> CameraView:
-        result = self.__client.request('get-camera-look-at')
-        return self.__serializer.deserialize(result)
+        result = self._client.request('get-camera-look-at')
+        return self._serializer.deserialize(result)
 
     def set_camera_view(self, view: CameraView) -> None:
-        params = self.__serializer.serialize(view)
-        self.__client.request('set-camera-look-at', params)
+        params = self._serializer.serialize(view)
+        self._client.request('set-camera-look-at', params)
