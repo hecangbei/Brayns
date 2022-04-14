@@ -21,10 +21,6 @@
 import math
 from dataclasses import InitVar, dataclass
 
-from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.axis import Axis
-from brayns.core.geometry.box import Box
-
 
 @dataclass
 class PerspectiveCamera:
@@ -52,15 +48,3 @@ class PerspectiveCamera:
     @fovy_degrees.setter
     def fovy_degrees(self, value: float) -> None:
         self._fovy = math.radians(value)
-
-    def get_full_screen_distance(self, target_height: float) -> float:
-        return target_height / 2 / math.tan(self.fovy_radians / 2)
-
-    def get_default_view(self, target: Box) -> CameraView:
-        center = target.center
-        distance = self.get_full_screen_distance(target.height)
-        return CameraView(
-            position=center + distance * Axis.forward,
-            target=center,
-            up=Axis.up
-        )

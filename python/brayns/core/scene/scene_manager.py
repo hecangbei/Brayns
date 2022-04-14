@@ -48,8 +48,8 @@ class SceneManager:
         params = self.__model_serializer.serialize(model)
         self.__client.request('update-model', params)
 
-    def add_model(self, model: ModelInfo) -> list[Model]:
-        params = self.__model_info_serializer.serialize(model)
+    def add_model(self, info: ModelInfo) -> list[Model]:
+        params = self.__model_info_serializer.serialize(info)
         result = self.__client.request('add-model', params)
         return [self.__model_serializer.deserialize(model) for model in result]
 
