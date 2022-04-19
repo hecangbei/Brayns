@@ -30,32 +30,32 @@ from brayns.core.serializers.scene_serializer import SceneSerializer
 class SceneManager:
 
     def __init__(self, client: ClientProtocol) -> None:
-        self._client = client
-        self._scene_serializer = SceneSerializer()
-        self._model_serializer = ModelSerializer()
-        self._model_info_serializer = ModelInfoSerializer()
+        self.__client = client
+        self.__scene_serializer = SceneSerializer()
+        self.__model_serializer = ModelSerializer()
+        self.__model_info_serializer = ModelInfoSerializer()
 
     def get_scene(self) -> Scene:
-        result = self._client.request('get-scene')
-        return self._scene_serializer.deserialize(result)
+        result = self.__client.request('get-scene')
+        return self.__scene_serializer.deserialize(result)
 
     def get_model(self, id: int) -> Model:
         params = {'id': id}
-        result = self._client.request('get-model', params)
-        return self._model_serializer.deserialize(result)
+        result = self.__client.request('get-model', params)
+        return self.__model_serializer.deserialize(result)
 
     def update_model(self, model: Model) -> None:
-        params = self._model_serializer.serialize(model)
-        self._client.request('update-model', params)
+        params = self.__model_serializer.serialize(model)
+        self.__client.request('update-model', params)
 
     def add_model(self, info: ModelInfo) -> list[Model]:
-        params = self._model_info_serializer.serialize(info)
-        result = self._client.request('add-model', params)
-        return [self._model_serializer.deserialize(model) for model in result]
+        params = self.__model_info_serializer.serialize(info)
+        result = self.__client.request('add-model', params)
+        return [self.__model_serializer.deserialize(model) for model in result]
 
     def remove_models(self, ids: list[int]) -> None:
         params = {'ids': ids}
-        self._client.request('remove-model', params)
+        self.__client.request('remove-model', params)
 
     def clear_models(self) -> None:
         scene = self.get_scene()
