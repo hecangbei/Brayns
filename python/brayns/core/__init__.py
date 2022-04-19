@@ -21,7 +21,6 @@
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.camera.perspective_camera import PerspectiveCamera
 from brayns.core.camera.perspective_camera_manager import PerspectiveCameraManager
-from brayns.core.camera.perspective_view import PerspectiveView
 from brayns.core.scene.model import Model
 from brayns.core.scene.model_info import ModelInfo
 from brayns.core.scene.scene import Scene
@@ -33,7 +32,6 @@ __all__ = [
     'CameraView',
     'PerspectiveCamera',
     'PerspectiveCameraManager',
-    'PerspectiveView',
     'Model',
     'ModelInfo',
     'Scene',
