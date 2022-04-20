@@ -29,6 +29,13 @@ class Box:
     min: Vector3 = Vector3.zero
     max: Vector3 = Vector3.zero
 
+    @staticmethod
+    def deserialize(message: dict) -> 'Box':
+        return Box(
+            min=Vector3(*message['min']),
+            max=Vector3(*message['max']),
+        )
+
     @classmethod
     @property
     def empty(cls) -> 'Box':

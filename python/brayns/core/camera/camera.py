@@ -21,18 +21,12 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.box import Box
 from brayns.instance.instance_protocol import InstanceProtocol
 
 CameraType = TypeVar('CameraType', bound='Camera')
 
 
 class Camera(ABC):
-
-    @staticmethod
-    def get_current_camera_name(instance: InstanceProtocol) -> str:
-        return instance.request('get-camera-type')
 
     @classmethod
     @abstractmethod
@@ -41,26 +35,28 @@ class Camera(ABC):
 
     @classmethod
     @abstractmethod
-    def from_main_camera(cls, instance: InstanceProtocol) -> None:
-        pass
-
-    @classmethod
-    @abstractmethod
     def deserialize(cls: type[CameraType], message: dict) -> CameraType:
-        pass
-
-    @classmethod
-    def is_main_camera(cls, instance: InstanceProtocol) -> None:
-        return cls.get_name() == Camera.get_current_camera_name(instance)
-
-    @abstractmethod
-    def use_as_main_camera(self, instance: InstanceProtocol) -> None:
         pass
 
     @abstractmethod
     def serialize(self) -> dict:
         pass
 
-    @abstractmethod
-    def center(self, instance: InstanceProtocol, target: Box) -> None:
-        pass
+    @staticmethod
+    def get_current_camera_name(instance: InstanceProtocol) -> str:
+        return instance.request('get-camera-type')
+
+    @classmethod
+    def from_instance(cls: type[CameraType], instance: InstanceProtocol) -> CameraType:
+        name = cls.get_name()
+        result = instance.request(f'get-camera-{name}')
+        return cls.deserialize(result)
+
+    @classmethod
+    def is_main_camera(cls, instance: InstanceProtocol) -> None:
+        return cls.get_name() == Camera.get_current_camera_name(instance)
+
+    def use_as_main_camera(self, instance: InstanceProtocol) -> None:
+        name = self.get_name()
+        params = self.serialize()
+        instance.request(f'set-camera-{name}', params)

@@ -22,6 +22,7 @@ from dataclasses import dataclass
 
 from brayns.core.geometry.box import Box
 from brayns.core.geometry.transform import Transform
+from brayns.instance.instance_protocol import InstanceProtocol
 
 
 @dataclass
@@ -32,3 +33,29 @@ class Model:
     metadata: dict[str, str]
     visible: bool
     transform: Transform
+
+    @staticmethod
+    def from_instance(instance: InstanceProtocol, id: int) -> 'Model':
+        result = instance.request('get-model', {'id': id})
+        return Model.deserialize(result)
+
+    @staticmethod
+    def deserialize(message: dict) -> 'Model':
+        return Model(
+            id=message['id'],
+            bounds=Box.deserialize(message['bounds']),
+            metadata=message['metadata'],
+            visible=message['visible'],
+            transform=Transform.deserialize(message['transformation'])
+        )
+
+    def serialize(self) -> dict:
+        return {
+            'id': self.id,
+            'visible': self.visible,
+            'transformation': self.transform.serialize()
+        }
+
+    def update(self, instance: InstanceProtocol) -> None:
+        params = self.serialize()
+        instance.request('update-model', params)

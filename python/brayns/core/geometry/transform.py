@@ -31,7 +31,22 @@ class Transform:
     rotation: Quaternion = Quaternion.identity
     scale: Vector3 = Vector3.one
 
+    @staticmethod
+    def deserialize(message: dict) -> 'Transform':
+        return Transform(
+            translation=Vector3(*message['translation']),
+            rotation=Vector3(*message['rotation']),
+            scale=Vector3(*message['scale'])
+        )
+
     @classmethod
     @property
     def identity(cls) -> 'Transform':
         return Transform()
+
+    def serialize(self) -> dict:
+        return {
+            'translation': list(self.translation),
+            'rotation': list(self.rotation),
+            'scale': list(self.scale)
+        }
