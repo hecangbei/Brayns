@@ -22,7 +22,6 @@ import unittest
 
 from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.circuit_loader import CircuitLoader
-from brayns.plugins.circuit.circuit_manager import CircuitManager
 from brayns.plugins.circuit.report import Report
 from tests.core.scene.mock_scene_instance import MockSceneInstance
 
@@ -30,9 +29,8 @@ from tests.core.scene.mock_scene_instance import MockSceneInstance
 class TestCircuit(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._client = MockSceneInstance()
-        self._manager = CircuitManager(self._client)
-        self._info = CircuitLoader(
+        self._instance = MockSceneInstance()
+        self._loader = CircuitLoader(
             cells=Cells.all(),
             report=Report.compartment('test'),
             radius_multiplier=3,
@@ -44,7 +42,7 @@ class TestCircuit(unittest.TestCase):
         )
 
     def test_load_circuit(self) -> None:
-        self._manager.load_circuit('path', self._info)
+        self._loader.load_circuit(self._instance, 'path')
         ref = {
             'percentage': 1.0,
             'targets': [],
@@ -61,7 +59,7 @@ class TestCircuit(unittest.TestCase):
                 'load_dendrites': True
             }
         }
-        test = self._client.received_params[0]
+        test = self._instance.params[0]
         self.assertEqual(test['path'], 'path')
         self.assertEqual(test['loader'], '')
         self.assertEqual(test['loader_properties'], ref)
