@@ -32,6 +32,19 @@ class TestBox(unittest.TestCase):
             max=Vector3(3, 6, 9)
         )
 
+    def test_deserialize(self) -> None:
+        message = {
+            'min': [1, 2, 3],
+            'max': [3, 6, 9]
+        }
+        test = Box.deserialize(message)
+        self.assertEqual(test, self._box)
+
+    def test_empty(self) -> None:
+        test = Box.empty
+        self.assertEqual(test.min, Vector3.zero)
+        self.assertEqual(test.max, Vector3.zero)
+
     def test_center(self) -> None:
         self.assertEqual(self._box.center, Vector3(2, 4, 6))
 

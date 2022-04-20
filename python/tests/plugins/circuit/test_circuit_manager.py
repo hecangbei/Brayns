@@ -24,13 +24,13 @@ from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.circuit_loader import CircuitLoader
 from brayns.plugins.circuit.circuit_manager import CircuitManager
 from brayns.plugins.circuit.report import Report
-from tests.core.scene.mock_scene_client import MockSceneClient
+from tests.core.scene.mock_scene_instance import MockSceneInstance
 
 
 class TestCircuit(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._client = MockSceneClient()
+        self._client = MockSceneInstance()
         self._manager = CircuitManager(self._client)
         self._info = CircuitLoader(
             cells=Cells.all(),

@@ -34,7 +34,7 @@ class ModelLoader:
         params = {
             'path': path,
             'loader': self.name,
-            'loader-properties': self.properties
+            'loader_properties': self.properties
         }
         result = instance.request('add-model', params)
         return Model.deserialize(result)
