@@ -22,6 +22,7 @@ from dataclasses import dataclass
 
 from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.vector3 import Vector3
+from brayns.instance.instance_protocol import InstanceProtocol
 
 
 @dataclass
@@ -30,3 +31,26 @@ class CameraView:
     position: Vector3 = Vector3.zero
     target: Vector3 = Vector3.zero
     up: Vector3 = Axis.up
+
+    @staticmethod
+    def from_main_camera(instance: InstanceProtocol) -> 'CameraView':
+        result = instance.request('get-camera-look-at')
+        return CameraView.deserialize(result)
+
+    @staticmethod
+    def deserialize(message: dict) -> 'CameraView':
+        return CameraView(
+            position=Vector3(*message['position']),
+            target=Vector3(*message['target']),
+            up=Vector3(*message['up'])
+        )
+
+    def use_for_main_camera(self, instance: InstanceProtocol) -> None:
+        instance.request('set-camera-look-at', self.serialize())
+
+    def serialize(self) -> dict:
+        return {
+            'position': list(self.position),
+            'target': list(self.target),
+            'up': list(self.up)
+        }
