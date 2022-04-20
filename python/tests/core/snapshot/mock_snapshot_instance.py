@@ -24,7 +24,7 @@ from typing import Any
 from brayns.instance.instance_protocol import InstanceProtocol
 
 
-class MockSnapshotClient(InstanceProtocol):
+class MockSnapshotInstance(InstanceProtocol):
 
     def __init__(self) -> None:
         self.data = b'123456789'
