@@ -40,7 +40,7 @@ class PerspectiveCamera(Camera):
         return 'perspective'
 
     @classmethod
-    def deserialize(cls, message) -> 'PerspectiveCamera':
+    def deserialize(cls, message: dict) -> 'PerspectiveCamera':
         return PerspectiveCamera(
             fovy=message['fovy'],
             aperture_radius=message['aperture_radius'],

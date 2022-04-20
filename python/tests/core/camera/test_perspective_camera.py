@@ -29,6 +29,22 @@ from brayns.core.geometry.vector3 import Vector3
 
 class TestPerspectiveCamera(unittest.TestCase):
 
+    def test_get_name(self) -> None:
+        test = PerspectiveCamera.get_name()
+        ref = 'perspective'
+        self.assertEqual(test, ref)
+
+    def test_deserialize(self) -> None:
+        message = {
+            'fovy': 30,
+            'aperture_radius': 1,
+            'focus_distance': 2
+        }
+        test = PerspectiveCamera.deserialize(message)
+        self.assertAlmostEqual(test.fovy_degrees, 30)
+        self.assertEqual(test.aperture_radius, 1)
+        self.assertEqual(test.focus_distance, 2)
+
     def test_fovy_radians(self) -> None:
         test = math.radians(30)
         camera = PerspectiveCamera()
@@ -43,12 +59,14 @@ class TestPerspectiveCamera(unittest.TestCase):
         self.assertAlmostEqual(camera.fovy_degrees, test)
         self.assertAlmostEqual(camera.fovy_radians, math.radians(test))
 
-    def test_get_full_screen_distance(self) -> None:
-        camera = PerspectiveCamera(fovy=90, degrees=True)
-        test = camera.get_full_screen_distance(target_height=2)
-        self.assertAlmostEqual(test, 1)
+    def test_serialize(self) -> None:
+        camera = PerspectiveCamera(math.radians(30), 1, 2)
+        test = camera.serialize()
+        self.assertAlmostEqual(test['fovy'], 30)
+        self.assertEqual(test['aperture_radius'], 1)
+        self.assertEqual(test['focus_distance'], 2)
 
-    def test_get_default_view(self) -> None:
+    def test_get_full_screen_view(self) -> None:
         camera = PerspectiveCamera(fovy=90, degrees=True)
         target = Box(-Vector3.one, Vector3.one)
         test = camera.get_full_screen_view(target)

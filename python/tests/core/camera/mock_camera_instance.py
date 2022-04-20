@@ -20,8 +20,10 @@
 
 from typing import Any
 
+from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
 from brayns.instance.instance_protocol import InstanceProtocol
+from tests.core.camera.mock_camera import MockCamera
 
 
 class MockCameraInstance(InstanceProtocol):
