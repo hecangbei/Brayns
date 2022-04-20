@@ -29,10 +29,10 @@ from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
 from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.instance.request_error import RequestError
 from brayns.instance.request_progress import RequestProgress
-from tests.client.websocket.mock_web_socket import MockWebSocket
+from tests.instance.websocket.mock_web_socket import MockWebSocket
 
 
-class TestClient(unittest.TestCase):
+class TestInstance(unittest.TestCase):
 
     def setUp(self) -> None:
         self._websocket = MockWebSocket()
