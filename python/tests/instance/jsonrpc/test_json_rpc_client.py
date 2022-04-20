@@ -24,7 +24,7 @@ import unittest
 from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
 from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
 from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
-from tests.client.websocket.mock_web_socket import MockWebSocket
+from tests.instance.websocket.mock_web_socket import MockWebSocket
 
 
 class TestJsonRpcClient(unittest.TestCase):
