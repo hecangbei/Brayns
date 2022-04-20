@@ -18,45 +18,38 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
+from brayns.core.geometry.quaternion import Quaternion
+from brayns.core.geometry.transform import Transform
 from brayns.core.geometry.vector3 import Vector3
 
 
-@dataclass
-class Box:
+class TestTransform(unittest.TestCase):
 
-    min: Vector3
-    max: Vector3
-
-    @staticmethod
-    def deserialize(message: dict) -> 'Box':
-        return Box(
-            min=Vector3(*message['min']),
-            max=Vector3(*message['max']),
+    def setUp(self) -> None:
+        self._transform = Transform(
+            translation=Vector3(1, 2, 3),
+            rotation=Quaternion(1, 2, 3, 4),
+            scale=Vector3(4, 5, 6)
         )
+        self._message = {
+            'translation': [1, 2, 3],
+            'rotation': [1, 2, 3, 4],
+            'rotation_center': [1, 2, 3],
+            'scale': [4, 5, 6]
+        }
 
-    @classmethod
-    @property
-    def empty(cls) -> 'Box':
-        return Box(Vector3.zero, Vector3.zero)
+    def test_deserialize(self) -> None:
+        test = Transform.deserialize(self._message)
+        ref = self._transform
+        self.assertEqual(test, ref)
 
-    @property
-    def center(self) -> Vector3:
-        return (self.min + self.max) / 2
+    def test_serialize(self) -> None:
+        test = self._transform.serialize()
+        ref = self._message
+        self.assertEqual(test, ref)
 
-    @property
-    def size(self) -> Vector3:
-        return self.max - self.min
 
-    @property
-    def width(self) -> float:
-        return self.size.x
-
-    @property
-    def height(self) -> float:
-        return self.size.y
-
-    @property
-    def depth(self) -> float:
-        return self.size.z
+if __name__ == '__main__':
+    unittest.main()

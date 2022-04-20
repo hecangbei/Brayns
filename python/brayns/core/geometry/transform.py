@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from brayns.core.geometry.quaternion import Quaternion
 from brayns.core.geometry.vector3 import Vector3
@@ -27,15 +27,15 @@ from brayns.core.geometry.vector3 import Vector3
 @dataclass
 class Transform:
 
-    translation: Vector3 = Vector3.zero
-    rotation: Quaternion = Quaternion.identity
-    scale: Vector3 = Vector3.one
+    translation: Vector3 = field(default_factory=lambda: Vector3.zero)
+    rotation: Quaternion = field(default_factory=lambda: Quaternion.identity)
+    scale: Vector3 = field(default_factory=lambda: Vector3.one)
 
     @staticmethod
     def deserialize(message: dict) -> 'Transform':
         return Transform(
             translation=Vector3(*message['translation']),
-            rotation=Vector3(*message['rotation']),
+            rotation=Quaternion(*message['rotation']),
             scale=Vector3(*message['scale'])
         )
 
@@ -48,5 +48,6 @@ class Transform:
         return {
             'translation': list(self.translation),
             'rotation': list(self.rotation),
+            'rotation_center': list(self.translation),
             'scale': list(self.scale)
         }

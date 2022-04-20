@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from brayns.core.geometry.box import Box
 from brayns.core.scene.model import Model
@@ -28,8 +28,8 @@ from brayns.instance.instance_protocol import InstanceProtocol
 @dataclass
 class Scene:
 
-    bounds: Box = Box.empty
-    models: list[Model] = field(default_factory=list)
+    bounds: Box
+    models: list[Model]
 
     @staticmethod
     def from_instance(instance: InstanceProtocol) -> 'Scene':

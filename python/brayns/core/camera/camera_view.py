@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.vector3 import Vector3
@@ -28,9 +28,9 @@ from brayns.instance.instance_protocol import InstanceProtocol
 @dataclass
 class CameraView:
 
-    position: Vector3 = Vector3.zero
-    target: Vector3 = Vector3.zero
-    up: Vector3 = Axis.up
+    position: Vector3 = field(default_factory=lambda: Vector3.zero)
+    target: Vector3 = field(default_factory=lambda: Vector3.zero)
+    up: Vector3 = field(default_factory=lambda: Axis.up)
 
     @staticmethod
     def from_instance(instance: InstanceProtocol) -> 'CameraView':

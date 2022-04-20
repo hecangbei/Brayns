@@ -18,45 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.scene.model_loader import ModelLoader
+from tests.core.scene.mock_scene_instance import MockSceneInstance
 
 
-@dataclass
-class Box:
+class TestSceneManager(unittest.TestCase):
 
-    min: Vector3
-    max: Vector3
+    def test_add_model(self) -> None:
+        instance = MockSceneInstance()
+        properties = {'test1': 1, 'test2': 2}
+        loader = ModelLoader('test', properties)
+        loader.add_model(instance, 'path')
+        self.assertEqual(instance.methods, ['add-model'])
+        test = instance.params
+        ref = {
+            'path': 'path',
+            'loader': 'test',
+            'loader_properties': properties
+        }
+        self.assertEqual(test, [ref])
 
-    @staticmethod
-    def deserialize(message: dict) -> 'Box':
-        return Box(
-            min=Vector3(*message['min']),
-            max=Vector3(*message['max']),
-        )
 
-    @classmethod
-    @property
-    def empty(cls) -> 'Box':
-        return Box(Vector3.zero, Vector3.zero)
-
-    @property
-    def center(self) -> Vector3:
-        return (self.min + self.max) / 2
-
-    @property
-    def size(self) -> Vector3:
-        return self.max - self.min
-
-    @property
-    def width(self) -> float:
-        return self.size.x
-
-    @property
-    def height(self) -> float:
-        return self.size.y
-
-    @property
-    def depth(self) -> float:
-        return self.size.z
+if __name__ == '__main__':
+    unittest.main()
