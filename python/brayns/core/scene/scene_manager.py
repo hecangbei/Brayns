@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.scene.model import Model
 from brayns.core.scene.model_info import ModelInfo
 from brayns.core.scene.scene import Scene
@@ -29,7 +29,7 @@ from brayns.core.serializers.scene_serializer import SceneSerializer
 
 class SceneManager:
 
-    def __init__(self, client: ClientProtocol) -> None:
+    def __init__(self, client: InstanceProtocol) -> None:
         self.__client = client
         self.__scene_serializer = SceneSerializer()
         self.__model_serializer = ModelSerializer()

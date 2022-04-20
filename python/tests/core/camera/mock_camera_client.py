@@ -20,12 +20,12 @@
 
 from typing import Any
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
 
 
-class MockCameraClient(ClientProtocol):
+class MockCameraClient(InstanceProtocol):
 
     def __init__(self) -> None:
         self.view = CameraView()

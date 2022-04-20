@@ -20,8 +20,8 @@
 
 from typing import Any, Optional
 
-from brayns.client.request_error import RequestError
-from brayns.client.request_progress import RequestProgress
+from brayns.instance.request_error import RequestError
+from brayns.instance.request_progress import RequestProgress
 
 
 class JsonRpcTask:

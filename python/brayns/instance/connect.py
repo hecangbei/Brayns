@@ -18,25 +18,25 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-from typing import Union
+import logging
+import sys
+from typing import Optional
 
-from brayns.client.request_progress import RequestProgress
+from brayns.instance.instance import Instance
+from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.instance.websocket.web_socket_client import WebSocketClient
 
 
-@dataclass
-class JsonRpcProgress:
-
-    id: Union[int, str]
-    params: RequestProgress
-
-    @staticmethod
-    def from_dict(message: dict) -> 'JsonRpcProgress':
-        params = message['params']
-        return JsonRpcProgress(
-            id=params['id'],
-            params=RequestProgress(
-                operation=params['operation'],
-                amount=params['amount']
-            )
-        )
+def connect(
+    uri: str,
+    secure: bool = False,
+    cafile: Optional[str] = None,
+    logger: Optional[logging.Logger] = None
+) -> InstanceProtocol:
+    websocket = WebSocketClient.connect(uri, secure, cafile)
+    if logger is None:
+        logger = logging.Logger('Brayns', logging.WARN)
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+    json_rpc_client = JsonRpcClient(websocket, logger)
+    return Instance(json_rpc_client)

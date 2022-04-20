@@ -22,7 +22,7 @@ import ssl
 from typing import Optional, Union
 
 import websockets
-from brayns.client.websocket.web_socket_error import WebSocketError
+from brayns.instance.websocket.web_socket_error import WebSocketError
 
 
 class WebSocket:

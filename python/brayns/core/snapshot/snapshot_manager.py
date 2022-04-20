@@ -21,7 +21,7 @@
 import base64
 from typing import Optional
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.image.image_format import ImageFormat
 from brayns.core.serializers.snapshot_serializer import SnapshotSerializer
 from brayns.core.snapshot.snapshot_info import SnapshotInfo
@@ -29,7 +29,7 @@ from brayns.core.snapshot.snapshot_info import SnapshotInfo
 
 class SnapshotManager:
 
-    def __init__(self, client: ClientProtocol) -> None:
+    def __init__(self, client: InstanceProtocol) -> None:
         self._client = client
         self._serializer = SnapshotSerializer()
 

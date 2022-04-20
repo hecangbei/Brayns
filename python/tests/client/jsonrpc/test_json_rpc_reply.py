@@ -20,7 +20,7 @@
 
 import unittest
 
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
+from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
 
 
 class TestJsonRpcReply(unittest.TestCase):

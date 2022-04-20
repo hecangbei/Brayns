@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.camera.camera_manager import CameraManager
 from brayns.core.camera.perspective_camera import PerspectiveCamera
 from brayns.core.serializers.perspective_camera_serializer import PerspectiveCameraSerializer
@@ -26,7 +26,7 @@ from brayns.core.serializers.perspective_camera_serializer import PerspectiveCam
 
 class PerspectiveCameraManager(CameraManager):
 
-    def __init__(self, client: ClientProtocol) -> None:
+    def __init__(self, client: InstanceProtocol) -> None:
         self._client = client
         self._serializer = PerspectiveCameraSerializer()
 

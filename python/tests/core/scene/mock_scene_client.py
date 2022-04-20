@@ -20,7 +20,7 @@
 
 from typing import Any
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.geometry.box import Box
 from brayns.core.geometry.transform import Transform
 from brayns.core.geometry.vector3 import Vector3
@@ -53,7 +53,7 @@ def serialize_scene(scene: Scene) -> dict:
     }
 
 
-class MockSceneClient(ClientProtocol):
+class MockSceneClient(InstanceProtocol):
 
     def __init__(self) -> None:
         self.scene = Scene()

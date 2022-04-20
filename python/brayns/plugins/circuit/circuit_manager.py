@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.scene.model import Model
 from brayns.core.scene.model_info import ModelInfo
 from brayns.core.scene.scene_manager import SceneManager
@@ -28,7 +28,7 @@ from brayns.plugins.serializers.circuit_info_serializer import CircuitInfoSerial
 
 class CircuitManager(SceneManager):
 
-    def __init__(self, client: ClientProtocol) -> None:
+    def __init__(self, client: InstanceProtocol) -> None:
         self._scene = SceneManager(client)
         self._serializer = CircuitInfoSerializer()
 

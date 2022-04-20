@@ -21,14 +21,14 @@
 import logging
 import unittest
 
-from brayns.client.client import Client
-from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
-from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
-from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
-from brayns.client.request_error import RequestError
-from brayns.client.request_progress import RequestProgress
+from brayns.instance.instance import Instance
+from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
+from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
+from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
+from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
+from brayns.instance.request_error import RequestError
+from brayns.instance.request_progress import RequestProgress
 from tests.client.websocket.mock_web_socket import MockWebSocket
 
 
@@ -109,8 +109,8 @@ class TestClient(unittest.TestCase):
                 task.wait_for_result()
             self.assertEqual(context.exception, error.error)
 
-    def _connect(self) -> Client:
-        return Client(
+    def _connect(self) -> Instance:
+        return Instance(
             JsonRpcClient(
                 websocket=self._websocket,
                 logger=logging.Logger('Test')
