@@ -18,16 +18,18 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.connect import connect
-from brayns.client.request_error import RequestError
-from brayns.client.request_future import RequestFuture
-from brayns.client.request_progress import RequestProgress
+from typing import Any, Protocol
 
-__all__ = [
-    'ClientProtocol',
-    'connect',
-    'RequestError',
-    'RequestFuture',
-    'RequestProgress'
-]
+from brayns.instance.request_future import RequestFuture
+
+
+class InstanceProtocol(Protocol):
+
+    def disconnect(self) -> None:
+        pass
+
+    def request(self, method: str, params: Any = None) -> Any:
+        return self.task(method, params).wait_for_result()
+
+    def task(self, method: str, params: Any = None) -> RequestFuture:
+        raise NotImplementedError()

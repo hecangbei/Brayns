@@ -20,13 +20,13 @@
 
 import logging
 
-from brayns.client.jsonrpc.json_rpc_dispatcher import JsonRpcDispatcher
-from brayns.client.jsonrpc.json_rpc_handler import JsonRpcHandler
-from brayns.client.jsonrpc.json_rpc_manager import JsonRpcManager
-from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
-from brayns.client.jsonrpc.json_rpc_task import JsonRpcTask
-from brayns.client.request_error import RequestError
-from brayns.client.websocket.web_socket_protocol import WebSocketProtocol
+from brayns.instance.jsonrpc.json_rpc_dispatcher import JsonRpcDispatcher
+from brayns.instance.jsonrpc.json_rpc_handler import JsonRpcHandler
+from brayns.instance.jsonrpc.json_rpc_manager import JsonRpcManager
+from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
+from brayns.instance.jsonrpc.json_rpc_task import JsonRpcTask
+from brayns.instance.request_error import RequestError
+from brayns.instance.websocket.web_socket_protocol import WebSocketProtocol
 
 
 class JsonRpcClient:

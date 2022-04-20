@@ -20,9 +20,9 @@
 
 import unittest
 
-from brayns.client.jsonrpc.json_rpc_manager import JsonRpcManager
-from brayns.client.request_error import RequestError
-from brayns.client.request_progress import RequestProgress
+from brayns.instance.jsonrpc.json_rpc_manager import JsonRpcManager
+from brayns.instance.request_error import RequestError
+from brayns.instance.request_progress import RequestProgress
 
 
 class TestJsonRpcManager(unittest.TestCase):

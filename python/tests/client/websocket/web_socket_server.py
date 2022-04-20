@@ -22,7 +22,7 @@ import ssl
 from typing import Any, Callable, Coroutine, Optional
 
 import websockets
-from brayns.client.websocket.event_loop import EventLoop
+from brayns.instance.websocket.event_loop import EventLoop
 
 
 class WebSocketServer:

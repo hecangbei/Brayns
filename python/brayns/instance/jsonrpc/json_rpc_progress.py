@@ -18,26 +18,25 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Protocol, Union
+from dataclasses import dataclass
+from typing import Union
 
-from brayns.client.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.client.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.client.jsonrpc.json_rpc_reply import JsonRpcReply
+from brayns.instance.request_progress import RequestProgress
 
 
-class JsonRpcProtocol(Protocol):
+@dataclass
+class JsonRpcProgress:
 
-    def on_binary(self, data: bytes) -> None:
-        pass
+    id: Union[int, str]
+    params: RequestProgress
 
-    def on_reply(self, reply: JsonRpcReply) -> None:
-        pass
-
-    def on_error(self, error: JsonRpcError) -> None:
-        pass
-
-    def on_progress(self, progress: JsonRpcProgress) -> None:
-        pass
-
-    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        pass
+    @staticmethod
+    def from_dict(message: dict) -> 'JsonRpcProgress':
+        params = message['params']
+        return JsonRpcProgress(
+            id=params['id'],
+            params=RequestProgress(
+                operation=params['operation'],
+                amount=params['amount']
+            )
+        )

@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.client.client_protocol import ClientProtocol
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.camera.camera_type import CameraType
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
@@ -26,7 +26,7 @@ from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
 
 class CameraManager:
 
-    def __init__(self, client: ClientProtocol) -> None:
+    def __init__(self, client: InstanceProtocol) -> None:
         self.__client = client
         self.__serializer = CameraViewSerializer()
 

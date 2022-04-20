@@ -21,7 +21,7 @@
 import json
 import unittest
 
-from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
+from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
 
 
 class TestJsonRpcRequest(unittest.TestCase):

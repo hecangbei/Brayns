@@ -18,25 +18,26 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import logging
-import sys
-from typing import Optional
+from typing import Protocol, Union
 
-from brayns.client.client import Client
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
-from brayns.client.websocket.web_socket_client import WebSocketClient
+from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
+from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
+from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
 
 
-def connect(
-    uri: str,
-    secure: bool = False,
-    cafile: Optional[str] = None,
-    logger: Optional[logging.Logger] = None
-) -> ClientProtocol:
-    websocket = WebSocketClient.connect(uri, secure, cafile)
-    if logger is None:
-        logger = logging.Logger('Brayns', logging.WARN)
-        logger.addHandler(logging.StreamHandler(sys.stdout))
-    json_rpc_client = JsonRpcClient(websocket, logger)
-    return Client(json_rpc_client)
+class JsonRpcProtocol(Protocol):
+
+    def on_binary(self, data: bytes) -> None:
+        pass
+
+    def on_reply(self, reply: JsonRpcReply) -> None:
+        pass
+
+    def on_error(self, error: JsonRpcError) -> None:
+        pass
+
+    def on_progress(self, progress: JsonRpcProgress) -> None:
+        pass
+
+    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
+        pass

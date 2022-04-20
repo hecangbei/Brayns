@@ -22,8 +22,8 @@ import pathlib
 import unittest
 from typing import Union
 
-from brayns.client.websocket.web_socket_client import WebSocketClient
-from brayns.client.websocket.web_socket_error import WebSocketError
+from brayns.instance.websocket.web_socket_client import WebSocketClient
+from brayns.instance.websocket.web_socket_error import WebSocketError
 from tests.client.websocket.web_socket_server import WebSocketServer
 
 

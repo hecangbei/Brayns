@@ -20,18 +20,18 @@
 
 from typing import Any
 
-from brayns.client.client_protocol import ClientProtocol
-from brayns.client.jsonrpc.json_rpc_client import JsonRpcClient
-from brayns.client.jsonrpc.json_rpc_request import JsonRpcRequest
-from brayns.client.request_future import RequestFuture
+from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
+from brayns.instance.request_future import RequestFuture
 
 
-class Client(ClientProtocol):
+class Instance(InstanceProtocol):
 
     def __init__(self, client: JsonRpcClient) -> None:
         self._client = client
 
-    def __enter__(self) -> 'Client':
+    def __enter__(self) -> 'Instance':
         return self
 
     def __exit__(self, *_) -> None:
