@@ -18,13 +18,12 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import base64
 from dataclasses import dataclass
 from typing import Optional
 
 from brayns.core.image.image_format import ImageFormat
-from brayns.core.snapshot.snapshot_task import SnapshotTask
 from brayns.instance.instance_protocol import InstanceProtocol
-from brayns.instance.request_future import RequestFuture
 
 
 @dataclass
@@ -34,17 +33,20 @@ class Snapshot:
     resolution: Optional[tuple[int, int]] = (1920, 1080)
     frame: Optional[int] = None
 
-    def save(self, instance: InstanceProtocol, path: str, remote: bool = False) -> SnapshotTask:
+    def save(self, instance: InstanceProtocol, path: str, remote: bool = False) -> None:
         format = ImageFormat.from_path(path)
-        message_path = path if remote else None
-        task = self._task(instance, message_path, format)
-        return SnapshotTask(task, path, remote)
+        if remote:
+            self._request(instance, path, format)
+            return
+        data = self.download(instance, format)
+        with open(path, 'wb') as file:
+            file.write(data)
 
     def download(self, instance: InstanceProtocol, format: ImageFormat = ImageFormat.PNG) -> bytes:
-        task = self._task(instance, None, format)
-        return SnapshotTask(task)
+        result = self._request(instance, None, format)
+        return base64.b64decode(result['data'])
 
-    def _task(self, instance: InstanceProtocol, path: Optional[str], format: ImageFormat) -> RequestFuture:
+    def _request(self, instance: InstanceProtocol, path: Optional[str], format: ImageFormat) -> dict:
         params = {
             'path': path,
             'image_settings': {
@@ -54,4 +56,4 @@ class Snapshot:
             },
             'animation_frame': self.frame
         }
-        return instance.task('snapshot', params)
+        return instance.request('snapshot', params)

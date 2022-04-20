@@ -22,13 +22,13 @@ import unittest
 
 from brayns.core.camera.perspective_camera import PerspectiveCamera
 from brayns.core.camera.perspective_camera_manager import PerspectiveCameraManager
-from tests.core.camera.mock_camera_client import MockCameraClient
+from tests.core.camera.mock_camera_instance import MockCameraInstance
 
 
 class TestPerspectiveCameraManager(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._client = MockCameraClient()
+        self._client = MockCameraInstance()
         self._manager = PerspectiveCameraManager(self._client)
 
     def test_get_camera(self) -> None:

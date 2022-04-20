@@ -20,24 +20,26 @@
 
 from typing import Any
 
-from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.serializers.camera_view_serializer import CameraViewSerializer
+from brayns.instance.instance_protocol import InstanceProtocol
 
 
-class MockCameraClient(InstanceProtocol):
+class MockCameraInstance(InstanceProtocol):
 
     def __init__(self) -> None:
         self.view = CameraView()
         self.name = ''
         self.properties = {}
-        self._serializer = CameraViewSerializer()
+        self.method = ''
+        self.params = None
 
     def request(self, method: str, params: Any = None) -> Any:
+        self.method = method
+        self.params = params
         if method == 'get-camera-look-at':
-            return self._serializer.serialize(self.view)
+            return self.view.serialize()
         if method == 'set-camera-look-at':
-            self.view = self._serializer.deserialize(params)
+            self.view = CameraView.deserialize(params)
             return None
         if method == 'get-camera-type':
             return self.name

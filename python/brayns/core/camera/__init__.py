@@ -17,3 +17,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+from brayns.core.camera.camera import Camera
+from brayns.core.camera.camera_view import CameraView
+from brayns.core.camera.perspective_camera import PerspectiveCamera
+
+__all__ = [
+    'Camera',
+    'CameraView',
+    'PerspectiveCamera'
+]
