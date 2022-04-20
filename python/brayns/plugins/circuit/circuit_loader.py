@@ -20,12 +20,15 @@
 
 from dataclasses import dataclass
 
+from brayns.core.scene.model import Model
+from brayns.core.scene.model_loader import ModelLoader
+from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.report import Report
 
 
 @dataclass
-class CircuitInfo:
+class CircuitLoader:
 
     cells: Cells = Cells.all()
     report: Report = Report.none()
@@ -35,3 +38,24 @@ class CircuitInfo:
     load_dendrites: bool = False
     load_afferent_synapses: bool = False
     load_efferent_synapses: bool = False
+
+    def load_circuit(self, instance: InstanceProtocol, path: str) -> Model:
+        loader = ModelLoader(
+            properties={
+                'percentage': self.cells.density,
+                'targets': self.cells.targets,
+                'gids': self.cells.gids,
+                'report_type': self.report.type,
+                'report_name': self.report.name,
+                'spike_transition_time': self.report.spike_transition_time,
+                'neuron_morphology_parameters': {
+                    'radius_multiplier': self.radius_multiplier,
+                    'load_soma': self.load_soma,
+                    'load_axon': self.load_axon,
+                    'load_dendrites': self.load_dendrites
+                },
+                'load_afferent_synapses': self.load_afferent_synapses,
+                'load_efferent_synapses': self.load_efferent_synapses
+            }
+        )
+        return loader.add_model(instance, path)

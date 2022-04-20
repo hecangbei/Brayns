@@ -17,3 +17,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+from brayns.plugins.circuit.cells import Cells
+from brayns.plugins.circuit.circuit_loader import CircuitLoader
+from brayns.plugins.circuit.report import Report
+
+__all__ = [
+    'Cells',
+    'CircuitLoader',
+    'Report'
+]
