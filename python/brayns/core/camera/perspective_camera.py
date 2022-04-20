@@ -25,7 +25,6 @@ from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.box import Box
-from brayns.instance.instance_protocol import InstanceProtocol
 
 
 @dataclass
@@ -39,11 +38,6 @@ class PerspectiveCamera(Camera):
     @classmethod
     def get_name(cls) -> str:
         return 'perspective'
-
-    @classmethod
-    def from_main_camera(cls, instance: InstanceProtocol) -> 'PerspectiveCamera':
-        result = instance.request('get-camera-perspective')
-        return PerspectiveCamera.deserialize(result)
 
     @classmethod
     def deserialize(cls, message) -> 'PerspectiveCamera':
@@ -73,19 +67,12 @@ class PerspectiveCamera(Camera):
     def fovy_degrees(self, value: float) -> None:
         self._fovy = math.radians(value)
 
-    def use_as_main_camera(self, instance: InstanceProtocol) -> None:
-        instance.request('set-camera-perspective', self.serialize())
-
     def serialize(self) -> dict:
         return {
             'fovy': self.fovy_degrees,
             'aperture_radius': self.aperture_radius,
             'focus_distance': self.focus_distance
         }
-
-    def center(self, instance: InstanceProtocol, target: Box) -> None:
-        view = self.get_full_screen_view(target)
-        view.use_for_main_camera(instance)
 
     def get_full_screen_view(self, target: Box) -> CameraView:
         center = target.center

@@ -33,7 +33,7 @@ class CameraView:
     up: Vector3 = Axis.up
 
     @staticmethod
-    def from_main_camera(instance: InstanceProtocol) -> 'CameraView':
+    def from_instance(instance: InstanceProtocol) -> 'CameraView':
         result = instance.request('get-camera-look-at')
         return CameraView.deserialize(result)
 

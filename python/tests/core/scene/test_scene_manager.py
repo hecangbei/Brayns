@@ -23,7 +23,7 @@ import unittest
 from brayns.core.geometry.quaternion import Quaternion
 from brayns.core.geometry.transform import Transform
 from brayns.core.geometry.vector3 import Vector3
-from brayns.core.scene.model_info import ModelInfo
+from brayns.core.scene.model_loader import ModelLoader
 from brayns.core.scene.scene_manager import SceneManager
 from tests.core.scene.mock_scene_client import MockSceneClient
 
@@ -59,7 +59,7 @@ class TestSceneManager(unittest.TestCase):
         self.assertEqual(test, ref)
 
     def test_add_model(self) -> None:
-        info = ModelInfo('path', 'loader', {'test': 1})
+        info = ModelLoader('path', 'loader', {'test': 1})
         test = self._manager.add_model(info)
         ref = self._client.models
         self.assertEqual(len(ref), 1)

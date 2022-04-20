@@ -18,13 +18,23 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+
+from brayns.core.scene.model import Model
+from brayns.instance.instance_protocol import InstanceProtocol
 
 
 @dataclass
-class SnapshotInfo:
+class ModelLoader:
 
-    jpeg_quality: int = 100
-    resolution: Optional[tuple[int, int]] = None
-    frame: Optional[int] = None
+    name: str = ''
+    properties: dict = field(default_factory=dict)
+
+    def add_model(self, instance: InstanceProtocol, path: str) -> Model:
+        params = {
+            'path': path,
+            'loader': self.name,
+            'loader-properties': self.properties
+        }
+        result = instance.request('add-model', params)
+        return Model.deserialize(result)

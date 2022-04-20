@@ -22,6 +22,7 @@ from dataclasses import dataclass, field
 
 from brayns.core.geometry.box import Box
 from brayns.core.scene.model import Model
+from brayns.instance.instance_protocol import InstanceProtocol
 
 
 @dataclass
@@ -29,3 +30,28 @@ class Scene:
 
     bounds: Box = Box.empty
     models: list[Model] = field(default_factory=list)
+
+    @staticmethod
+    def from_instance(instance: InstanceProtocol) -> 'Scene':
+        result = instance.request('get-scene')
+        return Scene.deserialize(result)
+
+    @staticmethod
+    def deserialize(message: dict) -> 'Scene':
+        return Scene(
+            bounds=Box.deserialize(message['bounds']),
+            models=[
+                Model.deserialize(model)
+                for model in message['models']
+            ]
+        )
+
+    @staticmethod
+    def remove_models(instance: InstanceProtocol, ids: list[int]) -> None:
+        instance.request('remove-model', {'ids': ids})
+
+    @staticmethod
+    def clear(instance: InstanceProtocol) -> None:
+        scene = Scene.from_instance(instance)
+        ids = [model.id for model in scene.models]
+        Scene.remove_models(instance, ids)
