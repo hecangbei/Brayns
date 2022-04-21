@@ -18,14 +18,40 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from dataclasses import dataclass
+
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.camera.orthographic_camera import OrthographicCamera
-from brayns.core.camera.perspective_camera import PerspectiveCamera
+from brayns.core.geometry.axis import Axis
+from brayns.core.geometry.box import Box
 
-__all__ = [
-    'Camera',
-    'CameraView',
-    'OrthographicCamera',
-    'PerspectiveCamera'
-]
+
+@dataclass
+class OrthographicCamera(Camera):
+
+    height: float = 0.0
+
+    @staticmethod
+    def from_target(target: Box) -> 'OrthographicCamera':
+        return OrthographicCamera(target.height)
+
+    @classmethod
+    def get_name(cls) -> str:
+        return 'orthographic'
+
+    @classmethod
+    def deserialize(cls, message: dict) -> 'OrthographicCamera':
+        return OrthographicCamera(
+            height=message['height'],
+        )
+
+    def serialize(self) -> dict:
+        return {
+            'height': self.height,
+        }
+
+    def get_full_screen_view(self, target: Box) -> CameraView:
+        center = target.center
+        distance = target.depth / 2
+        position = center + distance * Axis.forward
+        return CameraView(position, center)
