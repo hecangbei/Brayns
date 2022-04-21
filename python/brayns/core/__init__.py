@@ -20,5 +20,6 @@
 
 from brayns.core.camera import *
 from brayns.core.geometry import *
+from brayns.core.parameters import *
 from brayns.core.scene import *
 from brayns.core.snapshot import *

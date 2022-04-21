@@ -59,5 +59,24 @@ class AnimationParameters:
             'current': self.current_frame
         }
 
-    def get_time_in_seconds(self, frame: int) -> float:
-        return frame * self.delta_time * self.time_unit.to_seconds()
+    def clamp(self, frame: int) -> int:
+        return max(min(frame, self.end_frame), self.start_frame)
+
+    def get_timestamp(self, frame: int) -> float:
+        return (frame - self.start_frame) * self.delta_time
+
+    def get_frame(self, timestamp: float) -> int:
+        frame_count = round(timestamp / self.delta_time)
+        return self.start_frame + frame_count
+
+    def get_frames(self, duration: float, timestep: float = 0.0) -> list[int]:
+        frames = []
+        t = 0.0
+        dt = timestep if timestep > 0.0 else self.delta_time
+        while t <= duration:
+            frame = self.get_frame(t)
+            if frame > self.end_frame:
+                return frames
+            frames.append(frame)
+            t += dt
+        return frames

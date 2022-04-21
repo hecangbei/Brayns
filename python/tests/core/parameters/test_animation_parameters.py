@@ -63,10 +63,30 @@ class TestAnimationParameters(unittest.TestCase):
         }
         self.assertEqual(test.serialize(), ref)
 
-    def test_get_time_in_seconds(self) -> None:
-        params = AnimationParameters(0, 10, 5, 0.1)
-        test = params.get_time_in_seconds(3)
-        self.assertAlmostEqual(test, 0.0003)
+    def test_clamp(self) -> None:
+        test = AnimationParameters(2, 10)
+        self.assertEqual(test.clamp(3), 3)
+        self.assertEqual(test.clamp(1), 2)
+        self.assertEqual(test.clamp(11), 10)
+
+    def test_get_timestamp(self) -> None:
+        test = AnimationParameters(1, 10, delta_time=0.1)
+        self.assertAlmostEqual(test.get_timestamp(3), 0.2)
+        self.assertAlmostEqual(test.get_timestamp(1), 0)
+        self.assertAlmostEqual(test.get_timestamp(10), 0.9)
+
+    def test_get_frame(self) -> None:
+        test = AnimationParameters(1, 10, delta_time=0.1)
+        self.assertEqual(test.get_frame(0.2), 3)
+        self.assertEqual(test.get_frame(0), 1)
+        self.assertEqual(test.get_frame(0.9), 10)
+
+    def test_get_frames(self) -> None:
+        test = AnimationParameters(1, 10, delta_time=0.1)
+        frames = test.get_frames(0.5)
+        self.assertEqual(frames, [1, 2, 3, 4, 5, 6])
+        frames = test.get_frames(0.5, 0.2)
+        self.assertEqual(frames, [1, 3, 5])
 
 
 if __name__ == '__main__':
