@@ -46,7 +46,8 @@ class CameraView:
         )
 
     def use_for_main_camera(self, instance: InstanceProtocol) -> None:
-        instance.request('set-camera-look-at', self.serialize())
+        params = self.serialize()
+        instance.request('set-camera-look-at', params)
 
     def serialize(self) -> dict:
         return {
