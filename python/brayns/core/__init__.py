@@ -20,6 +20,5 @@
 
 from brayns.core.camera import *
 from brayns.core.geometry import *
-from brayns.core.image import *
 from brayns.core.scene import *
 from brayns.core.snapshot import *

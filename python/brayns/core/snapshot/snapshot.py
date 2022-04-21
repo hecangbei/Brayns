@@ -22,7 +22,7 @@ import base64
 from dataclasses import dataclass
 from typing import Optional
 
-from brayns.core.image.image_format import ImageFormat
+from brayns.core.snapshot.image_format import ImageFormat
 from brayns.instance.instance_protocol import InstanceProtocol
 
 
@@ -33,27 +33,32 @@ class Snapshot:
     resolution: Optional[tuple[int, int]] = (1920, 1080)
     frame: Optional[int] = None
 
-    def save(self, instance: InstanceProtocol, path: str, remote: bool = False) -> None:
+    def save(self, instance: InstanceProtocol, path: str) -> None:
         format = ImageFormat.from_path(path)
-        if remote:
-            self._request(instance, path, format)
-            return
         data = self.download(instance, format)
         with open(path, 'wb') as file:
             file.write(data)
 
+    def save_remotely(self, instance: InstanceProtocol, path: str) -> None:
+        format = ImageFormat.from_path(path)
+        params = self._get_params(format, path)
+        self._request(instance, params)
+
     def download(self, instance: InstanceProtocol, format: ImageFormat = ImageFormat.PNG) -> bytes:
-        result = self._request(instance, None, format)
+        params = self._get_params(format)
+        result = self._request(instance, params)
         return base64.b64decode(result['data'])
 
-    def _request(self, instance: InstanceProtocol, path: Optional[str], format: ImageFormat) -> dict:
-        params = {
+    def _get_params(self, format: ImageFormat, path: Optional[str] = None) -> dict:
+        return {
             'path': path,
             'image_settings': {
                 'format': format.value,
                 'quality': self.jpeg_quality,
-                'size': self.resolution
+                'size': list(self.resolution)
             },
             'animation_frame': self.frame
         }
+
+    def _request(self, instance: InstanceProtocol, params: dict) -> dict:
         return instance.request('snapshot', params)
