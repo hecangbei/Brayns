@@ -39,7 +39,7 @@ class CircuitLoader:
     load_afferent_synapses: bool = False
     load_efferent_synapses: bool = False
 
-    def load_circuit(self, instance: InstanceProtocol, path: str) -> Model:
+    def load_circuit(self, instance: InstanceProtocol, path: str) -> list[Model]:
         loader = ModelLoader(
             properties={
                 'percentage': self.cells.density,

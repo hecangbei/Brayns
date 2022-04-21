@@ -30,11 +30,11 @@ class ModelLoader:
     name: str = ''
     properties: dict = field(default_factory=dict)
 
-    def add_model(self, instance: InstanceProtocol, path: str) -> Model:
+    def add_model(self, instance: InstanceProtocol, path: str) -> list[Model]:
         params = {
             'path': path,
             'loader': self.name,
             'loader_properties': self.properties
         }
         result = instance.request('add-model', params)
-        return Model.deserialize(result)
+        return [Model.deserialize(model) for model in result]

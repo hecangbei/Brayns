@@ -37,7 +37,7 @@ class TestAnimationParameters(unittest.TestCase):
         self.assertEqual(test, AnimationParameters.deserialize(ref))
 
     def test_deserialize(self) -> None:
-        test = {
+        message = {
             'start_frame': 0,
             'end_frame': 10,
             'current': 5,
@@ -45,7 +45,7 @@ class TestAnimationParameters(unittest.TestCase):
             'unit': 'ms'
         }
         ref = AnimationParameters(0, 10, 5, 1)
-        test = AnimationParameters.deserialize(ref)
+        test = AnimationParameters.deserialize(message)
         self.assertEqual(test, ref)
 
     def test_update(self) -> None:

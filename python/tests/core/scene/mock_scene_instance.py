@@ -82,7 +82,7 @@ class MockSceneInstance(InstanceProtocol):
         if method == 'get-model':
             return self.get_model(params['id'])
         if method == 'add-model':
-            return self.add_model()
+            return [self.add_model()]
         if method == 'update-model':
             return self.update_model(params)
         if method == 'remove-model':
