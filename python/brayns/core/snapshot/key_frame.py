@@ -18,8 +18,19 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.image.image_format import ImageFormat
+from dataclasses import dataclass
 
-__all__ = [
-    'ImageFormat'
-]
+from brayns.core.camera.camera_view import CameraView
+
+
+@dataclass
+class KeyFrame:
+
+    index: int
+    view: CameraView
+
+    def serialize(self) -> dict:
+        return {
+            'frame_index': self.index,
+            'camera_view': self.view.serialize()
+        }

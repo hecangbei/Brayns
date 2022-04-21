@@ -20,45 +20,39 @@
 
 import unittest
 
+from brayns.core.camera.camera_view import CameraView
+from brayns.core.snapshot.frame_exporter import FrameExporter
 from brayns.core.snapshot.image_format import ImageFormat
-from brayns.core.snapshot.snapshot import Snapshot
+from brayns.core.snapshot.key_frame import KeyFrame
 from tests.core.snapshot.mock_snapshot_instance import MockSnapshotInstance
 
 
-class TestSnapshot(unittest.TestCase):
+class TestFrameExporter(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSnapshotInstance()
 
-    def test_save_remotely(self) -> None:
-        path = 'test.jpg'
-        snapshot = Snapshot(
+    def test_export_frames(self) -> None:
+        exporter = FrameExporter(
+            frames=[KeyFrame(i, CameraView()) for i in range(10)],
+            format=ImageFormat.JPEG,
             jpeg_quality=50,
             resolution=(600, 900),
-            frame=12
+            sequential_naming=False
         )
-        snapshot.save_remotely(self._instance, path)
-        self.assertEqual(self._instance.method, 'snapshot')
+        folder = 'test'
+        exporter.export_frames(self._instance, folder)
+        self.assertEqual(self._instance.method, 'export-frames')
         params = self._instance.params
         image: dict = params['image_settings']
-        self.assertEqual(params['path'], path)
+        self.assertEqual(params['path'], folder)
         self.assertEqual(image['format'], 'jpg')
         self.assertEqual(image['quality'], 50)
-        self.assertEqual(params['animation_frame'], 12)
         self.assertEqual(image['size'], [600, 900])
-
-    def test_download(self) -> None:
-        snapshot = Snapshot()
-        data = snapshot.download(self._instance, ImageFormat.PNG)
-        self.assertEqual(data, self._instance.data)
-        self.assertEqual(self._instance.method, 'snapshot')
-        params = self._instance.params
-        image: dict = params['image_settings']
-        self.assertIsNone(params['path'])
-        self.assertEqual(image['format'], 'png')
-        self.assertEqual(image['quality'], 100)
-        self.assertIsNone(params['animation_frame'])
-        self.assertEqual(image['size'], [1920, 1080])
+        self.assertFalse(params['sequential_naming'])
+        for i, frame in enumerate(params['key_frames']):
+            self.assertEqual(i, frame['frame_index'])
+            self.assertEqual(frame['camera_view'], CameraView().serialize())
 
 
 if __name__ == '__main__':

@@ -18,14 +18,35 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.snapshot.frame_exporter import FrameExporter
+from dataclasses import dataclass
+from typing import Optional
+
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
-from brayns.core.snapshot.snapshot import Snapshot
+from brayns.instance.instance_protocol import InstanceProtocol
 
-__all__ = [
-    'FrameExporter',
-    'ImageFormat',
-    'KeyFrame',
-    'Snapshot'
-]
+
+@dataclass
+class FrameExporter:
+
+    frames: list[KeyFrame]
+    format: ImageFormat = ImageFormat.PNG
+    jpeg_quality: int = 100
+    resolution: Optional[tuple[int, int]] = (1920, 1080)
+    sequential_naming: bool = True
+
+    def export_frames(self, instance: InstanceProtocol, folder: str) -> None:
+        params = {
+            'path': folder,
+            'image_settings': {
+                'format': self.format.value,
+                'quality': self.jpeg_quality,
+                'size': list(self.resolution)
+            },
+            'key_frames': [
+                frame.serialize()
+                for frame in self.frames
+            ],
+            'sequential_naming': self.sequential_naming
+        }
+        instance.request('export-frames', params)

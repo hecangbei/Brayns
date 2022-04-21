@@ -28,10 +28,14 @@ class MockSnapshotInstance(InstanceProtocol):
 
     def __init__(self) -> None:
         self.data = b'123456789'
+        self.method = ''
         self.params = {}
 
     def request(self, method: str, params: Any = None) -> Any:
+        self.method = method
+        self.params = params
         if method == 'snapshot':
-            self.params = params
             return {'data': base64.b64encode(self.data)}
+        if method == 'export-frames':
+            return None
         raise RuntimeError('Invalid request method')
