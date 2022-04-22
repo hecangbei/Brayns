@@ -18,9 +18,9 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from brayns.core.geometry.axis import Axis
+from brayns.core.geometry.quaternion import Quaternion
 from brayns.core.geometry.vector3 import Vector3
 from brayns.instance.instance_protocol import InstanceProtocol
 
@@ -28,9 +28,9 @@ from brayns.instance.instance_protocol import InstanceProtocol
 @dataclass
 class CameraView:
 
-    position: Vector3 = field(default_factory=lambda: Vector3.zero)
-    target: Vector3 = field(default_factory=lambda: Vector3.zero)
-    up: Vector3 = field(default_factory=lambda: Axis.up)
+    position: Vector3 = Vector3.zero
+    target: Vector3 = Vector3.zero
+    up: Vector3 = Vector3.up
 
     @staticmethod
     def from_instance(instance: InstanceProtocol) -> 'CameraView':
@@ -55,3 +55,12 @@ class CameraView:
             'target': list(self.target),
             'up': list(self.up)
         }
+
+    def rotate_around_position(self, rotation: Quaternion) -> None:
+        self.target = rotation.rotate(self.target, self.position)
+
+    def rotate_around_target(self, rotation: Quaternion) -> None:
+        self.position = rotation.rotate(self.position, self.target)
+
+    def rotate_up(self, rotation: Quaternion) -> None:
+        self.up = rotation.rotate(self.up)

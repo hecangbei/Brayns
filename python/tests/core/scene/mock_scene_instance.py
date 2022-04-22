@@ -33,8 +33,8 @@ class MockSceneInstance(InstanceProtocol):
             'min': [-1, -1, -1],
             'max': [1, 1, 1]
         }
-        self.methods = []
-        self.params = []
+        self.method = ''
+        self.params = None
         self._id = 0
 
     def create_model(self) -> Model:
@@ -75,8 +75,8 @@ class MockSceneInstance(InstanceProtocol):
         ]
 
     def request(self, method: str, params: Any = None) -> Any:
-        self.methods.append(method)
-        self.params.append(params)
+        self.method = method
+        self.params = params
         if method == 'get-scene':
             return self.get_scene()
         if method == 'get-model':

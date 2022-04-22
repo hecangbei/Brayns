@@ -22,8 +22,8 @@ from dataclasses import dataclass
 
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.box import Box
+from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass
@@ -36,7 +36,8 @@ class OrthographicCamera(Camera):
         return OrthographicCamera(target.height)
 
     @classmethod
-    def get_name(cls) -> str:
+    @property
+    def name(cls) -> str:
         return 'orthographic'
 
     @classmethod
@@ -53,5 +54,5 @@ class OrthographicCamera(Camera):
     def get_full_screen_view(self, target: Box) -> CameraView:
         center = target.center
         distance = target.depth / 2
-        position = center + distance * Axis.forward
+        position = center + distance * Vector3.forward
         return CameraView(position, center)

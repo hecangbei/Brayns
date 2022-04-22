@@ -23,8 +23,8 @@ from dataclasses import InitVar, dataclass
 
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.box import Box
+from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass
@@ -36,7 +36,8 @@ class PerspectiveCamera(Camera):
     degrees: InitVar[bool] = False
 
     @classmethod
-    def get_name(cls) -> str:
+    @property
+    def name(cls) -> str:
         return 'perspective'
 
     @classmethod
@@ -77,5 +78,5 @@ class PerspectiveCamera(Camera):
     def get_full_screen_view(self, target: Box) -> CameraView:
         center = target.center
         distance = target.height / 2 / math.tan(self.fovy_radians / 2)
-        position = center + distance * Axis.forward
+        position = center + distance * Vector3.forward
         return CameraView(position, center)

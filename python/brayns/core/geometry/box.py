@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from brayns.core.geometry.vector3 import Vector3
 
 
-@dataclass
+@dataclass(frozen=True)
 class Box:
 
     min: Vector3

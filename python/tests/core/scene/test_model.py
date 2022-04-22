@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
+from types import MappingProxyType
 
 from brayns.core.geometry.box import Box
 from brayns.core.geometry.quaternion import Quaternion
@@ -32,79 +33,86 @@ class TestModel(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSceneInstance()
-
-    def test_from_instance(self) -> None:
-        ref = self._instance.add_model()
-        model = Model.from_instance(self._instance, ref['id'])
-        self.assertEqual(model.id, ref['id'])
-        self.assertEqual(model.bounds, Box.deserialize(ref['bounds']))
-        self.assertEqual(model.metadata, ref['metadata'])
-        self.assertEqual(model.visible, ref['visible'])
-        self.assertEqual(
-            model.transform,
-            Transform.deserialize(ref['transformation'])
+        self._model = Model(
+            id=1,
+            bounds=Box(Vector3.zero, Vector3.one),
+            metadata=MappingProxyType({'test': '1'}),
+            visible=True,
+            transform=Transform(
+                Vector3.one,
+                Quaternion(1, 2, 3, 4),
+                Vector3.zero
+            )
         )
-        self.assertEqual(self._instance.methods, ['get-model'])
-        self.assertEqual(self._instance.params, [{'id': ref['id']}])
-
-    def test_deserialize(self) -> None:
-        message = {
-            'id': 0,
+        self._message = {
+            'id': 1,
             'bounds': {
                 'min': [0, 0, 0],
                 'max': [1, 1, 1]
             },
-            'metadata': {
-                'test1': '1'
-            },
+            'metadata': {'test': '1'},
             'visible': True,
-            'transformation': Transform.identity.serialize()
+            'transformation': self._model.transform.serialize()
         }
-        test = Model.deserialize(message)
-        ref = Model(
-            id=0,
-            bounds=Box(Vector3.zero, Vector3.one),
-            metadata={
-                'test1': '1'
-            },
-            visible=True,
-            transform=Transform.identity
-        )
-        self.assertEqual(test, ref)
+
+    def test_from_instance(self) -> None:
+        message = self._instance.add_model()
+        ref = Model.deserialize(message)
+        model = Model.from_instance(self._instance, ref.id)
+        self.assertEqual(model.id, ref.id)
+        self.assertEqual(model.bounds, ref.bounds)
+        self.assertEqual(model.metadata, ref.metadata)
+        self.assertEqual(model.visible, ref.visible)
+        self.assertEqual(model.transform, ref.transform)
+
+    def test_deserialize(self) -> None:
+        test = Model.deserialize(self._message)
+        self.assertEqual(test.id, self._model.id)
+        self.assertEqual(test.bounds, self._model.bounds)
+        self.assertEqual(test.metadata, self._model.metadata)
+        self.assertEqual(test.visible, self._model.visible)
+        self.assertEqual(test.transform, self._model.transform)
 
     def test_serialize(self) -> None:
         ref = {
-            'id': 1,
-            'visible': True,
-            'transformation': Transform.identity.serialize()
+            'id': self._model.id,
+            'visible': self._model.visible,
+            'transformation': self._model.transform.serialize()
         }
-        model = Model(
-            id=1,
-            bounds=Box.empty,
-            metadata={},
-            visible=True,
-            transform=Transform.identity
-        )
-        test = model.serialize()
+        test = self._model.serialize()
         self.assertEqual(test, ref)
 
     def test_update(self) -> None:
-        result = self._instance.add_model()
-        model = Model.deserialize(result)
-        model.transform = Transform(
-            Vector3.one,
-            Quaternion(1, 2, 3, 4),
-            Vector3.zero
-        )
+        message = self._instance.add_model()
+        model = Model.deserialize(message)
+        model.transform = self._model.transform
         model.visible = False
         model.update(self._instance)
-        self.assertEqual(self._instance.methods, ['update-model'])
-        ref = {
+        self.assertEqual(self._instance.method, 'update-model')
+        self.assertEqual(self._instance.params, {
             'id': model.id,
             'visible': model.visible,
             'transformation': model.transform.serialize()
-        }
-        self.assertEqual(self._instance.params, [ref])
+        })
+
+    def test_translate(self) -> None:
+        translation = 3 * Vector3.one
+        ref = self._model.transform.translate(translation)
+        self._model.translate(translation)
+        self.assertEqual(self._model.transform, ref)
+
+    def test_rotate(self) -> None:
+        rotation = Quaternion(1, 2, 3, 4)
+        center = Vector3(4, 5, 6)
+        ref = self._model.transform.rotate(rotation, center)
+        self._model.rotate(rotation, center)
+        self.assertEqual(self._model.transform, ref)
+
+    def test_rescale(self) -> None:
+        scale = 3 * Vector3.one
+        ref = self._model.transform.rescale(scale)
+        self._model.rescale(scale)
+        self.assertEqual(self._model.transform, ref)
 
 
 if __name__ == '__main__':

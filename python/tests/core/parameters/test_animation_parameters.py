@@ -21,6 +21,7 @@
 import unittest
 
 from brayns.core.parameters.animation_parameters import AnimationParameters
+from brayns.core.parameters.time_unit import TimeUnit
 from tests.core.parameters.mock_parameters_instance import MockParametersInstance
 
 
@@ -28,28 +29,42 @@ class TestAnimationParameters(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockParametersInstance()
-
-    def test_from_instance(self) -> None:
-        test = AnimationParameters.from_instance(self._instance)
-        self.assertEqual(self._instance.method, 'get-animation-parameters')
-        self.assertEqual(self._instance.params, None)
-        ref = self._instance.animation
-        self.assertEqual(test, AnimationParameters.deserialize(ref))
-
-    def test_deserialize(self) -> None:
-        message = {
+        self._animation = AnimationParameters(
+            start_frame=0,
+            end_frame=10,
+            current_frame=5,
+            delta_time=0.1,
+            time_unit=TimeUnit.MILLISECOND
+        )
+        self._message = {
             'start_frame': 0,
             'end_frame': 10,
             'current': 5,
-            'dt': 1,
+            'dt': 0.1,
             'unit': 'ms'
         }
-        ref = AnimationParameters(0, 10, 5, 1)
-        test = AnimationParameters.deserialize(message)
-        self.assertEqual(test, ref)
+
+    def test_from_instance(self) -> None:
+        self._instance.animation = self._message
+        test = AnimationParameters.from_instance(self._instance)
+        self.assertEqual(self._instance.method, 'get-animation-parameters')
+        self.assertEqual(self._instance.params, None)
+        self.assertEqual(test.start_frame, self._animation.start_frame)
+        self.assertEqual(test.end_frame, self._animation.end_frame)
+        self.assertEqual(test.current_frame, self._animation.current_frame)
+        self.assertEqual(test.delta_time, self._animation.delta_time)
+        self.assertEqual(test.time_unit, self._animation.time_unit)
+
+    def test_deserialize(self) -> None:
+        test = AnimationParameters.deserialize(self._message)
+        self.assertEqual(test.start_frame, self._animation.start_frame)
+        self.assertEqual(test.end_frame, self._animation.end_frame)
+        self.assertEqual(test.current_frame, self._animation.current_frame)
+        self.assertEqual(test.delta_time, self._animation.delta_time)
+        self.assertEqual(test.time_unit, self._animation.time_unit)
 
     def test_update(self) -> None:
-        test = AnimationParameters()
+        test = AnimationParameters(0, 10, 5)
         test.update(self._instance)
         self.assertEqual(self._instance.method, 'set-animation-parameters')
         self.assertEqual(self._instance.params, test.serialize())
@@ -64,25 +79,25 @@ class TestAnimationParameters(unittest.TestCase):
         self.assertEqual(test.serialize(), ref)
 
     def test_clamp(self) -> None:
-        test = AnimationParameters(2, 10)
+        test = AnimationParameters(2, 10, 0)
         self.assertEqual(test.clamp(3), 3)
         self.assertEqual(test.clamp(1), 2)
         self.assertEqual(test.clamp(11), 10)
 
     def test_get_timestamp(self) -> None:
-        test = AnimationParameters(1, 10, delta_time=0.1)
+        test = AnimationParameters(1, 10, 5, delta_time=0.1)
         self.assertAlmostEqual(test.get_timestamp(3), 0.2)
         self.assertAlmostEqual(test.get_timestamp(1), 0)
         self.assertAlmostEqual(test.get_timestamp(10), 0.9)
 
     def test_get_frame(self) -> None:
-        test = AnimationParameters(1, 10, delta_time=0.1)
+        test = AnimationParameters(1, 10, 5, delta_time=0.1)
         self.assertEqual(test.get_frame(0.2), 3)
         self.assertEqual(test.get_frame(0), 1)
         self.assertEqual(test.get_frame(0.9), 10)
 
     def test_get_frames(self) -> None:
-        test = AnimationParameters(1, 10, delta_time=0.1)
+        test = AnimationParameters(1, 10, 5, delta_time=0.1)
         frames = test.get_frames(0.5)
         self.assertEqual(frames, [1, 2, 3, 4, 5, 6])
         frames = test.get_frames(0.5, 0.2)

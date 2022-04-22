@@ -32,7 +32,7 @@ class FrameExporter:
     frames: list[KeyFrame]
     format: ImageFormat = ImageFormat.PNG
     jpeg_quality: int = 100
-    resolution: Optional[tuple[int, int]] = (1920, 1080)
+    resolution: Optional[tuple[int, int]] = None
     sequential_naming: bool = True
 
     def export_frames(self, instance: InstanceProtocol, folder: str) -> None:
@@ -41,7 +41,7 @@ class FrameExporter:
             'image_settings': {
                 'format': self.format.value,
                 'quality': self.jpeg_quality,
-                'size': list(self.resolution)
+                'size': self.resolution
             },
             'key_frames': [
                 frame.serialize()

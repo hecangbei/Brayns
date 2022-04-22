@@ -29,36 +29,39 @@ class TestSnapshot(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSnapshotInstance()
-
-    def test_save_remotely(self) -> None:
-        path = 'test.jpg'
-        snapshot = Snapshot(
+        self._snapshot = Snapshot(
             jpeg_quality=50,
             resolution=(600, 900),
             frame=12
         )
-        snapshot.save_remotely(self._instance, path)
+
+    def test_save_remotely(self) -> None:
+        path = 'test.jpg'
+        self._snapshot.save_remotely(self._instance, path)
         self.assertEqual(self._instance.method, 'snapshot')
-        params = self._instance.params
-        image: dict = params['image_settings']
-        self.assertEqual(params['path'], path)
-        self.assertEqual(image['format'], 'jpg')
-        self.assertEqual(image['quality'], 50)
-        self.assertEqual(params['animation_frame'], 12)
-        self.assertEqual(image['size'], [600, 900])
+        self.assertEqual(self._instance.params, {
+            'path': path,
+            'image_settings': {
+                'quality': self._snapshot.jpeg_quality,
+                'size': self._snapshot.resolution,
+                'format': 'jpg'
+            },
+            'animation_frame': self._snapshot.frame
+        })
 
     def test_download(self) -> None:
-        snapshot = Snapshot()
-        data = snapshot.download(self._instance, ImageFormat.PNG)
+        data = self._snapshot.download(self._instance, ImageFormat.JPEG)
         self.assertEqual(data, self._instance.data)
         self.assertEqual(self._instance.method, 'snapshot')
-        params = self._instance.params
-        image: dict = params['image_settings']
-        self.assertIsNone(params['path'])
-        self.assertEqual(image['format'], 'png')
-        self.assertEqual(image['quality'], 100)
-        self.assertIsNone(params['animation_frame'])
-        self.assertEqual(image['size'], [1920, 1080])
+        self.assertEqual(self._instance.params, {
+            'path': None,
+            'image_settings': {
+                'quality': self._snapshot.jpeg_quality,
+                'size': self._snapshot.resolution,
+                'format': 'jpg'
+            },
+            'animation_frame': self._snapshot.frame
+        })
 
 
 if __name__ == '__main__':

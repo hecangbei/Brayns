@@ -25,18 +25,13 @@ from typing import Iterable, Iterator, Union
 from brayns.core.geometry.vector3 import Vector3
 
 
-@dataclass
+@dataclass(frozen=True)
 class Quaternion:
 
-    x: float = 0.0
-    y: float = 0.0
-    z: float = 0.0
-    w: float = 1.0
-
-    @classmethod
-    @property
-    def identity(cls) -> 'Quaternion':
-        return Quaternion()
+    x: float
+    y: float
+    z: float
+    w: float
 
     @staticmethod
     def from_euler(euler: Vector3, degrees: bool = False) -> 'Quaternion':
@@ -68,11 +63,16 @@ class Quaternion:
     def unpack(values: Iterable[float]) -> 'Quaternion':
         return Quaternion(*values)
 
+    @classmethod
+    @property
+    def identity(cls) -> 'Quaternion':
+        return Quaternion(0.0, 0.0, 0.0, 1.0)
+
     def __iter__(self) -> Iterator[float]:
         yield from (self.x, self.y, self.z, self.w)
 
     def __abs__(self) -> float:
-        return self.norm
+        return Quaternion.unpack(abs(i) for i in self)
 
     def __neg__(self) -> 'Quaternion':
         return Quaternion.unpack(-i for i in self)
