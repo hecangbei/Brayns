@@ -29,11 +29,11 @@ class TestCamera(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockCameraInstance()
-        self._instance.name = MockCamera.get_name()
+        self._instance.name = MockCamera.name
         self._instance.properties = MockCamera().serialize()
 
     def test_get_current_camera_name(self) -> None:
-        test = Camera.get_current_camera_name(self._instance)
+        test = Camera.get_main_camera_name(self._instance)
         ref = self._instance.name
         self.assertEqual(test, ref)
         self.assertEqual(self._instance.method, 'get-camera-type')
@@ -57,7 +57,7 @@ class TestCamera(unittest.TestCase):
         self._instance.name = ''
         self._instance.properties = {}
         test.use_as_main_camera(self._instance)
-        self.assertEqual(self._instance.name, MockCamera.get_name())
+        self.assertEqual(self._instance.name, MockCamera.name)
         self.assertEqual(self._instance.properties, test.serialize())
         self.assertEqual(self._instance.method, 'set-camera-test')
         self.assertEqual(self._instance.params, test.serialize())

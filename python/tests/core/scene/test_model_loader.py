@@ -28,17 +28,17 @@ class TestSceneManager(unittest.TestCase):
 
     def test_add_model(self) -> None:
         instance = MockSceneInstance()
+        name = 'test'
+        path = 'path/test.model'
         properties = {'test1': 1, 'test2': 2}
-        loader = ModelLoader('test', properties)
-        loader.add_model(instance, 'path')
-        self.assertEqual(instance.methods, ['add-model'])
-        test = instance.params
-        ref = {
-            'path': 'path',
-            'loader': 'test',
+        loader = ModelLoader(name, properties)
+        loader.add_model(instance, path)
+        self.assertEqual(instance.method, 'add-model')
+        self.assertEqual(instance.params, {
+            'path': path,
+            'loader': name,
             'loader_properties': properties
-        }
-        self.assertEqual(test, [ref])
+        })
 
 
 if __name__ == '__main__':

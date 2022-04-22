@@ -21,11 +21,7 @@
 import unittest
 
 from brayns.core.geometry.box import Box
-from brayns.core.geometry.quaternion import Quaternion
-from brayns.core.geometry.transform import Transform
-from brayns.core.geometry.vector3 import Vector3
 from brayns.core.scene.model import Model
-from brayns.core.scene.model_loader import ModelLoader
 from brayns.core.scene.scene import Scene
 from tests.core.scene.mock_scene_instance import MockSceneInstance
 
@@ -36,33 +32,44 @@ class TestScene(unittest.TestCase):
         self._instance = MockSceneInstance()
 
     def test_from_instance(self) -> None:
-        model = self._instance.add_model()
+        message = self._instance.add_model()
         scene = Scene.from_instance(self._instance)
+        self.assertEqual(self._instance.method, 'get-scene')
+        self.assertEqual(self._instance.params, None)
         self.assertEqual(scene.bounds, Box.deserialize(self._instance.bounds))
-        self.assertEqual(scene.models, [Model.deserialize(model)])
-        self.assertEqual(self._instance.methods, ['get-scene'])
-        self.assertEqual(self._instance.params, [None])
+        self.assertEqual(len(scene.models), 1)
+        model = scene.models[0]
+        ref = Model.deserialize(message)
+        self.assertEqual(model.id, ref.id)
+        self.assertEqual(model.bounds, ref.bounds)
+        self.assertEqual(model.metadata, ref.metadata)
+        self.assertEqual(model.visible, ref.visible)
+        self.assertEqual(model.transform, ref.transform)
 
     def test_deserialize(self) -> None:
         self._instance.add_model()
         message = self._instance.get_scene()
         scene = Scene.deserialize(message)
-        self.assertEqual(scene.bounds, Box.deserialize(message['bounds']))
-        self.assertEqual(scene.models, [
-            Model.deserialize(model)
-            for model in message['models']
-        ])
+        self.assertEqual(scene.bounds, Box.deserialize(self._instance.bounds))
+        self.assertEqual(len(scene.models), 1)
+        model = scene.models[0]
+        ref = Model.deserialize(self._instance.models[0])
+        self.assertEqual(model.id, ref.id)
+        self.assertEqual(model.bounds, ref.bounds)
+        self.assertEqual(model.metadata, ref.metadata)
+        self.assertEqual(model.visible, ref.visible)
+        self.assertEqual(model.transform, ref.transform)
 
     def test_remove_models(self) -> None:
         ids = [1, 2, 3]
         Scene.remove_models(self._instance, ids)
-        self.assertEqual(self._instance.methods, ['remove-model'])
-        self.assertEqual(self._instance.params, [{'ids': ids}])
+        self.assertEqual(self._instance.method, 'remove-model')
+        self.assertEqual(self._instance.params, {'ids': ids})
 
-    def test_clear(self) -> None:
+    def test_clear_models(self) -> None:
         for _ in range(3):
             self._instance.add_model()
-        Scene.clear(self._instance)
+        Scene.clear_models(self._instance)
         self.assertFalse(self._instance.models)
 
 

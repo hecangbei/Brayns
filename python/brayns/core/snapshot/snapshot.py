@@ -30,7 +30,7 @@ from brayns.instance.instance_protocol import InstanceProtocol
 class Snapshot:
 
     jpeg_quality: int = 100
-    resolution: Optional[tuple[int, int]] = (1920, 1080)
+    resolution: Optional[tuple[int, int]] = None
     frame: Optional[int] = None
 
     def save(self, instance: InstanceProtocol, path: str) -> None:
@@ -55,7 +55,7 @@ class Snapshot:
             'image_settings': {
                 'format': format.value,
                 'quality': self.jpeg_quality,
-                'size': list(self.resolution)
+                'size': self.resolution
             },
             'animation_frame': self.frame
         }

@@ -23,22 +23,12 @@ from dataclasses import dataclass
 from typing import Iterable, Iterator, Union
 
 
-@dataclass
+@dataclass(frozen=True)
 class Vector3:
 
-    x: float = 0.0
-    y: float = 0.0
-    z: float = 0.0
-
-    @classmethod
-    @property
-    def zero(cls) -> 'Vector3':
-        return Vector3()
-
-    @classmethod
-    @property
-    def one(cls) -> 'Vector3':
-        return Vector3.full(1.0)
+    x: float
+    y: float
+    z: float
 
     @staticmethod
     def full(value: float) -> 'Vector3':
@@ -48,6 +38,46 @@ class Vector3:
     def unpack(values: Iterable[float]) -> 'Vector3':
         return Vector3(*values)
 
+    @classmethod
+    @property
+    def zero(cls) -> 'Vector3':
+        return Vector3.full(0.0)
+
+    @classmethod
+    @property
+    def one(cls) -> 'Vector3':
+        return Vector3.full(1.0)
+
+    @classmethod
+    @property
+    def right(cls) -> 'Vector3':
+        return Vector3(1.0, 0.0, 0.0)
+
+    @classmethod
+    @property
+    def left(cls) -> 'Vector3':
+        return Vector3(-1.0, 0.0, 0.0)
+
+    @classmethod
+    @property
+    def up(cls) -> 'Vector3':
+        return Vector3(0.0, 1.0, 0.0)
+
+    @classmethod
+    @property
+    def down(cls) -> 'Vector3':
+        return Vector3(0.0, -1.0, 0.0)
+
+    @classmethod
+    @property
+    def forward(cls) -> 'Vector3':
+        return Vector3(0.0, 0.0, 1.0)
+
+    @classmethod
+    @property
+    def back(cls) -> 'Vector3':
+        return Vector3(0.0, 0.0, -1.0)
+
     def __iter__(self) -> Iterator[float]:
         yield from (self.x, self.y, self.z)
 
@@ -55,7 +85,7 @@ class Vector3:
         return Vector3.unpack(-i for i in self)
 
     def __abs__(self) -> float:
-        return self.norm
+        return Vector3.unpack(abs(i) for i in self)
 
     def __add__(self, other: 'Vector3') -> 'Vector3':
         return Vector3.unpack(i + j for i, j in zip(self, other))
@@ -92,3 +122,13 @@ class Vector3:
     @property
     def normalized(self) -> 'Vector3':
         return self / self.norm
+
+    def dot(self, other: 'Vector3') -> 'Vector3':
+        return sum(i * j for i, j in zip(self, other))
+
+    def cross(self, other: 'Vector3') -> 'Vector3':
+        return Vector3(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )

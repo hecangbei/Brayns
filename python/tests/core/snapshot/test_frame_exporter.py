@@ -31,28 +31,37 @@ class TestFrameExporter(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSnapshotInstance()
-
-    def test_export_frames(self) -> None:
-        exporter = FrameExporter(
-            frames=[KeyFrame(i, CameraView()) for i in range(10)],
+        self._exporter = FrameExporter(
+            frames=[KeyFrame(i, CameraView()) for i in range(2)],
             format=ImageFormat.JPEG,
             jpeg_quality=50,
             resolution=(600, 900),
             sequential_naming=False
         )
+
+    def test_export_frames(self) -> None:
         folder = 'test'
-        exporter.export_frames(self._instance, folder)
+        self._exporter.export_frames(self._instance, folder)
         self.assertEqual(self._instance.method, 'export-frames')
-        params = self._instance.params
-        image: dict = params['image_settings']
-        self.assertEqual(params['path'], folder)
-        self.assertEqual(image['format'], 'jpg')
-        self.assertEqual(image['quality'], 50)
-        self.assertEqual(image['size'], [600, 900])
-        self.assertFalse(params['sequential_naming'])
-        for i, frame in enumerate(params['key_frames']):
-            self.assertEqual(i, frame['frame_index'])
-            self.assertEqual(frame['camera_view'], CameraView().serialize())
+        self.assertEqual(self._instance.params, {
+            'path': folder,
+            'image_settings': {
+                'format': self._exporter.format.value,
+                'quality': self._exporter.jpeg_quality,
+                'size': self._exporter.resolution
+            },
+            'key_frames': [
+                {
+                    'frame_index': 0,
+                    'camera_view': CameraView().serialize()
+                },
+                {
+                    'frame_index': 1,
+                    'camera_view': CameraView().serialize()
+                }
+            ],
+            'sequential_naming': self._exporter.sequential_naming
+        })
 
 
 if __name__ == '__main__':

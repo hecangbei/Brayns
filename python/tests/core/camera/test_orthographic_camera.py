@@ -21,7 +21,6 @@
 import unittest
 
 from brayns.core.camera.orthographic_camera import OrthographicCamera
-from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.box import Box
 from brayns.core.geometry.vector3 import Vector3
 
@@ -33,8 +32,8 @@ class TestPerspectiveCamera(unittest.TestCase):
         test = OrthographicCamera.from_target(target)
         self.assertEqual(test.height, 2)
 
-    def test_get_name(self) -> None:
-        test = OrthographicCamera.get_name()
+    def test_name(self) -> None:
+        test = OrthographicCamera.name
         ref = 'orthographic'
         self.assertEqual(test, ref)
 
@@ -55,9 +54,9 @@ class TestPerspectiveCamera(unittest.TestCase):
         camera = OrthographicCamera.from_target(target)
         target = Box(-Vector3.one, Vector3.one)
         test = camera.get_full_screen_view(target)
-        self.assertEqual(test.position, Axis.forward)
+        self.assertEqual(test.position, Vector3.forward)
         self.assertEqual(test.target, Vector3.zero)
-        self.assertEqual(test.up, Axis.up)
+        self.assertEqual(test.up, Vector3.up)
 
 
 if __name__ == '__main__':

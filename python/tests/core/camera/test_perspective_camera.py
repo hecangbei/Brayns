@@ -22,7 +22,6 @@ import math
 import unittest
 
 from brayns.core.camera.perspective_camera import PerspectiveCamera
-from brayns.core.geometry.axis import Axis
 from brayns.core.geometry.box import Box
 from brayns.core.geometry.vector3 import Vector3
 
@@ -30,7 +29,7 @@ from brayns.core.geometry.vector3 import Vector3
 class TestPerspectiveCamera(unittest.TestCase):
 
     def test_get_name(self) -> None:
-        test = PerspectiveCamera.get_name()
+        test = PerspectiveCamera.name
         ref = 'perspective'
         self.assertEqual(test, ref)
 
@@ -70,9 +69,11 @@ class TestPerspectiveCamera(unittest.TestCase):
         camera = PerspectiveCamera(fovy=90, degrees=True)
         target = Box(-Vector3.one, Vector3.one)
         test = camera.get_full_screen_view(target)
-        self.assertAlmostEqual(test.position, Axis.forward)
-        self.assertAlmostEqual(test.target, Vector3.zero)
-        self.assertAlmostEqual(test.up, Axis.up)
+        self.assertAlmostEqual(test.position.x, 0)
+        self.assertAlmostEqual(test.position.y, 0)
+        self.assertAlmostEqual(test.position.z, 1)
+        self.assertEqual(test.target, Vector3.zero)
+        self.assertEqual(test.up, Vector3.up)
 
 
 if __name__ == '__main__':

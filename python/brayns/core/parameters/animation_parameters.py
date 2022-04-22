@@ -18,20 +18,11 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
-
 from brayns.core.parameters.time_unit import TimeUnit
 from brayns.instance.instance_protocol import InstanceProtocol
 
 
-@dataclass
 class AnimationParameters:
-
-    start_frame: int = 0
-    end_frame: int = 0
-    current_frame: int = 0
-    delta_time: float = 0.0
-    time_unit: TimeUnit = TimeUnit.MILLISECOND
 
     @staticmethod
     def from_instance(instance: InstanceProtocol) -> 'AnimationParameters':
@@ -47,6 +38,52 @@ class AnimationParameters:
             delta_time=message['dt'],
             time_unit=TimeUnit(message['unit'])
         )
+
+    def __init__(
+        self,
+        start_frame: int,
+        end_frame: int,
+        current_frame: int,
+        delta_time: float = 0.0,
+        time_unit: TimeUnit = TimeUnit.MILLISECOND
+    ) -> None:
+        self._start_frame = start_frame
+        self._end_frame = end_frame
+        self._current_frame = current_frame
+        self._delta_time = delta_time
+        self._time_unit = time_unit
+
+    @property
+    def start_frame(self) -> int:
+        return self._start_frame
+
+    @start_frame.setter
+    def start_frame(self, value: int) -> None:
+        self._start_frame = value
+
+    @property
+    def end_frame(self) -> int:
+        return self._end_frame
+
+    @end_frame.setter
+    def end_frame(self, value: int) -> None:
+        self._end_frame = value
+
+    @property
+    def current_frame(self) -> int:
+        return self._current_frame
+
+    @current_frame.setter
+    def current_frame(self, value: int) -> None:
+        self._current_frame = value
+
+    @property
+    def delta_time(self) -> float:
+        return self._delta_time
+
+    @property
+    def time_unit(self) -> TimeUnit:
+        return self._time_unit
 
     def update(self, instance: InstanceProtocol) -> None:
         params = self.serialize()

@@ -45,10 +45,69 @@ class TestTransform(unittest.TestCase):
         ref = self._transform
         self.assertEqual(test, ref)
 
+    def test_identity(self) -> None:
+        test = Transform.identity
+        self.assertEqual(test.translation, Vector3.zero)
+        self.assertEqual(test.rotation, Quaternion.identity)
+        self.assertEqual(test.scale, Vector3.one)
+
     def test_serialize(self) -> None:
         test = self._transform.serialize()
         ref = self._message
         self.assertEqual(test, ref)
+
+    def test_with_translation(self) -> None:
+        translation = Vector3.one
+        test = self._transform.with_translation(translation)
+        self.assertEqual(test.translation, translation)
+        self.assertEqual(test.rotation, self._transform.rotation)
+        self.assertEqual(test.scale, self._transform.scale)
+
+    def test_with_rotation(self) -> None:
+        rotation = Quaternion.identity
+        test = self._transform.with_rotation(rotation)
+        self.assertEqual(test.translation, self._transform.translation)
+        self.assertEqual(test.rotation, rotation)
+        self.assertEqual(test.scale, self._transform.scale)
+
+    def test_with_scale(self) -> None:
+        scale = Vector3.one
+        test = self._transform.with_scale(scale)
+        self.assertEqual(test.translation, self._transform.translation)
+        self.assertEqual(test.rotation, self._transform.rotation)
+        self.assertEqual(test.scale, scale)
+
+    def test_translate(self) -> None:
+        translation = Vector3.one
+        test = self._transform.translate(translation)
+        ref = self._transform.translation + translation
+        self.assertEqual(test.translation, ref)
+        self.assertEqual(test.rotation, self._transform.rotation)
+        self.assertEqual(test.scale, self._transform.scale)
+
+    def test_rotate(self) -> None:
+        rotation = Quaternion.from_axis_angle(Vector3.up, 90, degrees=True)
+        test = self._transform.rotate(rotation)
+        self.assertEqual(test.translation, self._transform.translation)
+        self.assertEqual(test.rotation, rotation * self._transform.rotation)
+        self.assertEqual(test.scale, self._transform.scale)
+
+    def test_rotate_with_center(self) -> None:
+        rotation = Quaternion.from_axis_angle(Vector3.up, 90, degrees=True)
+        center = Vector3.one
+        test = self._transform.rotate(rotation, center)
+        ref = self._transform.translation
+        ref += center - rotation.rotate(center)
+        self.assertEqual(test.translation, ref)
+        self.assertEqual(test.rotation, rotation * self._transform.rotation)
+        self.assertEqual(test.scale, self._transform.scale)
+
+    def test_rescale(self) -> None:
+        scale = 2 * Vector3.one
+        test = self._transform.rescale(scale)
+        self.assertEqual(test.translation, self._transform.translation)
+        self.assertEqual(test.rotation, self._transform.rotation)
+        self.assertEqual(test.scale, scale * self._transform.scale)
 
 
 if __name__ == '__main__':

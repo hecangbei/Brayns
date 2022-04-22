@@ -21,7 +21,7 @@
 import unittest
 
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.axis import Axis
+from brayns.core.geometry.quaternion import Quaternion
 from brayns.core.geometry.vector3 import Vector3
 from tests.core.camera.mock_camera_instance import MockCameraInstance
 
@@ -33,7 +33,7 @@ class TestCameraView(unittest.TestCase):
         self._instance.view = CameraView(
             position=Vector3.one,
             target=2 * Vector3.one,
-            up=Axis.right
+            up=Vector3.right
         )
 
     def test_from_instance(self) -> None:
@@ -69,6 +69,30 @@ class TestCameraView(unittest.TestCase):
             'up': [0, 1, 0]
         }
         self.assertEqual(test, ref)
+
+    def test_rotate_around_position(self) -> None:
+        view = CameraView(target=Vector3.forward)
+        rotation = Quaternion.from_axis_angle(Vector3.up, -90, degrees=True)
+        view.rotate_around_position(rotation)
+        self.assertAlmostEqual(view.target.x, -1)
+        self.assertAlmostEqual(view.target.y, 0)
+        self.assertAlmostEqual(view.target.z, 0)
+
+    def test_rotate_around_target(self) -> None:
+        view = CameraView(position=Vector3.forward)
+        rotation = Quaternion.from_axis_angle(Vector3.up, -90, degrees=True)
+        view.rotate_around_target(rotation)
+        self.assertAlmostEqual(view.position.x, -1)
+        self.assertAlmostEqual(view.position.y, 0)
+        self.assertAlmostEqual(view.position.z, 0)
+
+    def test_rotate_up(self) -> None:
+        view = CameraView(up=Vector3.forward)
+        rotation = Quaternion.from_axis_angle(Vector3.up, -90, degrees=True)
+        view.rotate_up(rotation)
+        self.assertAlmostEqual(view.up.x, -1)
+        self.assertAlmostEqual(view.up.y, 0)
+        self.assertAlmostEqual(view.up.z, 0)
 
 
 if __name__ == '__main__':

@@ -59,7 +59,7 @@ class TestCircuit(unittest.TestCase):
                 'load_dendrites': True
             }
         }
-        test = self._instance.params[0]
+        test = self._instance.params
         self.assertEqual(test['path'], 'path')
         self.assertEqual(test['loader'], '')
         self.assertEqual(test['loader_properties'], ref)

@@ -30,7 +30,8 @@ class MockCamera(Camera):
     test2: int = 0
 
     @classmethod
-    def get_name(cls) -> str:
+    @property
+    def name(cls) -> str:
         return 'test'
 
     @classmethod
