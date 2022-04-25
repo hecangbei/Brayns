@@ -18,13 +18,14 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import math
 from dataclasses import dataclass
-from typing import Iterable, Iterator, Union
+from typing import Iterator
+
+from brayns.core.geometry.vector import Vector
 
 
 @dataclass(frozen=True)
-class Vector3:
+class Vector3(Vector):
 
     x: float
     y: float
@@ -33,10 +34,6 @@ class Vector3:
     @staticmethod
     def full(value: float) -> 'Vector3':
         return Vector3(value, value, value)
-
-    @staticmethod
-    def unpack(values: Iterable[float]) -> 'Vector3':
-        return Vector3(*values)
 
     @classmethod
     @property
@@ -79,51 +76,11 @@ class Vector3:
         return Vector3(0.0, 0.0, -1.0)
 
     def __iter__(self) -> Iterator[float]:
-        yield from (self.x, self.y, self.z)
+        yield self.x
+        yield self.y
+        yield self.z
 
-    def __neg__(self) -> 'Vector3':
-        return Vector3.unpack(-i for i in self)
-
-    def __abs__(self) -> float:
-        return Vector3.unpack(abs(i) for i in self)
-
-    def __add__(self, other: 'Vector3') -> 'Vector3':
-        return Vector3.unpack(i + j for i, j in zip(self, other))
-
-    def __sub__(self, other: 'Vector3') -> 'Vector3':
-        return Vector3.unpack(i - j for i, j in zip(self, other))
-
-    def __mul__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
-        if isinstance(value, (int, float)):
-            return Vector3.unpack(i * value for i in self)
-        return Vector3.unpack(i * j for i, j in zip(self, value))
-
-    def __rmul__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
-        return self * value
-
-    def __truediv__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
-        if isinstance(value, (int, float)):
-            return Vector3.unpack(i / value for i in self)
-        return Vector3.unpack(i / j for i, j in zip(self, value))
-
-    def __rtruediv__(self, value: Union[int, float, 'Vector3']) -> 'Vector3':
-        if isinstance(value, (int, float)):
-            return Vector3.unpack(value / i for i in self)
-        return Vector3.unpack(j / i for i, j in zip(self, value))
-
-    @property
-    def square_norm(self) -> float:
-        return sum(i * i for i in self)
-
-    @property
-    def norm(self) -> float:
-        return math.sqrt(self.square_norm)
-
-    @property
-    def normalized(self) -> 'Vector3':
-        return self / self.norm
-
-    def dot(self, other: 'Vector3') -> 'Vector3':
+    def dot(self, other: 'Vector3') -> float:
         return sum(i * j for i, j in zip(self, other))
 
     def cross(self, other: 'Vector3') -> 'Vector3':

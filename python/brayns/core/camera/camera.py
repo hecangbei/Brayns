@@ -23,7 +23,7 @@ from typing import TypeVar
 
 from brayns.instance.instance_protocol import InstanceProtocol
 
-CameraType = TypeVar('CameraType', bound='Camera')
+T = TypeVar('T', bound='Camera')
 
 
 class Camera(ABC):
@@ -36,7 +36,7 @@ class Camera(ABC):
 
     @classmethod
     @abstractmethod
-    def deserialize(cls: type[CameraType], message: dict) -> CameraType:
+    def deserialize(cls: type[T], message: dict) -> T:
         pass
 
     @abstractmethod
@@ -48,7 +48,7 @@ class Camera(ABC):
         return instance.request('get-camera-type')
 
     @classmethod
-    def from_instance(cls: type[CameraType], instance: InstanceProtocol) -> CameraType:
+    def from_instance(cls: type[T], instance: InstanceProtocol) -> T:
         name = cls.name
         result = instance.request(f'get-camera-{name}')
         return cls.deserialize(result)
