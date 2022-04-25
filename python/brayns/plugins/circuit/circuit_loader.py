@@ -39,6 +39,17 @@ class CircuitLoader:
     load_afferent_synapses: bool = False
     load_efferent_synapses: bool = False
 
+    @staticmethod
+    def for_soma_only() -> 'CircuitLoader':
+        return CircuitLoader(radius_multiplier=10.0)
+
+    @staticmethod
+    def for_morphology() -> 'CircuitLoader':
+        return CircuitLoader(
+            cells=Cells.from_density(0.001),
+            load_dendrites=True
+        )
+
     def load_circuit(self, instance: InstanceProtocol, path: str) -> list[Model]:
         loader = ModelLoader(
             properties={
