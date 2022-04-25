@@ -40,10 +40,7 @@ class TestCircuit(unittest.TestCase):
             load_afferent_synapses=True,
             load_efferent_synapses=True
         )
-
-    def test_load_circuit(self) -> None:
-        self._loader.load_circuit(self._instance, 'path')
-        ref = {
+        self._properties = {
             'percentage': 1.0,
             'targets': [],
             'gids': [],
@@ -59,10 +56,26 @@ class TestCircuit(unittest.TestCase):
                 'load_dendrites': True
             }
         }
+
+    def test_for_soma_only(self) -> None:
+        loader = CircuitLoader.for_soma_only()
+        self.assertEqual(loader.cells.density, 1.0)
+        self.assertEqual(loader.radius_multiplier, 10.0)
+        self.assertTrue(loader.load_soma)
+
+    def test_for_morphology(self) -> None:
+        loader = CircuitLoader.for_morphology()
+        self.assertEqual(loader.cells.density, 0.001)
+        self.assertEqual(loader.radius_multiplier, 1.0)
+        self.assertTrue(loader.load_soma)
+        self.assertTrue(loader.load_dendrites)
+
+    def test_load_circuit(self) -> None:
+        self._loader.load_circuit(self._instance, 'path')
         test = self._instance.params
         self.assertEqual(test['path'], 'path')
         self.assertEqual(test['loader'], '')
-        self.assertEqual(test['loader_properties'], ref)
+        self.assertEqual(test['loader_properties'], self._properties)
 
 
 if __name__ == '__main__':
