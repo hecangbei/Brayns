@@ -53,6 +53,6 @@ class OrthographicCamera(Camera):
 
     def get_full_screen_view(self, target: Box) -> CameraView:
         center = target.center
-        distance = target.depth / 2
+        distance = target.depth
         position = center + distance * Vector3.forward
         return CameraView(position, center)
