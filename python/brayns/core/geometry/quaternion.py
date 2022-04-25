@@ -20,13 +20,14 @@
 
 import math
 from dataclasses import dataclass
-from typing import Iterable, Iterator, Union
+from typing import Iterator, Union
 
+from brayns.core.geometry.vector import Vector
 from brayns.core.geometry.vector3 import Vector3
 
 
 @dataclass(frozen=True)
-class Quaternion:
+class Quaternion(Vector):
 
     x: float
     y: float
@@ -59,29 +60,16 @@ class Quaternion:
     def from_vector(value: Vector3) -> 'Quaternion':
         return Quaternion(*value, 0.0)
 
-    @staticmethod
-    def unpack(values: Iterable[float]) -> 'Quaternion':
-        return Quaternion(*values)
-
     @classmethod
     @property
     def identity(cls) -> 'Quaternion':
         return Quaternion(0.0, 0.0, 0.0, 1.0)
 
     def __iter__(self) -> Iterator[float]:
-        yield from (self.x, self.y, self.z, self.w)
-
-    def __abs__(self) -> float:
-        return Quaternion.unpack(abs(i) for i in self)
-
-    def __neg__(self) -> 'Quaternion':
-        return Quaternion.unpack(-i for i in self)
-
-    def __add__(self, other: 'Quaternion') -> 'Quaternion':
-        return Quaternion.unpack(i + j for i, j in zip(self, other))
-
-    def __sub__(self, other: 'Quaternion') -> 'Quaternion':
-        return Quaternion.unpack(i - j for i, j in zip(self, other))
+        yield self.x
+        yield self.y
+        yield self.z
+        yield self.w
 
     def __mul__(self, value: Union[int, float, 'Quaternion']) -> 'Quaternion':
         if isinstance(value, (int, float)):
@@ -113,18 +101,6 @@ class Quaternion:
     @property
     def vector(self) -> Vector3:
         return Vector3(self.x, self.y, self.z)
-
-    @property
-    def square_norm(self) -> float:
-        return sum(i * i for i in self)
-
-    @property
-    def norm(self) -> float:
-        return math.sqrt(self.square_norm)
-
-    @property
-    def normalized(self) -> 'Quaternion':
-        return self / self.norm
 
     @property
     def conjugate(self) -> 'Quaternion':
