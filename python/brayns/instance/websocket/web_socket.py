@@ -18,50 +18,22 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import ssl
-from typing import Optional, Union
-
-import websockets
-from brayns.instance.websocket.web_socket_error import WebSocketError
+from typing import Protocol, Union
 
 
-class WebSocket:
+class WebSocket(Protocol):
 
-    @staticmethod
-    async def connect(uri: str, ssl: Optional[ssl.SSLContext]) -> 'WebSocket':
-        try:
-            websocket = await websockets.connect(
-                uri=uri,
-                ssl=ssl,
-                ping_interval=None,
-                close_timeout=0,
-                max_size=int(2e9)
-            )
-            return WebSocket(websocket)
-        except Exception as e:
-            raise WebSocketError(str(e))
+    def __enter__(self) -> 'WebSocket':
+        return self
 
-    def __init__(self,  websocket: websockets.WebSocketClientProtocol) -> None:
-        self._websocket = websocket
+    def __exit__(self, *_) -> None:
+        self.close()
 
-    @property
-    def closed(self) -> bool:
-        return self._websocket.closed
+    def close(self) -> None:
+        raise NotImplementedError()
 
-    async def close(self) -> None:
-        try:
-            await self._websocket.close()
-        except Exception as e:
-            raise WebSocketError(str(e))
+    def receive(self) -> Union[bytes, str]:
+        raise NotImplementedError()
 
-    async def receive(self) -> Union[bytes, str]:
-        try:
-            return await self._websocket.recv()
-        except Exception as e:
-            raise WebSocketError(str(e))
-
-    async def send(self, data: Union[bytes, str]) -> None:
-        try:
-            await self._websocket.send(data)
-        except Exception as e:
-            raise WebSocketError(str(e))
+    def send(self, data: Union[bytes, str]) -> None:
+        raise NotImplementedError()

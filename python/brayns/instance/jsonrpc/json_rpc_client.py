@@ -26,14 +26,14 @@ from brayns.instance.jsonrpc.json_rpc_manager import JsonRpcManager
 from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.instance.jsonrpc.json_rpc_task import JsonRpcTask
 from brayns.instance.request_error import RequestError
-from brayns.instance.websocket.web_socket_protocol import WebSocketProtocol
+from brayns.instance.websocket.web_socket import WebSocket
 
 
 class JsonRpcClient:
 
     def __init__(
         self,
-        websocket: WebSocketProtocol,
+        websocket: WebSocket,
         logger: logging.Logger
     ) -> None:
         self._websocket = websocket
