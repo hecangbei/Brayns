@@ -59,12 +59,12 @@ class Snapshot:
         message = {}
         if path is not None:
             message['path'] = path
-        image = {'format': format.value}
+        image_settings = {'format': format.value}
         if self.jpeg_quality is not None:
-            image['quality'] = self.jpeg_quality
+            image_settings['quality'] = self.jpeg_quality
         if self.resolution is not None:
-            image['size'] = list(self.resolution)
-        message['image_settings'] = image
+            image_settings['size'] = list(self.resolution)
+        message['image_settings'] = image_settings
         if self.frame is not None:
             message['animation_settings'] = {'frame': self.frame}
         if self.view is not None:
