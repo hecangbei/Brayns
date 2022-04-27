@@ -18,16 +18,32 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.color import Color
-from brayns.core.geometry.quaternion import Quaternion
-from brayns.core.geometry.transform import Transform
-from brayns.core.geometry.vector3 import Vector3
+import unittest
 
-__all__ = [
-    'Box',
-    'Color',
-    'Quaternion',
-    'Transform',
-    'Vector3'
-]
+from brayns.core.common.color import Color
+
+
+class TestColor(unittest.TestCase):
+
+    def test_normalize_hex(self) -> None:
+        test = Color.normalize_hex('FF')
+        self.assertEqual(test, 1.0)
+
+    def test_from_hex(self) -> None:
+        test = Color.from_hex('2ca02c')
+        ref = Color.from_int8(44, 160, 44)
+        self.assertEqual(test, ref)
+
+    def test_from_int8(self) -> None:
+        test = Color.from_int8(33, 160, 44)
+        ref = Color(33 / 255, 160 / 255, 44 / 255)
+        self.assertEqual(test, ref)
+
+    def test_iter(self) -> None:
+        test = list(Color(1, 2, 3, 4))
+        ref = [1, 2, 3, 4]
+        self.assertEqual(test, ref)
+
+
+if __name__ == '__main__':
+    unittest.main()

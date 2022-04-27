@@ -21,8 +21,8 @@
 import unittest
 
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.quaternion import Quaternion
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.quaternion import Quaternion
+from brayns.core.common.vector3 import Vector3
 from tests.core.camera.mock_camera_instance import MockCameraInstance
 
 

@@ -23,8 +23,8 @@ from dataclasses import InitVar, dataclass
 
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.box import Box
+from brayns.core.common.vector3 import Vector3
 
 
 @dataclass

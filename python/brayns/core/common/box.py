@@ -19,42 +19,44 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass
-from typing import Iterator
 
-from brayns.core.geometry.vector import Vector
+from brayns.core.common.vector3 import Vector3
 
 
 @dataclass(frozen=True)
-class Color(Vector):
+class Box:
 
-    red: float = 0.0
-    green: float = 0.0
-    blue: float = 0.0
-    alpha: float = 1.0
+    min: Vector3 = Vector3.zero
+    max: Vector3 = Vector3.zero
 
     @staticmethod
-    def normalize_hex(value: str) -> float:
-        return int(value, base=16) / 255
-
-    @staticmethod
-    def from_hex(value: str) -> 'Color':
-        return Color(
-            Color.normalize_hex(value[0:2]),
-            Color.normalize_hex(value[2:4]),
-            Color.normalize_hex(value[4:6])
+    def deserialize(message: dict) -> 'Box':
+        return Box(
+            min=Vector3(*message['min']),
+            max=Vector3(*message['max']),
         )
-
-    @staticmethod
-    def from_int8(red: int, green: int, blue: int, alpha: int = 255) -> 'Color':
-        return Color(red, green, blue, alpha) / 255
 
     @classmethod
     @property
-    def bbp_background(cls) -> 'Color':
-        return Color(0.004, 0.016, 0.102, 0.0)
+    def empty(cls) -> 'Box':
+        return Box()
 
-    def __iter__(self) -> Iterator[float]:
-        yield self.red
-        yield self.green
-        yield self.blue
-        yield self.alpha
+    @property
+    def center(self) -> Vector3:
+        return (self.min + self.max) / 2
+
+    @property
+    def size(self) -> Vector3:
+        return self.max - self.min
+
+    @property
+    def width(self) -> float:
+        return self.size.x
+
+    @property
+    def height(self) -> float:
+        return self.size.y
+
+    @property
+    def depth(self) -> float:
+        return self.size.z

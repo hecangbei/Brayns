@@ -20,8 +20,8 @@
 
 from dataclasses import dataclass, replace
 
-from brayns.core.geometry.quaternion import Quaternion
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.quaternion import Quaternion
+from brayns.core.common.vector3 import Vector3
 
 
 @dataclass(frozen=True)
