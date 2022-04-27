@@ -24,6 +24,8 @@ from brayns.core.camera.camera_view import CameraView
 from brayns.core.snapshot.frame_exporter import FrameExporter
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
+from tests.core.camera.mock_camera import MockCamera
+from tests.core.renderer.mock_renderer import MockRenderer
 from tests.core.snapshot.mock_snapshot_instance import MockSnapshotInstance
 
 
@@ -31,25 +33,18 @@ class TestFrameExporter(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSnapshotInstance()
+        self._path = 'test'
         self._exporter = FrameExporter(
             frames=[KeyFrame(i, CameraView()) for i in range(2)],
             format=ImageFormat.JPEG,
             jpeg_quality=50,
             resolution=(600, 900),
-            sequential_naming=False
+            sequential_naming=False,
+            camera=MockCamera(),
+            renderer=MockRenderer()
         )
-
-    def test_export_frames(self) -> None:
-        folder = 'test'
-        self._exporter.export_frames(self._instance, folder)
-        self.assertEqual(self._instance.method, 'export-frames')
-        self.assertEqual(self._instance.params, {
-            'path': folder,
-            'image_settings': {
-                'format': self._exporter.format.value,
-                'quality': self._exporter.jpeg_quality,
-                'size': self._exporter.resolution
-            },
+        self._message = {
+            'path': self._path,
             'key_frames': [
                 {
                     'frame_index': 0,
@@ -60,8 +55,21 @@ class TestFrameExporter(unittest.TestCase):
                     'camera_view': CameraView().serialize()
                 }
             ],
-            'sequential_naming': self._exporter.sequential_naming
-        })
+            'image_settings': {
+                'format': 'jpg',
+                'quality': 50,
+                'size': [600, 900]
+            },
+            'sequential_naming': self._exporter.sequential_naming,
+            'camera': MockCamera().serialize(),
+            'renderer': MockRenderer().serialize()
+        }
+
+    def test_export_frames(self) -> None:
+        folder = 'test'
+        self._exporter.export_frames(self._instance, folder)
+        self.assertEqual(self._instance.method, 'export-frames')
+        self.assertEqual(self._instance.params, self._message)
 
 
 if __name__ == '__main__':

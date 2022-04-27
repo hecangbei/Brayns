@@ -21,6 +21,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from brayns.core.camera.camera import Camera
+from brayns.core.renderer.renderer import Renderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
 from brayns.instance.instance import Instance
@@ -31,22 +33,36 @@ class FrameExporter:
 
     frames: list[KeyFrame]
     format: ImageFormat = ImageFormat.PNG
-    jpeg_quality: int = 100
+    jpeg_quality: Optional[int] = 100
     resolution: Optional[tuple[int, int]] = None
     sequential_naming: bool = True
+    camera: Optional[Camera] = None
+    renderer: Optional[Renderer] = None
 
-    def export_frames(self, instance: Instance, folder: str) -> None:
-        params = {
-            'path': folder,
-            'image_settings': {
-                'format': self.format.value,
-                'quality': self.jpeg_quality,
-                'size': self.resolution
-            },
+    def export_frames(self, instance: Instance, destination_folder: str) -> None:
+        params = self._get_params(destination_folder)
+        self._request(instance, params)
+
+    def _get_params(self, path: str) -> dict:
+        message = {
+            'path': path,
             'key_frames': [
                 frame.serialize()
                 for frame in self.frames
             ],
             'sequential_naming': self.sequential_naming
         }
+        image_settings = {'format': self.format.value}
+        if self.jpeg_quality is not None:
+            image_settings['quality'] = self.jpeg_quality
+        if self.resolution is not None:
+            image_settings['size'] = list(self.resolution)
+        message['image_settings'] = image_settings
+        if self.camera is not None:
+            message['camera'] = self.camera.serialize()
+        if self.renderer is not None:
+            message['renderer'] = self.renderer.serialize()
+        return message
+
+    def _request(self, instance: Instance, params: dict) -> None:
         instance.request('export-frames', params)

@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass
+from typing import Optional
 
 from brayns.core.camera.camera_view import CameraView
 
@@ -27,10 +28,12 @@ from brayns.core.camera.camera_view import CameraView
 class KeyFrame:
 
     index: int
-    view: CameraView
+    view: Optional[CameraView] = None
 
     def serialize(self) -> dict:
-        return {
+        message = {
             'frame_index': self.index,
-            'camera_view': self.view.serialize()
         }
+        if self.view is not None:
+            message['camera_view'] = self.view.serialize()
+        return message
