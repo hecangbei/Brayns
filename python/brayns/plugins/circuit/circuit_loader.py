@@ -27,7 +27,7 @@ from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.report import Report
 
 
-@dataclass
+@dataclass(frozen=True)
 class CircuitLoader:
 
     cells: Cells = Cells.all()
@@ -41,7 +41,10 @@ class CircuitLoader:
 
     @staticmethod
     def for_soma_only() -> 'CircuitLoader':
-        return CircuitLoader(radius_multiplier=10.0)
+        return CircuitLoader(
+            cells=Cells.from_density(0.1),
+            radius_multiplier=10.0
+        )
 
     @staticmethod
     def for_morphology() -> 'CircuitLoader':
