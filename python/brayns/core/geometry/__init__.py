@@ -19,12 +19,14 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.core.geometry.box import Box
+from brayns.core.geometry.color import Color
 from brayns.core.geometry.quaternion import Quaternion
 from brayns.core.geometry.transform import Transform
 from brayns.core.geometry.vector3 import Vector3
 
 __all__ = [
     'Box',
+    'Color',
     'Quaternion',
     'Transform',
     'Vector3'

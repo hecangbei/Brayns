@@ -27,9 +27,9 @@ from brayns.core.geometry.vector import Vector
 @dataclass(frozen=True)
 class Vector3(Vector):
 
-    x: float
-    y: float
-    z: float
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
 
     @staticmethod
     def full(value: float) -> 'Vector3':
@@ -38,7 +38,7 @@ class Vector3(Vector):
     @classmethod
     @property
     def zero(cls) -> 'Vector3':
-        return Vector3.full(0.0)
+        return Vector3()
 
     @classmethod
     @property

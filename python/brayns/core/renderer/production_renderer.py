@@ -18,44 +18,22 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from abc import ABC, abstractmethod
-from typing import TypeVar
+from dataclasses import dataclass
 
-from brayns.instance.instance_protocol import InstanceProtocol
-
-T = TypeVar('T', bound='Camera')
+from brayns.core.renderer.renderer import Renderer
 
 
-class Camera(ABC):
+@dataclass
+class ProductionRenderer(Renderer):
 
     @classmethod
     @property
-    @abstractmethod
     def name(cls) -> str:
-        pass
+        return 'production'
 
     @classmethod
-    @abstractmethod
-    def deserialize(cls: type[T], message: dict) -> T:
-        pass
+    def deserialize(cls, message: dict) -> 'ProductionRenderer':
+        return cls.from_dict(message)
 
-    @abstractmethod
     def serialize(self) -> dict:
-        pass
-
-    @staticmethod
-    def get_main_camera_name(instance: InstanceProtocol) -> str:
-        return instance.request('get-camera-type')
-
-    @classmethod
-    def from_instance(cls: type[T], instance: InstanceProtocol) -> T:
-        result = instance.request(f'get-camera-{cls.name}')
-        return cls.deserialize(result)
-
-    @classmethod
-    def is_main_camera(cls, instance: InstanceProtocol) -> None:
-        return cls.name == Camera.get_main_camera_name(instance)
-
-    def use_as_main_camera(self, instance: InstanceProtocol) -> None:
-        params = self.serialize()
-        instance.request(f'set-camera-{self.name}', params)
+        return self.to_dict()

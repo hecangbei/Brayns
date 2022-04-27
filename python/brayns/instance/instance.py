@@ -31,12 +31,6 @@ class Instance(InstanceProtocol):
     def __init__(self, client: JsonRpcClient) -> None:
         self._client = client
 
-    def __enter__(self) -> 'Instance':
-        return self
-
-    def __exit__(self, *_) -> None:
-        self.disconnect()
-
     def disconnect(self) -> None:
         self._client.disconnect()
 

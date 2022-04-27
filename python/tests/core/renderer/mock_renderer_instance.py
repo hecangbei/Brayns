@@ -18,24 +18,31 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any, Protocol
+from typing import Any
 
-from brayns.instance.request_future import RequestFuture
+from brayns.instance.instance_protocol import InstanceProtocol
 
 
-class InstanceProtocol(Protocol):
+class MockRendererInstance(InstanceProtocol):
 
-    def __enter__(self) -> 'InstanceProtocol':
-        return self
-
-    def __exit__(self, *_) -> None:
-        self.disconnect()
-
-    def disconnect(self) -> None:
-        pass
+    def __init__(self) -> None:
+        self.name = ''
+        self.properties = {}
+        self.method = ''
+        self.params = None
 
     def request(self, method: str, params: Any = None) -> Any:
-        return self.task(method, params).wait_for_result()
-
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        raise NotImplementedError()
+        self.method = method
+        self.params = params
+        if method == 'get-renderer-type':
+            return self.name
+        if method.startswith('get-renderer-'):
+            name = method.split('-')[2]
+            if name != self.name:
+                raise RuntimeError(f'Current renderer is not {name}')
+            return self.properties
+        if method.startswith('set-renderer-'):
+            self.name = method.split('-')[2]
+            self.properties = params
+            return None
+        raise RuntimeError('Invalid request')

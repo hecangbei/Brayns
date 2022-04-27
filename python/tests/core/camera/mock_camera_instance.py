@@ -46,7 +46,7 @@ class MockCameraInstance(InstanceProtocol):
         if method.startswith('get-camera-'):
             name = method.split('-')[2]
             if name != self.name:
-                raise RuntimeError(f'Current camera is {self.name} not {name}')
+                raise RuntimeError(f'Current camera is not {name}')
             return self.properties
         if method.startswith('set-camera-'):
             self.name = method.split('-')[2]
