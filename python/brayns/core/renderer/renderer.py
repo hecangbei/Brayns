@@ -22,7 +22,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional, TypeVar
 
-from brayns.core.geometry.color import Color
+from brayns.core.common.color import Color
 from brayns.instance.instance_protocol import InstanceProtocol
 
 T = TypeVar('T', bound='Renderer')

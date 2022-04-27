@@ -20,10 +20,10 @@
 
 from types import MappingProxyType
 
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.quaternion import Quaternion
-from brayns.core.geometry.transform import Transform
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.box import Box
+from brayns.core.common.quaternion import Quaternion
+from brayns.core.common.transform import Transform
+from brayns.core.common.vector3 import Vector3
 from brayns.instance.instance_protocol import InstanceProtocol
 
 

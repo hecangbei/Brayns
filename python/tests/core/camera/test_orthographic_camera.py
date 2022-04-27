@@ -21,8 +21,8 @@
 import unittest
 
 from brayns.core.camera.orthographic_camera import OrthographicCamera
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.box import Box
+from brayns.core.common.vector3 import Vector3
 
 
 class TestPerspectiveCamera(unittest.TestCase):

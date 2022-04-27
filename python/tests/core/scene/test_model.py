@@ -21,10 +21,10 @@
 import unittest
 from types import MappingProxyType
 
-from brayns.core.geometry.box import Box
-from brayns.core.geometry.quaternion import Quaternion
-from brayns.core.geometry.transform import Transform
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.box import Box
+from brayns.core.common.quaternion import Quaternion
+from brayns.core.common.transform import Transform
+from brayns.core.common.vector3 import Vector3
 from brayns.core.scene.model import Model
 from tests.core.scene.mock_scene_instance import MockSceneInstance
 

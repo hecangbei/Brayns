@@ -22,8 +22,8 @@ import math
 from dataclasses import dataclass
 from typing import Iterator, Union
 
-from brayns.core.geometry.vector import Vector
-from brayns.core.geometry.vector3 import Vector3
+from brayns.core.common.vector import Vector
+from brayns.core.common.vector3 import Vector3
 
 
 @dataclass(frozen=True)

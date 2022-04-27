@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.geometry.box import Box
+from brayns.core.common.box import Box
 from brayns.core.scene.model import Model
 from brayns.instance.instance_protocol import InstanceProtocol
 
@@ -61,7 +61,7 @@ class Scene:
     @property
     def bounds(self) -> Box:
         return self._bounds
-    
+
     @property
     def models(self) -> tuple[Model]:
         return self._models

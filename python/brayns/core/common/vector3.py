@@ -21,7 +21,7 @@
 from dataclasses import dataclass
 from typing import Iterator
 
-from brayns.core.geometry.vector import Vector
+from brayns.core.common.vector import Vector
 
 
 @dataclass(frozen=True)

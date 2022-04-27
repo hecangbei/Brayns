@@ -20,7 +20,7 @@
 
 import unittest
 
-from brayns.core.geometry.box import Box
+from brayns.core.common.box import Box
 from brayns.core.scene.model import Model
 from brayns.core.scene.scene import Scene
 from tests.core.scene.mock_scene_instance import MockSceneInstance

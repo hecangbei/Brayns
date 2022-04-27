@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.core.camera import *
-from brayns.core.geometry import *
+from brayns.core.common import *
 from brayns.core.parameters import *
 from brayns.core.scene import *
 from brayns.core.snapshot import *

@@ -20,7 +20,7 @@
 
 from typing import Any
 
-from brayns.core.geometry.transform import Transform
+from brayns.core.common.transform import Transform
 from brayns.core.scene.model import Model
 from brayns.instance.instance_protocol import InstanceProtocol
 
