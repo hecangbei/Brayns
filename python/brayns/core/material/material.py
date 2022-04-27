@@ -25,15 +25,13 @@ from typing import TypeVar
 from brayns.core.common.color import Color
 from brayns.instance.instance import Instance
 
-T = TypeVar('T', bound='Renderer')
+T = TypeVar('T', bound='Material')
 
 
 @dataclass
-class Renderer(ABC):
+class Material(ABC):
 
-    samples_per_pixel: int = 1
-    max_ray_bounces: int = 3
-    background_color: Color = Color.bbp_background.transparent
+    color: Color = Color.white
 
     @classmethod
     @property
@@ -51,34 +49,35 @@ class Renderer(ABC):
         pass
 
     @staticmethod
-    def get_main_renderer_name(instance: Instance) -> str:
-        return instance.request('get-renderer-type')
+    def get_material_name(instance: Instance, model_id: int) -> str:
+        params = {'id': model_id}
+        return instance.request('get-material-type', params)
 
     @classmethod
     def from_dict(cls: type[T], message: dict, **kwargs) -> T:
         return cls(
-            samples_per_pixel=message['samples_per_pixel'],
-            max_ray_bounces=message['max_ray_bounces'],
-            background_color=Color(*message['background_color']),
+            color=message['color'],
             **kwargs
         )
 
     @classmethod
-    def from_instance(cls: type[T], instance: Instance) -> T:
-        result = instance.request(f'get-renderer-{cls.name}')
+    def from_model(cls: type[T], instance: Instance, model_id: int) -> T:
+        params = {'id': model_id}
+        result = instance.request(f'get-material-{cls.name}', params)
         return cls.deserialize(result)
 
     @classmethod
-    def is_main_renderer(cls, instance: Instance) -> bool:
-        return cls.name == Renderer.get_main_renderer_name(instance)
+    def is_applied(cls, instance: Instance, model_id: int) -> bool:
+        return cls.name == Material.get_material_name(instance, model_id)
 
     def to_dict(self, properties: dict) -> dict:
         return {
-            'samples_per_pixel': self.samples_per_pixel,
-            'max_ray_bounces': self.max_ray_bounces,
-            'background_color': list(self.background_color)
+            'color': self.color,
         } | properties
 
-    def use_as_main_renderer(self, instance: Instance) -> None:
-        params = self.serialize()
-        instance.request(f'set-renderer-{self.name}', params)
+    def apply(self, instance: Instance, model_id: int) -> None:
+        params = {
+            'model_id': model_id,
+            'material': self.serialize()
+        }
+        instance.request(f'set-material-{self.name}', params)

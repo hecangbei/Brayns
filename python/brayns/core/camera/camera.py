@@ -53,7 +53,7 @@ class Camera(ABC):
         return cls.deserialize(result)
 
     @classmethod
-    def is_main_camera(cls, instance: Instance) -> None:
+    def is_main_camera(cls, instance: Instance) -> bool:
         return cls.name == Camera.get_main_camera_name(instance)
 
     def use_as_main_camera(self, instance: Instance) -> None:

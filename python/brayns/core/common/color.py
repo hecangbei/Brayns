@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Iterator
 
 from brayns.core.common.vector import Vector
@@ -50,11 +50,44 @@ class Color(Vector):
 
     @classmethod
     @property
+    def black(cls) -> 'Color':
+        return Color()
+
+    @classmethod
+    @property
+    def white(cls) -> 'Color':
+        return Color(1.0, 1.0, 1.0)
+
+    @classmethod
+    @property
+    def pure_red(self) -> 'Color':
+        return Color(1.0, 0.0, 0.0)
+
+    @classmethod
+    @property
+    def pure_green(self) -> 'Color':
+        return Color(0.0, 1.0, 0.0)
+
+    @classmethod
+    @property
+    def pure_blue(self) -> 'Color':
+        return Color(0.0, 0.0, 1.0)
+
+    @classmethod
+    @property
     def bbp_background(cls) -> 'Color':
-        return Color(0.004, 0.016, 0.102, 0.0)
+        return Color(0.004, 0.016, 0.102)
 
     def __iter__(self) -> Iterator[float]:
         yield self.red
         yield self.green
         yield self.blue
         yield self.alpha
+
+    @property
+    def transparent(self) -> 'Color':
+        return replace(self, alpha=0.0)
+
+    @property
+    def opaque(self) -> 'Color':
+        return replace(self, alpha=1.0)
