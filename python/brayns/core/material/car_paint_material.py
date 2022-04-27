@@ -18,22 +18,29 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.material.car_paint_material import CarPaintMaterial
-from brayns.core.material.default_material import DefaultMaterial
-from brayns.core.material.emissive_material import EmissiveMaterial
-from brayns.core.material.glass_material import GlassMaterial
-from brayns.core.material.material import Material
-from brayns.core.material.matte_material import MatteMaterial
-from brayns.core.material.metal_material import MetalMaterial
-from brayns.core.material.plastic_material import PlasticMaterial
+from dataclasses import dataclass
 
-__all__ = [
-    'CarPaintMaterial',
-    'DefaultMaterial',
-    'EmissiveMaterial',
-    'GlassMaterial',
-    'Material',
-    'MatteMaterial',
-    'MetalMaterial',
-    'PlasticMaterial'
-]
+from brayns.core.material.material import Material
+
+
+@dataclass
+class CarPaintMaterial(Material):
+
+    flake_density: float = 0.0
+
+    @classmethod
+    @property
+    def name(self) -> str:
+        return 'carpaint'
+
+    @classmethod
+    def deserialize(cls, message: dict) -> 'CarPaintMaterial':
+        return cls.from_dict(
+            message,
+            flake_density=message['flake_density']
+        )
+
+    def serialize(self) -> dict:
+        return self.to_dict({
+            'flake_density': self.flake_density
+        })
