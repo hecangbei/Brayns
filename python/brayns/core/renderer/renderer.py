@@ -19,19 +19,26 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from dataclasses import dataclass
+from typing import Optional, TypeVar
 
+from brayns.core.geometry.color import Color
 from brayns.instance.instance_protocol import InstanceProtocol
 
-T = TypeVar('T', bound='Camera')
+T = TypeVar('T', bound='Renderer')
 
 
-class Camera(ABC):
+@dataclass
+class Renderer(ABC):
+
+    samples_per_pixel: int = 1
+    max_ray_bounces: int = 3
+    background_color: Color = Color.bbp_background
 
     @classmethod
     @property
     @abstractmethod
-    def name(cls) -> str:
+    def name(self) -> str:
         pass
 
     @classmethod
@@ -44,18 +51,35 @@ class Camera(ABC):
         pass
 
     @staticmethod
-    def get_main_camera_name(instance: InstanceProtocol) -> str:
-        return instance.request('get-camera-type')
+    def get_main_renderer_name(instance: InstanceProtocol) -> str:
+        return instance.request('get-renderer-type')
+
+    @classmethod
+    def from_dict(cls: type[T], message: dict, **kwargs) -> T:
+        return cls(
+            samples_per_pixel=message['samples_per_pixel'],
+            max_ray_bounces=message['max_ray_bounces'],
+            background_color=Color(*message['background_color']),
+            **kwargs
+        )
 
     @classmethod
     def from_instance(cls: type[T], instance: InstanceProtocol) -> T:
-        result = instance.request(f'get-camera-{cls.name}')
+        result = instance.request(f'get-renderer-{cls.name}')
         return cls.deserialize(result)
 
     @classmethod
-    def is_main_camera(cls, instance: InstanceProtocol) -> None:
-        return cls.name == Camera.get_main_camera_name(instance)
+    def is_main_renderer(cls, instance: InstanceProtocol) -> None:
+        return cls.name == Renderer.get_main_renderer_name(instance)
 
-    def use_as_main_camera(self, instance: InstanceProtocol) -> None:
+    def to_dict(self, properties: Optional[dict] = None) -> dict:
+        properties = {} if properties is None else properties
+        return {
+            'samples_per_pixel': self.samples_per_pixel,
+            'max_ray_bounces': self.max_ray_bounces,
+            'background_color': list(self.background_color)
+        } | properties
+
+    def use_as_main_renderer(self, instance: InstanceProtocol) -> None:
         params = self.serialize()
-        instance.request(f'set-camera-{self.name}', params)
+        instance.request(f'set-renderer-{self.name}', params)

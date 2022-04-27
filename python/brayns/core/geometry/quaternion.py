@@ -29,10 +29,10 @@ from brayns.core.geometry.vector3 import Vector3
 @dataclass(frozen=True)
 class Quaternion(Vector):
 
-    x: float
-    y: float
-    z: float
-    w: float
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    w: float = 1.0
 
     @staticmethod
     def from_euler(euler: Vector3, degrees: bool = False) -> 'Quaternion':
@@ -63,7 +63,7 @@ class Quaternion(Vector):
     @classmethod
     @property
     def identity(cls) -> 'Quaternion':
-        return Quaternion(0.0, 0.0, 0.0, 1.0)
+        return Quaternion()
 
     def __iter__(self) -> Iterator[float]:
         yield self.x

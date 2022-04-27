@@ -18,24 +18,32 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any, Protocol
+import unittest
 
-from brayns.instance.request_future import RequestFuture
+from brayns.core.geometry.color import Color
 
 
-class InstanceProtocol(Protocol):
+class TestColor(unittest.TestCase):
 
-    def __enter__(self) -> 'InstanceProtocol':
-        return self
+    def test_normalize_hex(self) -> None:
+        test = Color.normalize_hex('FF')
+        self.assertEqual(test, 1.0)
 
-    def __exit__(self, *_) -> None:
-        self.disconnect()
+    def test_from_hex(self) -> None:
+        test = Color.from_hex('2ca02c')
+        ref = Color.from_int8(44, 160, 44)
+        self.assertEqual(test, ref)
 
-    def disconnect(self) -> None:
-        pass
+    def test_from_int8(self) -> None:
+        test = Color.from_int8(33, 160, 44)
+        ref = Color(33 / 255, 160 / 255, 44 / 255)
+        self.assertEqual(test, ref)
 
-    def request(self, method: str, params: Any = None) -> Any:
-        return self.task(method, params).wait_for_result()
+    def test_iter(self) -> None:
+        test = list(Color(1, 2, 3, 4))
+        ref = [1, 2, 3, 4]
+        self.assertEqual(test, ref)
 
-    def task(self, method: str, params: Any = None) -> RequestFuture:
-        raise NotImplementedError()
+
+if __name__ == '__main__':
+    unittest.main()

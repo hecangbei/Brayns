@@ -54,7 +54,7 @@ class TestPerspectiveCamera(unittest.TestCase):
         camera = OrthographicCamera.from_target(target)
         target = Box(-Vector3.one, Vector3.one)
         test = camera.get_full_screen_view(target)
-        self.assertEqual(test.position, Vector3.forward)
+        self.assertEqual(test.position, 2 * Vector3.forward)
         self.assertEqual(test.target, Vector3.zero)
         self.assertEqual(test.up, Vector3.up)
 
