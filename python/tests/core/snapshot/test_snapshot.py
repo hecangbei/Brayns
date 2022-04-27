@@ -20,8 +20,11 @@
 
 import unittest
 
+from brayns.core.camera.camera_view import CameraView
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.snapshot import Snapshot
+from tests.core.camera.mock_camera import MockCamera
+from tests.core.renderer.mock_renderer import MockRenderer
 from tests.core.snapshot.mock_snapshot_instance import MockSnapshotInstance
 
 
@@ -29,39 +32,55 @@ class TestSnapshot(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSnapshotInstance()
-        self._snapshot = Snapshot(
-            jpeg_quality=50,
-            resolution=(600, 900),
-            frame=12
-        )
 
     def test_save_remotely(self) -> None:
+        snapshot = Snapshot()
         path = 'test.jpg'
-        self._snapshot.save_remotely(self._instance, path)
+        snapshot.save_remotely(self._instance, path)
         self.assertEqual(self._instance.method, 'snapshot')
         self.assertEqual(self._instance.params, {
             'path': path,
             'image_settings': {
-                'quality': self._snapshot.jpeg_quality,
-                'size': self._snapshot.resolution,
                 'format': 'jpg'
-            },
-            'animation_frame': self._snapshot.frame
+            }
         })
 
-    def test_download(self) -> None:
-        data = self._snapshot.download(self._instance, ImageFormat.JPEG)
+    def test_download_not_params(self) -> None:
+        snapshot = Snapshot()
+        data = snapshot.download(self._instance, ImageFormat.PNG)
         self.assertEqual(data, self._instance.data)
         self.assertEqual(self._instance.method, 'snapshot')
         self.assertEqual(self._instance.params, {
-            'path': None,
             'image_settings': {
-                'quality': self._snapshot.jpeg_quality,
-                'size': self._snapshot.resolution,
-                'format': 'jpg'
-            },
-            'animation_frame': self._snapshot.frame
+                'format': 'png'
+            }
         })
+
+    def test_download_all_params(self) -> None:
+        snapshot = Snapshot(
+            jpeg_quality=50,
+            resolution=(1920, 1080),
+            frame=12,
+            view=CameraView(),
+            camera=MockCamera(),
+            renderer=MockRenderer()
+        )
+        snapshot.download(self._instance, ImageFormat.JPEG)
+        ref = {
+            'image_settings': {
+                'format': 'jpg',
+                'quality': 50,
+                'size': [1920, 1080]
+            },
+            'animation_settings': {
+                'frame': 12,
+            },
+            'camera_view': CameraView().serialize(),
+            'camera': MockCamera().serialize(),
+            'renderer': MockRenderer().serialize()
+        }
+        test = self._instance.params
+        self.assertEqual(test, ref)
 
 
 if __name__ == '__main__':
