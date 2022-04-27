@@ -59,7 +59,7 @@ class TestCircuit(unittest.TestCase):
 
     def test_for_soma_only(self) -> None:
         loader = CircuitLoader.for_soma_only()
-        self.assertEqual(loader.cells.density, 1.0)
+        self.assertEqual(loader.cells.density, 0.1)
         self.assertEqual(loader.radius_multiplier, 10.0)
         self.assertTrue(loader.load_soma)
 

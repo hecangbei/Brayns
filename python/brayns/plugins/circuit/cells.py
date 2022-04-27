@@ -21,7 +21,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass
+@dataclass(frozen=True)
 class Cells:
 
     density: float = 1.0
