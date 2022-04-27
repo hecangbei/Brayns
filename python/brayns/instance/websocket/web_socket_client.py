@@ -21,12 +21,12 @@
 import ssl
 from typing import Optional, Union
 
+from brayns.instance.websocket.async_web_socket import AsyncWebSocket
 from brayns.instance.websocket.event_loop import EventLoop
 from brayns.instance.websocket.web_socket import WebSocket
-from brayns.instance.websocket.web_socket_protocol import WebSocketProtocol
 
 
-class WebSocketClient(WebSocketProtocol):
+class WebSocketClient(WebSocket):
 
     @staticmethod
     def connect(
@@ -38,27 +38,21 @@ class WebSocketClient(WebSocketProtocol):
         context = ssl.create_default_context(cafile=cafile) if secure else None
         loop = EventLoop()
         websocket = loop.run(
-            WebSocket.connect(uri, context)
+            AsyncWebSocket.connect(uri, context)
         ).result()
         return WebSocketClient(websocket, loop)
 
     def __init__(
         self,
-        websocket: WebSocket,
+        websocket: AsyncWebSocket,
         loop: EventLoop
     ) -> None:
         self._websocket = websocket
         self._loop = loop
 
-    def __enter__(self) -> 'WebSocketClient':
-        return self
-
-    def __exit__(self, *_) -> None:
-        self.close()
-
     @property
     def closed(self) -> bool:
-        return self._websocket.closed or self._loop.closed
+        return self._websocket.closed and self._loop.closed
 
     def close(self) -> None:
         self._loop.run(

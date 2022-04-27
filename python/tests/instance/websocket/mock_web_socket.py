@@ -25,10 +25,10 @@ from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
 from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
 from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
 from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
-from brayns.instance.websocket.web_socket_protocol import WebSocketProtocol
+from brayns.instance.websocket.web_socket import WebSocket
 
 
-class MockWebSocket(WebSocketProtocol):
+class MockWebSocket(WebSocket):
 
     def __init__(self) -> None:
         self._closed = False
