@@ -66,8 +66,7 @@ class TestFrameExporter(unittest.TestCase):
         }
 
     def test_export_frames(self) -> None:
-        folder = 'test'
-        self._exporter.export_frames(self._instance, folder)
+        self._exporter.export_frames(self._instance, self._path)
         self.assertEqual(self._instance.method, 'export-frames')
         self.assertEqual(self._instance.params, self._message)
 
