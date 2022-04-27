@@ -22,6 +22,9 @@ import base64
 from dataclasses import dataclass
 from typing import Optional
 
+from brayns.core.camera.camera import Camera
+from brayns.core.camera.camera_view import CameraView
+from brayns.core.renderer.renderer import Renderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.instance.instance import Instance
 
@@ -29,9 +32,12 @@ from brayns.instance.instance import Instance
 @dataclass
 class Snapshot:
 
-    jpeg_quality: int = 100
+    jpeg_quality: Optional[int] = None
     resolution: Optional[tuple[int, int]] = None
     frame: Optional[int] = None
+    view: Optional[CameraView] = None
+    camera: Optional[Camera] = None
+    renderer: Optional[Renderer] = None
 
     def save(self, instance: Instance, path: str) -> None:
         format = ImageFormat.from_path(path)
@@ -50,15 +56,24 @@ class Snapshot:
         return base64.b64decode(result['data'])
 
     def _get_params(self, format: ImageFormat, path: Optional[str] = None) -> dict:
-        return {
-            'path': path,
-            'image_settings': {
-                'format': format.value,
-                'quality': self.jpeg_quality,
-                'size': self.resolution
-            },
-            'animation_frame': self.frame
-        }
+        message = {}
+        if path is not None:
+            message['path'] = path
+        image = {'format': format.value}
+        if self.jpeg_quality is not None:
+            image['quality'] = self.jpeg_quality
+        if self.resolution is not None:
+            image['size'] = list(self.resolution)
+        message['image_settings'] = image
+        if self.frame is not None:
+            message['animation_settings'] = {'frame': self.frame}
+        if self.view is not None:
+            message['camera_view'] = self.view.serialize()
+        if self.camera is not None:
+            message['camera'] = self.camera.serialize()
+        if self.renderer is not None:
+            message['renderer'] = self.renderer.serialize()
+        return message
 
     def _request(self, instance: Instance, params: dict) -> dict:
         return instance.request('snapshot', params)
