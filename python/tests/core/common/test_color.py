@@ -44,6 +44,16 @@ class TestColor(unittest.TestCase):
         ref = [1, 2, 3, 4]
         self.assertEqual(test, ref)
 
+    def test_transparent(self) -> None:
+        test = Color(1, 2, 3, 4).transparent
+        ref = Color(1, 2, 3, 0)
+        self.assertEqual(test, ref)
+
+    def test_opaque(self) -> None:
+        test = Color(1, 2, 3, 0).opaque
+        ref = Color(1, 2, 3, 1)
+        self.assertEqual(test, ref)
+
 
 if __name__ == '__main__':
     unittest.main()

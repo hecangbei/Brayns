@@ -17,23 +17,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-from dataclasses import dataclass
-
-from brayns.core.renderer.renderer import Renderer
-
-
-@dataclass
-class ProductionRenderer(Renderer):
-
-    @classmethod
-    @property
-    def name(cls) -> str:
-        return 'production'
-
-    @classmethod
-    def deserialize(cls, message: dict) -> 'ProductionRenderer':
-        return cls.from_dict(message)
-
-    def serialize(self) -> dict:
-        return self.to_dict({})
