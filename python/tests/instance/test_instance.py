@@ -21,7 +21,7 @@
 import logging
 import unittest
 
-from brayns.instance.instance import Instance
+from brayns.instance.client import Client
 from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
 from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
 from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
@@ -109,8 +109,8 @@ class TestInstance(unittest.TestCase):
                 task.wait_for_result()
             self.assertEqual(context.exception, error.error)
 
-    def _connect(self) -> Instance:
-        return Instance(
+    def _connect(self) -> Client:
+        return Client(
             JsonRpcClient(
                 websocket=self._websocket,
                 logger=logging.Logger('Test')

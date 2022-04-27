@@ -21,10 +21,10 @@
 from typing import Any
 
 from brayns.core.camera.camera_view import CameraView
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
-class MockCameraInstance(InstanceProtocol):
+class MockCameraInstance(Instance):
 
     def __init__(self) -> None:
         self.view = CameraView()

@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from typing import Optional, TypeVar
 
 from brayns.core.common.color import Color
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 T = TypeVar('T', bound='Renderer')
 
@@ -51,7 +51,7 @@ class Renderer(ABC):
         pass
 
     @staticmethod
-    def get_main_renderer_name(instance: InstanceProtocol) -> str:
+    def get_main_renderer_name(instance: Instance) -> str:
         return instance.request('get-renderer-type')
 
     @classmethod
@@ -64,12 +64,12 @@ class Renderer(ABC):
         )
 
     @classmethod
-    def from_instance(cls: type[T], instance: InstanceProtocol) -> T:
+    def from_instance(cls: type[T], instance: Instance) -> T:
         result = instance.request(f'get-renderer-{cls.name}')
         return cls.deserialize(result)
 
     @classmethod
-    def is_main_renderer(cls, instance: InstanceProtocol) -> None:
+    def is_main_renderer(cls, instance: Instance) -> None:
         return cls.name == Renderer.get_main_renderer_name(instance)
 
     def to_dict(self, properties: Optional[dict] = None) -> dict:
@@ -80,6 +80,6 @@ class Renderer(ABC):
             'background_color': list(self.background_color)
         } | properties
 
-    def use_as_main_renderer(self, instance: InstanceProtocol) -> None:
+    def use_as_main_renderer(self, instance: Instance) -> None:
         params = self.serialize()
         instance.request(f'set-renderer-{self.name}', params)

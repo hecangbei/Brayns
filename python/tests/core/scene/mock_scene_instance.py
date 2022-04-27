@@ -22,10 +22,10 @@ from typing import Any
 
 from brayns.core.common.transform import Transform
 from brayns.core.scene.model import Model
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
-class MockSceneInstance(InstanceProtocol):
+class MockSceneInstance(Instance):
 
     def __init__(self) -> None:
         self.models = list[dict]()

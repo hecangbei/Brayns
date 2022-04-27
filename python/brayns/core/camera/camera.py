@@ -21,7 +21,7 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar
 
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 T = TypeVar('T', bound='Camera')
 
@@ -44,18 +44,18 @@ class Camera(ABC):
         pass
 
     @staticmethod
-    def get_main_camera_name(instance: InstanceProtocol) -> str:
+    def get_main_camera_name(instance: Instance) -> str:
         return instance.request('get-camera-type')
 
     @classmethod
-    def from_instance(cls: type[T], instance: InstanceProtocol) -> T:
+    def from_instance(cls: type[T], instance: Instance) -> T:
         result = instance.request(f'get-camera-{cls.name}')
         return cls.deserialize(result)
 
     @classmethod
-    def is_main_camera(cls, instance: InstanceProtocol) -> None:
+    def is_main_camera(cls, instance: Instance) -> None:
         return cls.name == Camera.get_main_camera_name(instance)
 
-    def use_as_main_camera(self, instance: InstanceProtocol) -> None:
+    def use_as_main_camera(self, instance: Instance) -> None:
         params = self.serialize()
         instance.request(f'set-camera-{self.name}', params)

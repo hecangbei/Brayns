@@ -24,13 +24,13 @@ from brayns.core.common.box import Box
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.transform import Transform
 from brayns.core.common.vector3 import Vector3
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 class Model:
 
     @staticmethod
-    def from_instance(instance: InstanceProtocol, id: int) -> 'Model':
+    def from_instance(instance: Instance, id: int) -> 'Model':
         result = instance.request('get-model', {'id': id})
         return Model.deserialize(result)
 
@@ -117,7 +117,7 @@ class Model:
             'transformation': self.transform.serialize()
         }
 
-    def update(self, instance: InstanceProtocol) -> None:
+    def update(self, instance: Instance) -> None:
         params = self.serialize()
         instance.request('update-model', params)
 
