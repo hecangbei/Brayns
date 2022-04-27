@@ -22,7 +22,7 @@ from dataclasses import dataclass
 
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.vector3 import Vector3
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 @dataclass
@@ -33,7 +33,7 @@ class CameraView:
     up: Vector3 = Vector3.up
 
     @staticmethod
-    def from_instance(instance: InstanceProtocol) -> 'CameraView':
+    def from_instance(instance: Instance) -> 'CameraView':
         result = instance.request('get-camera-look-at')
         return CameraView.deserialize(result)
 
@@ -45,7 +45,7 @@ class CameraView:
             up=Vector3(*message['up'])
         )
 
-    def use_for_main_camera(self, instance: InstanceProtocol) -> None:
+    def use_for_main_camera(self, instance: Instance) -> None:
         params = self.serialize()
         instance.request('set-camera-look-at', params)
 

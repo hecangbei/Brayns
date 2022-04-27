@@ -19,13 +19,13 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.core.parameters.time_unit import TimeUnit
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 class AnimationParameters:
 
     @staticmethod
-    def from_instance(instance: InstanceProtocol) -> 'AnimationParameters':
+    def from_instance(instance: Instance) -> 'AnimationParameters':
         result = instance.request('get-animation-parameters')
         return AnimationParameters.deserialize(result)
 
@@ -85,7 +85,7 @@ class AnimationParameters:
     def time_unit(self) -> TimeUnit:
         return self._time_unit
 
-    def update(self, instance: InstanceProtocol) -> None:
+    def update(self, instance: Instance) -> None:
         params = self.serialize()
         instance.request('set-animation-parameters', params)
 

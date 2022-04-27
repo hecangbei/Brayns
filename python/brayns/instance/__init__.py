@@ -18,14 +18,14 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 from brayns.instance.connect import connect
 from brayns.instance.request_error import RequestError
 from brayns.instance.request_future import RequestFuture
 from brayns.instance.request_progress import RequestProgress
 
 __all__ = [
-    'InstanceProtocol',
+    'Instance',
     'connect',
     'RequestError',
     'RequestFuture',

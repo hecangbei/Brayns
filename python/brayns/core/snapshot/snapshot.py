@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from brayns.core.snapshot.image_format import ImageFormat
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 @dataclass
@@ -33,18 +33,18 @@ class Snapshot:
     resolution: Optional[tuple[int, int]] = None
     frame: Optional[int] = None
 
-    def save(self, instance: InstanceProtocol, path: str) -> None:
+    def save(self, instance: Instance, path: str) -> None:
         format = ImageFormat.from_path(path)
         data = self.download(instance, format)
         with open(path, 'wb') as file:
             file.write(data)
 
-    def save_remotely(self, instance: InstanceProtocol, path: str) -> None:
+    def save_remotely(self, instance: Instance, path: str) -> None:
         format = ImageFormat.from_path(path)
         params = self._get_params(format, path)
         self._request(instance, params)
 
-    def download(self, instance: InstanceProtocol, format: ImageFormat = ImageFormat.PNG) -> bytes:
+    def download(self, instance: Instance, format: ImageFormat = ImageFormat.PNG) -> bytes:
         params = self._get_params(format)
         result = self._request(instance, params)
         return base64.b64decode(result['data'])
@@ -60,5 +60,5 @@ class Snapshot:
             'animation_frame': self.frame
         }
 
-    def _request(self, instance: InstanceProtocol, params: dict) -> dict:
+    def _request(self, instance: Instance, params: dict) -> dict:
         return instance.request('snapshot', params)

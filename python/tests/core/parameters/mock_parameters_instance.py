@@ -20,10 +20,10 @@
 
 from typing import Any
 
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
-class MockParametersInstance(InstanceProtocol):
+class MockParametersInstance(Instance):
 
     def __init__(self) -> None:
         self.method = ''

@@ -22,8 +22,8 @@ import logging
 import sys
 from typing import Optional
 
+from brayns.instance.client import Client
 from brayns.instance.instance import Instance
-from brayns.instance.instance_protocol import InstanceProtocol
 from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
 from brayns.instance.websocket.web_socket_client import WebSocketClient
 
@@ -33,10 +33,10 @@ def connect(
     secure: bool = False,
     cafile: Optional[str] = None,
     logger: Optional[logging.Logger] = None
-) -> InstanceProtocol:
+) -> Instance:
     websocket = WebSocketClient.connect(uri, secure, cafile)
     if logger is None:
         logger = logging.Logger('Brayns', logging.WARN)
         logger.addHandler(logging.StreamHandler(sys.stdout))
     json_rpc_client = JsonRpcClient(websocket, logger)
-    return Instance(json_rpc_client)
+    return Client(json_rpc_client)

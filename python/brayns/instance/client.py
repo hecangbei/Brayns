@@ -18,24 +18,31 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any, Protocol
+from typing import Any
 
+from brayns.instance.instance import Instance
+from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.instance.request_future import RequestFuture
 
 
-class InstanceProtocol(Protocol):
+class Client(Instance):
 
-    def __enter__(self) -> 'InstanceProtocol':
-        return self
-
-    def __exit__(self, *_) -> None:
-        self.disconnect()
+    def __init__(self, client: JsonRpcClient) -> None:
+        self._client = client
 
     def disconnect(self) -> None:
-        pass
+        self._client.disconnect()
 
     def request(self, method: str, params: Any = None) -> Any:
         return self.task(method, params).wait_for_result()
 
     def task(self, method: str, params: Any = None) -> RequestFuture:
-        raise NotImplementedError()
+        id = 0
+        while id in self._client.get_active_tasks():
+            id += 1
+        return RequestFuture(
+            cancel=lambda: self.request('cancel', {'id': id}),
+            poll=self._client.poll,
+            task=self._client.send(JsonRpcRequest(id, method, params))
+        )

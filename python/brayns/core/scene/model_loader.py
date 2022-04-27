@@ -21,7 +21,7 @@
 from dataclasses import dataclass, field
 
 from brayns.core.scene.model import Model
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 @dataclass
@@ -30,7 +30,7 @@ class ModelLoader:
     name: str = ''
     properties: dict = field(default_factory=dict)
 
-    def add_model(self, instance: InstanceProtocol, path: str) -> list[Model]:
+    def add_model(self, instance: Instance, path: str) -> list[Model]:
         params = {
             'path': path,
             'loader': self.name,

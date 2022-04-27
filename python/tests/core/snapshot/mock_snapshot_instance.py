@@ -21,10 +21,10 @@
 import base64
 from typing import Any
 
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
-class MockSnapshotInstance(InstanceProtocol):
+class MockSnapshotInstance(Instance):
 
     def __init__(self) -> None:
         self.data = b'123456789'

@@ -23,7 +23,7 @@ from typing import Optional
 
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 @dataclass
@@ -35,7 +35,7 @@ class FrameExporter:
     resolution: Optional[tuple[int, int]] = None
     sequential_naming: bool = True
 
-    def export_frames(self, instance: InstanceProtocol, folder: str) -> None:
+    def export_frames(self, instance: Instance, folder: str) -> None:
         params = {
             'path': folder,
             'image_settings': {

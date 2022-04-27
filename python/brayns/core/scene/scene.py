@@ -20,13 +20,13 @@
 
 from brayns.core.common.box import Box
 from brayns.core.scene.model import Model
-from brayns.instance.instance_protocol import InstanceProtocol
+from brayns.instance.instance import Instance
 
 
 class Scene:
 
     @staticmethod
-    def from_instance(instance: InstanceProtocol) -> 'Scene':
+    def from_instance(instance: Instance) -> 'Scene':
         result = instance.request('get-scene')
         return Scene.deserialize(result)
 
@@ -41,11 +41,11 @@ class Scene:
         )
 
     @staticmethod
-    def remove_models(instance: InstanceProtocol, ids: list[int]) -> None:
+    def remove_models(instance: Instance, ids: list[int]) -> None:
         instance.request('remove-model', {'ids': ids})
 
     @staticmethod
-    def clear_models(instance: InstanceProtocol) -> None:
+    def clear_models(instance: Instance) -> None:
         scene = Scene.from_instance(instance)
         ids = [model.id for model in scene.models]
         Scene.remove_models(instance, ids)
