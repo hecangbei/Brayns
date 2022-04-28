@@ -40,16 +40,6 @@ class Scene:
             )
         )
 
-    @staticmethod
-    def remove_models(instance: Instance, ids: list[int]) -> None:
-        instance.request('remove-model', {'ids': ids})
-
-    @staticmethod
-    def clear_models(instance: Instance) -> None:
-        scene = Scene.from_instance(instance)
-        ids = [model.id for model in scene.models]
-        Scene.remove_models(instance, ids)
-
     def __init__(
         self,
         bounds: Box,

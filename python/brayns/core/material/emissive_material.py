@@ -35,12 +35,12 @@ class EmissiveMaterial(Material):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'EmissiveMaterial':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             intensity=message['intensity']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'intensity': self.intensity
         })

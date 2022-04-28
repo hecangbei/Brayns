@@ -55,15 +55,6 @@ class Renderer(ABC):
         return instance.request('get-renderer-type')
 
     @classmethod
-    def from_dict(cls: type[T], message: dict, **kwargs) -> T:
-        return cls(
-            samples_per_pixel=message['samples_per_pixel'],
-            max_ray_bounces=message['max_ray_bounces'],
-            background_color=Color(*message['background_color']),
-            **kwargs
-        )
-
-    @classmethod
     def from_instance(cls: type[T], instance: Instance) -> T:
         result = instance.request(f'get-renderer-{cls.name}')
         return cls.deserialize(result)
@@ -72,13 +63,22 @@ class Renderer(ABC):
     def is_main_renderer(cls, instance: Instance) -> bool:
         return cls.name == Renderer.get_main_renderer_name(instance)
 
-    def to_dict(self, properties: dict) -> dict:
+    def use_as_main_renderer(self, instance: Instance) -> None:
+        params = self.serialize()
+        instance.request(f'set-renderer-{self.name}', params)
+
+    @classmethod
+    def _from_dict(cls: type[T], message: dict, **kwargs) -> T:
+        return cls(
+            samples_per_pixel=message['samples_per_pixel'],
+            max_ray_bounces=message['max_ray_bounces'],
+            background_color=Color(*message['background_color']),
+            **kwargs
+        )
+
+    def _to_dict(self, properties: dict) -> dict:
         return {
             'samples_per_pixel': self.samples_per_pixel,
             'max_ray_bounces': self.max_ray_bounces,
             'background_color': list(self.background_color)
         } | properties
-
-    def use_as_main_renderer(self, instance: Instance) -> None:
-        params = self.serialize()
-        instance.request(f'set-renderer-{self.name}', params)

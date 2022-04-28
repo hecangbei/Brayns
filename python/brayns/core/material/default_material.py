@@ -35,12 +35,12 @@ class DefaultMaterial(Material):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'DefaultMaterial':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             opacity=message['opacity']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'opacity': self.opacity
         })

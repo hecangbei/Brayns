@@ -33,7 +33,7 @@ class ProductionRenderer(Renderer):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'ProductionRenderer':
-        return cls.from_dict(message)
+        return cls._from_dict(message)
 
     def serialize(self) -> dict:
-        return self.to_dict({})
+        return self._to_dict({})

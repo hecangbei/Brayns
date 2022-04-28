@@ -54,13 +54,6 @@ class Material(ABC):
         return instance.request('get-material-type', params)
 
     @classmethod
-    def from_dict(cls: type[T], message: dict, **kwargs) -> T:
-        return cls(
-            color=Color(*message['color']),
-            **kwargs
-        )
-
-    @classmethod
     def from_model(cls: type[T], instance: Instance, model_id: int) -> T:
         params = {'id': model_id}
         result = instance.request(f'get-material-{cls.name}', params)
@@ -70,14 +63,21 @@ class Material(ABC):
     def is_applied(cls, instance: Instance, model_id: int) -> bool:
         return cls.name == Material.get_material_name(instance, model_id)
 
-    def to_dict(self, properties: dict) -> dict:
-        return {
-            'color': list(self.color)[:3],
-        } | properties
-
     def apply(self, instance: Instance, model_id: int) -> None:
         params = {
             'model_id': model_id,
             'material': self.serialize()
         }
         instance.request(f'set-material-{self.name}', params)
+
+    @classmethod
+    def _from_dict(cls: type[T], message: dict, **kwargs) -> T:
+        return cls(
+            color=Color(*message['color']),
+            **kwargs
+        )
+
+    def _to_dict(self, properties: dict) -> dict:
+        return {
+            'color': list(self.color)[:3],
+        } | properties
