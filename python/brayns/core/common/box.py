@@ -33,7 +33,7 @@ class Box:
     def deserialize(message: dict) -> 'Box':
         return Box(
             min=Vector3(*message['min']),
-            max=Vector3(*message['max']),
+            max=Vector3(*message['max'])
         )
 
     @classmethod
