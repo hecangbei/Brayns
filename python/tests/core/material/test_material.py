@@ -39,13 +39,6 @@ class TestMaterial(unittest.TestCase):
         self.assertEqual(self._instance.method, 'get-material-type')
         self.assertEqual(self._instance.params, {'id': 0})
 
-    def test_from_dict(self) -> None:
-        common = {'color': [1, 0, 0]}
-        test = MockMaterial.from_dict(common, test1='test', test2=3)
-        self.assertEqual(test.color, Color.pure_red)
-        self.assertEqual(test.test1, 'test')
-        self.assertEqual(test.test2, 3)
-
     def test_from_model(self) -> None:
         ref = MockMaterial(Color.pure_blue, 'test', 12)
         self._instance.names.append(ref.name)
@@ -58,15 +51,6 @@ class TestMaterial(unittest.TestCase):
     def test_is_applied(self) -> None:
         self._instance.names.append(MockMaterial.name)
         self.assertTrue(MockMaterial.is_applied(self._instance, 0))
-
-    def test_to_dict(self) -> None:
-        material = MockMaterial(Color.pure_red)
-        test = material.to_dict({'test': 0})
-        ref = {
-            'color': [1, 0, 0],
-            'test': 0
-        }
-        self.assertEqual(test, ref)
 
     def test_apply(self) -> None:
         material = MockMaterial(Color.pure_blue, test1='test', test2=3)

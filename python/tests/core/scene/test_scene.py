@@ -60,18 +60,6 @@ class TestScene(unittest.TestCase):
         self.assertEqual(model.visible, ref.visible)
         self.assertEqual(model.transform, ref.transform)
 
-    def test_remove_models(self) -> None:
-        ids = [1, 2, 3]
-        Scene.remove_models(self._instance, ids)
-        self.assertEqual(self._instance.method, 'remove-model')
-        self.assertEqual(self._instance.params, {'ids': ids})
-
-    def test_clear_models(self) -> None:
-        for _ in range(3):
-            self._instance.add_model()
-        Scene.clear_models(self._instance)
-        self.assertFalse(self._instance.models)
-
 
 if __name__ == '__main__':
     unittest.main()

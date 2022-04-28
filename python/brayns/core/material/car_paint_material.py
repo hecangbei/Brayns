@@ -35,12 +35,12 @@ class CarPaintMaterial(Material):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'CarPaintMaterial':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             flake_density=message['flake_density']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'flake_density': self.flake_density
         })

@@ -35,12 +35,12 @@ class GlassMaterial(Material):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'GlassMaterial':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             refraction_index=message['index_of_refraction']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'index_of_refraction': self.refraction_index
         })

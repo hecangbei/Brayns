@@ -36,14 +36,14 @@ class InteractiveRenderer(Renderer):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'InteractiveRenderer':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             enable_shadows=message['enable_shadows'],
             ambient_occlusion_samples=message['ao_samples']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'enable_shadows': self.enable_shadows,
             'ao_samples': self.ambient_occlusion_samples
         })

@@ -35,12 +35,12 @@ class MetalMaterial(Material):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'MetalMaterial':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             roughness=message['roughness']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'roughness': self.roughness
         })

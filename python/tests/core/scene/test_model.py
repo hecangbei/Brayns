@@ -73,6 +73,12 @@ class TestModel(unittest.TestCase):
         self.assertEqual(test.visible, self._model.visible)
         self.assertEqual(test.transform, self._model.transform)
 
+    def test_remove(self) -> None:
+        ids = [1, 2, 3]
+        Model.remove(self._instance, ids)
+        self.assertEqual(self._instance.method, 'remove-model')
+        self.assertEqual(self._instance.params, {'ids': ids})
+
     def test_serialize(self) -> None:
         ref = {
             'id': self._model.id,

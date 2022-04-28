@@ -36,14 +36,14 @@ class MockMaterial(Material):
 
     @classmethod
     def deserialize(cls, message: dict) -> 'MockMaterial':
-        return cls.from_dict(
+        return cls._from_dict(
             message,
             test1=message['test1'],
             test2=message['test2']
         )
 
     def serialize(self) -> dict:
-        return self.to_dict({
+        return self._to_dict({
             'test1': self.test1,
             'test2': self.test2
         })

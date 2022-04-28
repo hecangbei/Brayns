@@ -44,6 +44,10 @@ class Model:
             transform=Transform.deserialize(message['transformation'])
         )
 
+    @staticmethod
+    def remove(instance: Instance, ids: list[int]) -> None:
+        instance.request('remove-model', {'ids': ids})
+
     def __init__(
         self,
         id: int,
