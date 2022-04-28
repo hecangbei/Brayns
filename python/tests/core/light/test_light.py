@@ -26,7 +26,7 @@ from tests.core.light.mock_light import MockLight
 from tests.core.light.mock_light_instance import MockLightInstance
 
 
-class TestLights(unittest.TestCase):
+class TestLight(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockLightInstance()
