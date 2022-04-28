@@ -32,7 +32,7 @@ class TestRenderer(unittest.TestCase):
         self._instance.name = MockRenderer.name
         self._instance.properties = MockRenderer().serialize()
 
-    def test_get_current_renderer_name(self) -> None:
+    def test_get_main_renderer_name(self) -> None:
         test = Renderer.get_main_renderer_name(self._instance)
         ref = self._instance.name
         self.assertEqual(test, ref)
