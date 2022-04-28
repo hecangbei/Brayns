@@ -35,6 +35,10 @@ class MockParametersInstance(Instance):
             'dt': 1,
             'unit': 'ms'
         }
+        self.application = {
+            'plugins': ['test1', 'test2'],
+            'viewport': [1920, 1080]
+        }
 
     def request(self, method: str, params: Any = None) -> Any:
         self.method = method
@@ -42,5 +46,9 @@ class MockParametersInstance(Instance):
         if method == 'get-animation-parameters':
             return self.animation
         if method == 'set-animation-parameters':
+            return None
+        if method == 'get-application-parameters':
+            return self.application
+        if method == 'set-application-parameters':
             return None
         raise RuntimeError('Test error')
