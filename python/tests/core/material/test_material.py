@@ -42,7 +42,7 @@ class TestMaterial(unittest.TestCase):
     def test_from_model(self) -> None:
         ref = MockMaterial(Color.pure_blue, 'test', 12)
         self._instance.names.append(ref.name)
-        self._instance.properties.append(ref.serialize())
+        self._instance.materials.append(ref.serialize())
         test = MockMaterial.from_model(self._instance, 0)
         self.assertEqual(test, ref)
         self.assertEqual(self._instance.method, 'get-material-test')
@@ -55,7 +55,7 @@ class TestMaterial(unittest.TestCase):
     def test_apply(self) -> None:
         material = MockMaterial(Color.pure_blue, test1='test', test2=3)
         self._instance.names.append(material.name)
-        self._instance.properties.append({})
+        self._instance.materials.append({})
         material.apply(self._instance, 0)
         params = {
             'model_id': 0,

@@ -23,10 +23,10 @@ from typing import Any
 from brayns.instance.instance import Instance
 
 
-class MockMaterialInstance(Instance):
+class MockLightInstance(Instance):
 
     def __init__(self) -> None:
-        self.materials = list[dict]()
+        self.lights = list[dict]()
         self.names = list[str]()
         self.method = ''
         self.params = None
@@ -34,20 +34,26 @@ class MockMaterialInstance(Instance):
     def request(self, method: str, params: Any = None) -> Any:
         self.method = method
         self.params = params
-        if method == 'get-material-type':
-            id = params['id']
-            return self.names[id]
-        if method.startswith('get-material-'):
-            id = params['id']
-            name = method.split('-')[2]
-            if name != self.names[id]:
-                raise RuntimeError(f'Current material is not {name}')
-            return self.materials[id]
-        if method.startswith('set-material-'):
-            id = params['model_id']
-            name = method.split('-')[2]
-            if name != self.names[id]:
-                raise RuntimeError()
-            self.materials[id] = params['material']
+        if method == 'remove-lights':
+            ids = params['ids']
+            self.lights = [
+                light
+                for id, light in enumerate(self.lights)
+                if id not in ids
+            ]
+            self.names = [
+                name
+                for id, name in enumerate(self.names)
+                if id not in ids
+            ]
             return None
+        if method == 'clear-lights':
+            self.lights.clear()
+            self.names.clear()
+            return None
+        if method.startswith('add-light-'):
+            name = method.split('-')[2]
+            self.names.append(name)
+            self.lights.append(params)
+            return len(self.names) - 1
         raise RuntimeError('Invalid request')
