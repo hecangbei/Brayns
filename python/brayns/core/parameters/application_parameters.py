@@ -18,6 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from brayns.core.common.resolution import Resolution
 from brayns.instance.instance import Instance
 
 
@@ -32,13 +33,13 @@ class ApplicationParameters:
     def deserialize(message: dict) -> 'ApplicationParameters':
         return ApplicationParameters(
             plugins=tuple(message['plugins']),
-            resolution=tuple(message['viewport'])
+            resolution=Resolution(*message['viewport'])
         )
 
     def __init__(
         self,
         plugins: tuple[str],
-        resolution: tuple[int, int]
+        resolution: Resolution
     ) -> None:
         self._plugins = plugins
         self._resolution = resolution
@@ -48,11 +49,11 @@ class ApplicationParameters:
         return self._plugins
 
     @property
-    def resolution(self) -> tuple[int, int]:
+    def resolution(self) -> Resolution:
         return self._resolution
 
     @resolution.setter
-    def resolution(self, value: tuple[int, int]) -> None:
+    def resolution(self, value: Resolution) -> None:
         self._resolution = value
 
     def update(self, instance: Instance) -> None:

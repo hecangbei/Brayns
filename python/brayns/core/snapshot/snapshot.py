@@ -24,6 +24,7 @@ from typing import Optional
 
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
+from brayns.core.common.resolution import Resolution
 from brayns.core.renderer.renderer import Renderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.instance.instance import Instance
@@ -33,7 +34,7 @@ from brayns.instance.instance import Instance
 class Snapshot:
 
     jpeg_quality: Optional[int] = None
-    resolution: Optional[tuple[int, int]] = None
+    resolution: Optional[Resolution] = None
     frame: Optional[int] = None
     view: Optional[CameraView] = None
     camera: Optional[Camera] = None

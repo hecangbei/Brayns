@@ -20,6 +20,7 @@
 
 import unittest
 
+from brayns.core.common.resolution import Resolution
 from brayns.core.parameters.application_parameters import ApplicationParameters
 from tests.core.parameters.mock_parameters_instance import MockParametersInstance
 
@@ -30,7 +31,7 @@ class TestApplicationParameters(unittest.TestCase):
         self._instance = MockParametersInstance()
         self._application = ApplicationParameters(
             plugins=('test1', 'test2'),
-            resolution=(1920, 1080)
+            resolution=Resolution.full_hd
         )
         self._message = {
             'plugins': ['test1', 'test2'],

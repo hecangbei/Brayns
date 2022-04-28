@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from brayns.core.camera.camera import Camera
+from brayns.core.common.resolution import Resolution
 from brayns.core.renderer.renderer import Renderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
@@ -34,7 +35,7 @@ class FrameExporter:
     frames: list[KeyFrame]
     format: ImageFormat = ImageFormat.PNG
     jpeg_quality: Optional[int] = 100
-    resolution: Optional[tuple[int, int]] = None
+    resolution: Optional[Resolution] = None
     sequential_naming: bool = True
     camera: Optional[Camera] = None
     renderer: Optional[Renderer] = None
