@@ -18,21 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
+
+from brayns.plugins.circuit.cell_id import CellId
 
 
-@dataclass(frozen=True)
-class CellId:
+class TestCellId(unittest.TestCase):
 
-    value: str
+    def test_from_integer(self) -> None:
+        test = CellId.from_integer(3)
+        ref = '3'
+        self.assertEqual(test.value, ref)
 
-    @staticmethod
-    def from_integer(value: int) -> 'CellId':
-        return CellId(str(value))
+    def test_from_range(self) -> None:
+        test = CellId.from_range(0, 3)
+        ref = '0-3'
+        self.assertEqual(test.value, ref)
 
-    @staticmethod
-    def from_range(start: int, end: int) -> 'CellId':
-        return CellId(f'{start}-{end}')
+    def test_or(self) -> None:
+        test = CellId.from_integer(3) | CellId.from_range(10, 13) | CellId('5')
+        ref = '3,10-13,5'
+        self.assertEqual(test.value, ref)
 
-    def __or__(self, other: 'CellId') -> 'CellId':
-        return CellId(f'{self.value},{other.value}')
+
+if __name__ == '__main__':
+    unittest.main()
