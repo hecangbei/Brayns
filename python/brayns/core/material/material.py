@@ -56,7 +56,7 @@ class Material(ABC):
     @classmethod
     def from_dict(cls: type[T], message: dict, **kwargs) -> T:
         return cls(
-            color=message['color'],
+            color=Color(*message['color']),
             **kwargs
         )
 
@@ -72,7 +72,7 @@ class Material(ABC):
 
     def to_dict(self, properties: dict) -> dict:
         return {
-            'color': self.color,
+            'color': list(self.color)[:3],
         } | properties
 
     def apply(self, instance: Instance, model_id: int) -> None:

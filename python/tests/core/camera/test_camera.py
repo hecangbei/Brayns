@@ -32,7 +32,7 @@ class TestCamera(unittest.TestCase):
         self._instance.name = MockCamera.name
         self._instance.properties = MockCamera().serialize()
 
-    def test_get_current_camera_name(self) -> None:
+    def test_get_main_camera_name(self) -> None:
         test = Camera.get_main_camera_name(self._instance)
         ref = self._instance.name
         self.assertEqual(test, ref)
