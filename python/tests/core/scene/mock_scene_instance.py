@@ -87,4 +87,6 @@ class MockSceneInstance(Instance):
             return self.update_model(params)
         if method == 'remove-model':
             return self.remove_model(params)
+        if method == 'enable-simulation':
+            return None
         raise RuntimeError('Test error')

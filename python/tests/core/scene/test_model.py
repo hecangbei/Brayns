@@ -79,6 +79,15 @@ class TestModel(unittest.TestCase):
         self.assertEqual(self._instance.method, 'remove-model')
         self.assertEqual(self._instance.params, {'ids': ids})
 
+    def test_enable_simulation(self) -> None:
+        self._instance.add_model()
+        Model.enable_simulation(self._instance, 1, True)
+        self.assertEqual(self._instance.method, 'enable-simulation')
+        self.assertEqual(self._instance.params, {
+            'model_id': 1,
+            'enabled': True
+        })
+
     def test_serialize(self) -> None:
         ref = {
             'id': self._model.id,

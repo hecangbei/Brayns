@@ -48,6 +48,14 @@ class Model:
     def remove(instance: Instance, ids: list[int]) -> None:
         instance.request('remove-model', {'ids': ids})
 
+    @staticmethod
+    def enable_simulation(instance: Instance, id: int, enabled: bool) -> None:
+        params = {
+            'model_id': id,
+            'enabled': enabled
+        }
+        instance.request('enable-simulation', params)
+
     def __init__(
         self,
         id: int,
