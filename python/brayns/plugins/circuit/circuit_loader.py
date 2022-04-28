@@ -27,7 +27,7 @@ from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.report import Report
 
 
-@dataclass(frozen=True)
+@dataclass
 class CircuitLoader:
 
     cells: Cells = Cells.all()
