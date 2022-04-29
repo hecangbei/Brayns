@@ -25,7 +25,7 @@ from typing import Optional
 @dataclass(frozen=True)
 class BbpCells:
 
-    density: float = 1.0
+    density: Optional[float] = None
     targets: Optional[list[str]] = None
     gids: Optional[list[int]] = None
 
@@ -46,9 +46,9 @@ class BbpCells:
         return BbpCells(gids=gids)
 
     def serialize(self) -> dict:
-        message = {
-            'percentage': self.density
-        }
+        message = {}
+        if self.density is not None:
+            message['percentage'] = self.density
         if self.targets is not None:
             message['targets'] = self.targets
         if self.gids is not None:

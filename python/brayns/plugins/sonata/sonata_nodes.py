@@ -25,7 +25,7 @@ from typing import Optional
 @dataclass(frozen=True)
 class SonataNodes:
 
-    density: float = 1.0
+    density: Optional[float] = None
     names: Optional[list[str]] = None
     ids: Optional[list[int]] = None
 
@@ -46,9 +46,9 @@ class SonataNodes:
         return SonataNodes(ids=ids)
 
     def serialize(self) -> dict:
-        message = {
-            'node_percentage': self.density
-        }
+        message = {}
+        if self.density is not None:
+            message['node_percentage'] = self.density
         if self.names is not None:
             message['node_sets'] = self.names
         if self.ids is not None:
