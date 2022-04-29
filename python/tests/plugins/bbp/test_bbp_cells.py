@@ -33,15 +33,15 @@ class TestBbpCells(unittest.TestCase):
         density = 0.5
         cells = BbpCells.from_density(density)
         self.assertEqual(cells.density, density)
-        self.assertEqual(cells.targets, [])
-        self.assertEqual(cells.gids, [])
+        self.assertEqual(cells.targets, None)
+        self.assertEqual(cells.gids, None)
 
     def test_from_targets(self) -> None:
         targets = ['1', '2', '3']
         cells = BbpCells.from_targets(targets)
         self.assertEqual(cells.density, 1.0)
         self.assertEqual(cells.targets, targets)
-        self.assertEqual(cells.gids, [])
+        self.assertEqual(cells.gids, None)
 
     def test_from_targets_and_density(self) -> None:
         targets = ['1', '2', '3']
@@ -49,7 +49,7 @@ class TestBbpCells(unittest.TestCase):
         cells = BbpCells.from_targets(targets, density)
         self.assertEqual(cells.density, density)
         self.assertEqual(cells.targets, targets)
-        self.assertEqual(cells.gids, [])
+        self.assertEqual(cells.gids, None)
 
     def test_from_gids(self) -> None:
         gids = [1, 2, 3]

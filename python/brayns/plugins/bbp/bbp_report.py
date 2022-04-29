@@ -19,14 +19,15 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass(frozen=True)
 class BbpReport:
 
     type: str
-    name: str = ''
-    spike_transition_time: float = 1.0
+    name: Optional[str] = None
+    spike_transition_time: Optional[float] = None
 
     @staticmethod
     def none() -> 'BbpReport':

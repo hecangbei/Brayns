@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass
+from typing import Optional
 
 from brayns.core.model.model import Model
 from brayns.core.model.model_loader import ModelLoader
@@ -31,7 +32,7 @@ from brayns.plugins.bbp.bbp_report import BbpReport
 class BbpLoader:
 
     cells: BbpCells = BbpCells.all()
-    report: BbpReport = BbpReport.none()
+    report: Optional[BbpReport] = None
     radius_multiplier: float = 1.0
     load_soma: bool = True
     load_axon: bool = False
@@ -54,22 +55,30 @@ class BbpLoader:
         )
 
     def load_circuit(self, instance: Instance, path: str) -> list[Model]:
-        loader = ModelLoader(
-            properties={
-                'percentage': self.cells.density,
-                'targets': self.cells.targets,
-                'gids': self.cells.gids,
-                'report_type': self.report.type,
-                'report_name': self.report.name,
-                'spike_transition_time': self.report.spike_transition_time,
-                'neuron_morphology_parameters': {
-                    'radius_multiplier': self.radius_multiplier,
-                    'load_soma': self.load_soma,
-                    'load_axon': self.load_axon,
-                    'load_dendrites': self.load_dendrites
-                },
-                'load_afferent_synapses': self.load_afferent_synapses,
-                'load_efferent_synapses': self.load_efferent_synapses
-            }
-        )
+        properties = self._get_properties()
+        loader = ModelLoader('BBP loader', properties)
         return loader.add_model(instance, path)
+
+    def _get_properties(self) -> dict:
+        report = BbpReport.none() if self.report is None else self.report
+        params = {
+            'percentage': self.cells.density,
+            'report_type': report.type,
+            'neuron_morphology_parameters': {
+                'radius_multiplier': self.radius_multiplier,
+                'load_soma': self.load_soma,
+                'load_axon': self.load_axon,
+                'load_dendrites': self.load_dendrites
+            },
+            'load_afferent_synapses': self.load_afferent_synapses,
+            'load_efferent_synapses': self.load_efferent_synapses
+        }
+        if report.spike_transition_time is not None:
+            params['spike_transition_time'] = report.spike_transition_time
+        if report.name is not None:
+            params['report_name'] = report.name
+        if self.cells.gids is not None:
+            params['gids'] = self.cells.gids
+        if self.cells.targets is not None:
+            params['targets'] = self.cells.targets
+        return params
