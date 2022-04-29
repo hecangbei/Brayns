@@ -20,31 +20,36 @@
 
 import unittest
 
+from brayns.core.common.color import Color
 from brayns.plugins.circuit.cell_id import CellId
+from brayns.plugins.circuit.circuit_color_by_id import CircuitColorById
+from tests.plugins.circuit.mock_circuit_instance import MockCircuitInstance
 
 
-class TestCellId(unittest.TestCase):
+class TestCircuitColorById(unittest.TestCase):
 
-    def test_from_integer(self) -> None:
-        test = CellId.from_integer(3)
-        ref = '3'
-        self.assertEqual(test.value, ref)
-
-    def test_from_iterable(self) -> None:
-        values = [1, 3, 6]
-        test = CellId.from_iterable(values)
-        ref = '1,3,6'
-        self.assertEqual(test.value, ref)
-
-    def test_from_range(self) -> None:
-        test = CellId.from_range(0, 3)
-        ref = '0-3'
-        self.assertEqual(test.value, ref)
-
-    def test_or(self) -> None:
-        test = CellId.from_integer(3) | CellId.from_range(10, 13) | CellId('5')
-        ref = '3,10-13,5'
-        self.assertEqual(test.value, ref)
+    def test_apply(self) -> None:
+        instance = MockCircuitInstance()
+        color = CircuitColorById({
+            CellId.from_integer(3): Color.white,
+            CellId.from_range(4, 6): Color.pure_red
+        })
+        not_colored = color.apply(instance, 0)
+        self.assertEqual(instance.method, 'color-circuit-by-id')
+        self.assertEqual(instance.params, {
+            'model_id': 0,
+            'color_info': [
+                {
+                    'variable': '3',
+                    'color': [1, 1, 1, 1]
+                },
+                {
+                    'variable': '4-6',
+                    'color': [1, 0, 0, 1]
+                }
+            ]
+        })
+        self.assertEqual(not_colored, instance.not_colored)
 
 
 if __name__ == '__main__':
