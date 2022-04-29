@@ -58,7 +58,8 @@ class TestSnapshot(unittest.TestCase):
         self.assertEqual(self._instance.params, {
             'path': path,
             'image_settings': {
-                'format': 'jpg'
+                'format': 'jpg',
+                'quality': 100
             }
         })
 
