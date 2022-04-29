@@ -20,8 +20,8 @@
 
 from dataclasses import dataclass
 
-from brayns.core.scene.model import Model
-from brayns.core.scene.model_loader import ModelLoader
+from brayns.core.model.model import Model
+from brayns.core.model.model_loader import ModelLoader
 from brayns.instance.instance import Instance
 from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.report import Report
