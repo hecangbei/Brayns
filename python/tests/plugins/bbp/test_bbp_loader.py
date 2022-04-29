@@ -31,7 +31,7 @@ class TestBbpLoader(unittest.TestCase):
     def setUp(self) -> None:
         self._instance = MockSceneInstance()
         self._loader = BbpLoader(
-            cells=BbpCells.all(),
+            cells=BbpCells.from_targets(['tests'], 0.5),
             report=BbpReport.compartment('test'),
             radius_multiplier=3,
             load_soma=True,
@@ -41,12 +41,10 @@ class TestBbpLoader(unittest.TestCase):
             load_efferent_synapses=True
         )
         self._properties = {
-            'percentage': 1.0,
-            'targets': [],
-            'gids': [],
+            'percentage': 0.5,
+            'targets': ['tests'],
             'report_type': 'compartment',
             'report_name': 'test',
-            'spike_transition_time': 1.0,
             'load_afferent_synapses': True,
             'load_efferent_synapses': True,
             'neuron_morphology_parameters': {
@@ -74,7 +72,7 @@ class TestBbpLoader(unittest.TestCase):
         self._loader.load_circuit(self._instance, 'path')
         test = self._instance.params
         self.assertEqual(test['path'], 'path')
-        self.assertEqual(test['loader'], '')
+        self.assertEqual(test['loader'], 'BBP loader')
         self.assertEqual(test['loader_properties'], self._properties)
 
 

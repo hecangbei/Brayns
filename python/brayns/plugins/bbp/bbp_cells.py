@@ -18,15 +18,16 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass(frozen=True)
 class BbpCells:
 
     density: float = 1.0
-    targets: list[str] = field(default_factory=list)
-    gids: list[int] = field(default_factory=list)
+    targets: Optional[list[str]] = None
+    gids: Optional[list[int]] = None
 
     @staticmethod
     def all() -> 'BbpCells':
