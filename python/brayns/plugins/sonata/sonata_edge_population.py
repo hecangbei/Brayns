@@ -18,6 +18,26 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.plugins.bbp import *
-from brayns.plugins.common import *
-from brayns.plugins.sonata import *
+from dataclasses import dataclass
+from typing import Optional
+
+
+@dataclass(frozen=True)
+class SonataEdgePopulation:
+
+    name: str
+    afferent: bool
+    density: float = 1.0
+    radius: float = 2.0
+    report: Optional[str] = None
+
+    def serialize(self) -> None:
+        message = {
+            'edge_population': self.name,
+            'load_afferent': self.afferent,
+            'edge_percentage': self.density,
+            'radius': self.radius
+        }
+        if self.report is not None:
+            message['edge_report_name'] = self.report
+        return message

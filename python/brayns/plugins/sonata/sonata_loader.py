@@ -24,53 +24,27 @@ from typing import Optional
 from brayns.core.model.model import Model
 from brayns.core.model.model_loader import ModelLoader
 from brayns.instance.instance import Instance
-from brayns.plugins.bbp.bbp_cells import BbpCells
-from brayns.plugins.bbp.bbp_report import BbpReport
+from brayns.plugins.sonata.sonata_node_population import SonataNodePopulation
 
 
 @dataclass
-class BbpLoader:
+class SonataLoader:
 
-    cells: BbpCells = BbpCells.all()
-    report: Optional[BbpReport] = None
-    radius_multiplier: float = 1.0
-    load_soma: bool = True
-    load_axon: bool = False
-    load_dendrites: bool = False
-    load_afferent_synapses: bool = False
-    load_efferent_synapses: bool = False
-
-    @staticmethod
-    def for_soma_only() -> 'BbpLoader':
-        return BbpLoader(
-            cells=BbpCells.from_density(0.1),
-            radius_multiplier=10.0
-        )
-
-    @staticmethod
-    def for_morphology() -> 'BbpLoader':
-        return BbpLoader(
-            cells=BbpCells.from_density(0.001),
-            load_dendrites=True
-        )
+    node_populations: list[SonataNodePopulation]
+    simulation_config: Optional[str] = None
 
     def load_circuit(self, instance: Instance, path: str) -> list[Model]:
         properties = self._get_properties()
-        loader = ModelLoader('BBP loader', properties)
+        loader = ModelLoader('SONATA loader', properties)
         return loader.add_model(instance, path)
 
     def _get_properties(self) -> dict:
         properties = {
-            'neuron_morphology_parameters': {
-                'radius_multiplier': self.radius_multiplier,
-                'load_soma': self.load_soma,
-                'load_axon': self.load_axon,
-                'load_dendrites': self.load_dendrites
-            },
-            'load_afferent_synapses': self.load_afferent_synapses,
-            'load_efferent_synapses': self.load_efferent_synapses
+            'node_population_settings': [
+                node_population.serialize()
+                for node_population in self.node_populations
+            ]
         }
-        properties.update(self.cells.serialize())
-        if self.report is not None:
-            properties.update(self.report.serialize())
+        if self.simulation_config is not None:
+            properties['simulation_config_path'] = self.simulation_config
         return properties
