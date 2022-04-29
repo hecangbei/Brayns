@@ -43,3 +43,13 @@ class BbpReport:
     @staticmethod
     def compartment(name: str) -> 'BbpReport':
         return BbpReport(type='compartment', name=name)
+
+    def serialize(self) -> dict:
+        message = {
+            'report_type': self.type
+        }
+        if self.name is not None:
+            message['report_name'] = self.name
+        if self.spike_transition_time is not None:
+            message['spike_transition_time'] = self.spike_transition_time
+        return message
