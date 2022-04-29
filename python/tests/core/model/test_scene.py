@@ -21,9 +21,9 @@
 import unittest
 
 from brayns.core.common.box import Box
-from brayns.core.scene.model import Model
-from brayns.core.scene.scene import Scene
-from tests.core.scene.mock_scene_instance import MockSceneInstance
+from brayns.core.model.model import Model
+from brayns.core.model.scene import Scene
+from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestScene(unittest.TestCase):

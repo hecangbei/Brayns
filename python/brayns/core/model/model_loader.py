@@ -18,40 +18,23 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.common.box import Box
-from brayns.core.scene.model import Model
+from dataclasses import dataclass, field
+
+from brayns.core.model.model import Model
 from brayns.instance.instance import Instance
 
 
-class Scene:
+@dataclass
+class ModelLoader:
 
-    @staticmethod
-    def from_instance(instance: Instance) -> 'Scene':
-        result = instance.request('get-scene')
-        return Scene.deserialize(result)
+    name: str = ''
+    properties: dict = field(default_factory=dict)
 
-    @staticmethod
-    def deserialize(message: dict) -> 'Scene':
-        return Scene(
-            bounds=Box.deserialize(message['bounds']),
-            models=tuple(
-                Model.deserialize(model)
-                for model in message['models']
-            )
-        )
-
-    def __init__(
-        self,
-        bounds: Box,
-        models: tuple[Model]
-    ) -> None:
-        self._bounds = bounds
-        self._models = models
-
-    @property
-    def bounds(self) -> Box:
-        return self._bounds
-
-    @property
-    def models(self) -> tuple[Model]:
-        return self._models
+    def add_model(self, instance: Instance, path: str) -> list[Model]:
+        params = {
+            'path': path,
+            'loader': self.name,
+            'loader_properties': self.properties
+        }
+        result = instance.request('add-model', params)
+        return [Model.deserialize(model) for model in result]

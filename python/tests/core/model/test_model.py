@@ -25,8 +25,8 @@ from brayns.core.common.box import Box
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.transform import Transform
 from brayns.core.common.vector3 import Vector3
-from brayns.core.scene.model import Model
-from tests.core.scene.mock_scene_instance import MockSceneInstance
+from brayns.core.model.model import Model
+from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestModel(unittest.TestCase):

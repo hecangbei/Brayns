@@ -23,7 +23,7 @@ import unittest
 from brayns.plugins.circuit.cells import Cells
 from brayns.plugins.circuit.circuit_loader import CircuitLoader
 from brayns.plugins.circuit.report import Report
-from tests.core.scene.mock_scene_instance import MockSceneInstance
+from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestCircuit(unittest.TestCase):

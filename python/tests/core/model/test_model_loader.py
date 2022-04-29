@@ -20,8 +20,8 @@
 
 import unittest
 
-from brayns.core.scene.model_loader import ModelLoader
-from tests.core.scene.mock_scene_instance import MockSceneInstance
+from brayns.core.model.model_loader import ModelLoader
+from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestSceneManager(unittest.TestCase):

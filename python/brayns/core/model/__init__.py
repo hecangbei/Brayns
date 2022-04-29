@@ -18,9 +18,9 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.scene.model import Model
-from brayns.core.scene.model_loader import ModelLoader
-from brayns.core.scene.scene import Scene
+from brayns.core.model.model import Model
+from brayns.core.model.model_loader import ModelLoader
+from brayns.core.model.scene import Scene
 
 __all__ = [
     'Model',
