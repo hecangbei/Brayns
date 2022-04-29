@@ -23,15 +23,15 @@ from dataclasses import dataclass
 from brayns.core.model.model import Model
 from brayns.core.model.model_loader import ModelLoader
 from brayns.instance.instance import Instance
-from brayns.plugins.circuit.cells import Cells
-from brayns.plugins.circuit.report import Report
+from brayns.plugins.bbp.bbp_cells import BbpCells
+from brayns.plugins.bbp.bbp_report import BbpReport
 
 
 @dataclass
-class CircuitLoader:
+class BbpLoader:
 
-    cells: Cells = Cells.all()
-    report: Report = Report.none()
+    cells: BbpCells = BbpCells.all()
+    report: BbpReport = BbpReport.none()
     radius_multiplier: float = 1.0
     load_soma: bool = True
     load_axon: bool = False
@@ -40,16 +40,16 @@ class CircuitLoader:
     load_efferent_synapses: bool = False
 
     @staticmethod
-    def for_soma_only() -> 'CircuitLoader':
-        return CircuitLoader(
-            cells=Cells.from_density(0.1),
+    def for_soma_only() -> 'BbpLoader':
+        return BbpLoader(
+            cells=BbpCells.from_density(0.1),
             radius_multiplier=10.0
         )
 
     @staticmethod
-    def for_morphology() -> 'CircuitLoader':
-        return CircuitLoader(
-            cells=Cells.from_density(0.001),
+    def for_morphology() -> 'BbpLoader':
+        return BbpLoader(
+            cells=BbpCells.from_density(0.001),
             load_dendrites=True
         )
 

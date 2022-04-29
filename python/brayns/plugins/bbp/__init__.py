@@ -18,25 +18,12 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
+from brayns.plugins.bbp.bbp_cells import BbpCells
+from brayns.plugins.bbp.bbp_loader import BbpLoader
+from brayns.plugins.bbp.bbp_report import BbpReport
 
-from brayns.core.common.color import Color
-from brayns.plugins.circuit.circuit_color import CircuitColor
-from tests.plugins.circuit.mock_circuit_instance import MockCircuitInstance
-
-
-class TestCircuitColor(unittest.TestCase):
-
-    def test_apply(self) -> None:
-        instance = MockCircuitInstance()
-        color = CircuitColor(Color.pure_red)
-        color.apply(instance, 0)
-        self.assertEqual(instance.method, 'color-circuit-by-single-color')
-        self.assertEqual(instance.params, {
-            'model_id': 0,
-            'color': [1, 0, 0, 1]
-        })
-
-
-if __name__ == '__main__':
-    unittest.main()
+__all__ = [
+    'BbpCells',
+    'BbpLoader',
+    'BbpReport'
+]

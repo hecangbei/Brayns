@@ -18,27 +18,28 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
-class Report:
+class BbpCells:
 
-    type: str
-    name: str = ''
-    spike_transition_time: float = 1.0
-
-    @staticmethod
-    def none() -> 'Report':
-        return Report(type='none')
+    density: float = 1.0
+    targets: list[str] = field(default_factory=list)
+    gids: list[int] = field(default_factory=list)
 
     @staticmethod
-    def spikes(spike_transition_time: float = 1.0) -> 'Report':
-        return Report(
-            type='spikes',
-            spike_transition_time=spike_transition_time
-        )
+    def all() -> 'BbpCells':
+        return BbpCells.from_density(1.0)
 
     @staticmethod
-    def compartment(name: str) -> 'Report':
-        return Report(type='compartment', name=name)
+    def from_density(density: float) -> 'BbpCells':
+        return BbpCells(density=density)
+
+    @staticmethod
+    def from_targets(targets: list[str], density: float = 1.0) -> 'BbpCells':
+        return BbpCells(density=density, targets=targets)
+
+    @staticmethod
+    def from_gids(gids: list[int]) -> 'BbpCells':
+        return BbpCells(gids=gids)

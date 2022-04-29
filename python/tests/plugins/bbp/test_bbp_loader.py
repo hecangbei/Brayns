@@ -20,19 +20,19 @@
 
 import unittest
 
-from brayns.plugins.circuit.cells import Cells
-from brayns.plugins.circuit.circuit_loader import CircuitLoader
-from brayns.plugins.circuit.report import Report
+from brayns.plugins.bbp.bbp_cells import BbpCells
+from brayns.plugins.bbp.bbp_loader import BbpLoader
+from brayns.plugins.bbp.bbp_report import BbpReport
 from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
-class TestCircuit(unittest.TestCase):
+class TestBbpLoader(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSceneInstance()
-        self._loader = CircuitLoader(
-            cells=Cells.all(),
-            report=Report.compartment('test'),
+        self._loader = BbpLoader(
+            cells=BbpCells.all(),
+            report=BbpReport.compartment('test'),
             radius_multiplier=3,
             load_soma=True,
             load_axon=True,
@@ -58,13 +58,13 @@ class TestCircuit(unittest.TestCase):
         }
 
     def test_for_soma_only(self) -> None:
-        loader = CircuitLoader.for_soma_only()
+        loader = BbpLoader.for_soma_only()
         self.assertEqual(loader.cells.density, 0.1)
         self.assertEqual(loader.radius_multiplier, 10.0)
         self.assertTrue(loader.load_soma)
 
     def test_for_morphology(self) -> None:
-        loader = CircuitLoader.for_morphology()
+        loader = BbpLoader.for_morphology()
         self.assertEqual(loader.cells.density, 0.001)
         self.assertEqual(loader.radius_multiplier, 1.0)
         self.assertTrue(loader.load_soma)
