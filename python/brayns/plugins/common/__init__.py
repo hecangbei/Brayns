@@ -18,28 +18,16 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, field
+from brayns.plugins.common.cell_id import CellId
+from brayns.plugins.common.circuit_color import CircuitColor
+from brayns.plugins.common.circuit_color_by_id import CircuitColorById
+from brayns.plugins.common.circuit_color_by_method import CircuitColorByMethod
+from brayns.plugins.common.color_method import ColorMethod
 
-
-@dataclass(frozen=True)
-class Cells:
-
-    density: float = 1.0
-    targets: list[str] = field(default_factory=list)
-    gids: list[int] = field(default_factory=list)
-
-    @staticmethod
-    def all() -> 'Cells':
-        return Cells.from_density(1.0)
-
-    @staticmethod
-    def from_density(density: float) -> 'Cells':
-        return Cells(density=density)
-
-    @staticmethod
-    def from_targets(targets: list[str], density: float = 1.0) -> 'Cells':
-        return Cells(density=density, targets=targets)
-
-    @staticmethod
-    def from_gids(gids: list[int]) -> 'Cells':
-        return Cells(gids=gids)
+__all__ = [
+    'CellId',
+    'CircuitColorById',
+    'CircuitColorByMethod',
+    'CircuitColor',
+    'ColorMethod'
+]

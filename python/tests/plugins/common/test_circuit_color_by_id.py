@@ -18,27 +18,39 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
 from brayns.core.common.color import Color
-from brayns.instance.instance import Instance
-from brayns.plugins.circuit.cell_id import CellId
+from brayns.plugins.common.cell_id import CellId
+from brayns.plugins.common.circuit_color_by_id import CircuitColorById
+from tests.plugins.common.mock_circuit_instance import MockCircuitInstance
 
 
-@dataclass
-class CircuitColorById:
+class TestCircuitColorById(unittest.TestCase):
 
-    colors: dict[CellId, Color]
-
-    def apply(self, instance: Instance, model_id: int) -> list[int]:
-        params = {
-            'model_id': model_id,
+    def test_apply(self) -> None:
+        instance = MockCircuitInstance()
+        color = CircuitColorById({
+            CellId.from_integer(3): Color.white,
+            CellId.from_range(4, 6): Color.pure_red
+        })
+        not_colored = color.apply(instance, 0)
+        self.assertEqual(instance.method, 'color-circuit-by-id')
+        self.assertEqual(instance.params, {
+            'model_id': 0,
             'color_info': [
                 {
-                    'variable': id.value,
-                    'color': list(color)
+                    'variable': '3',
+                    'color': [1, 1, 1, 1]
+                },
+                {
+                    'variable': '4-6',
+                    'color': [1, 0, 0, 1]
                 }
-                for id, color in self.colors.items()
             ]
-        }
-        return instance.request('color-circuit-by-id', params)
+        })
+        self.assertEqual(not_colored, instance.not_colored)
+
+
+if __name__ == '__main__':
+    unittest.main()

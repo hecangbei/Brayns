@@ -20,29 +20,29 @@
 
 import unittest
 
-from brayns.plugins.circuit.report import Report
+from brayns.plugins.bbp.bbp_report import BbpReport
 
 
-class TestReport(unittest.TestCase):
+class TestBbpReport(unittest.TestCase):
 
     def test_none(self) -> None:
-        report = Report.none()
+        report = BbpReport.none()
         self.assertEqual(report.type, 'none')
 
     def test_spikes(self) -> None:
-        report = Report.spikes()
+        report = BbpReport.spikes()
         self.assertEqual(report.type, 'spikes')
         self.assertEqual(report.spike_transition_time, 1.0)
 
     def test_spikes_with_time(self) -> None:
         spike_transition_time = 0.5
-        report = Report.spikes(spike_transition_time)
+        report = BbpReport.spikes(spike_transition_time)
         self.assertEqual(report.type, 'spikes')
         self.assertEqual(report.spike_transition_time, spike_transition_time)
 
     def test_compartment(self) -> None:
         name = 'test'
-        report = Report.compartment(name)
+        report = BbpReport.compartment(name)
         self.assertEqual(report.type, 'compartment')
         self.assertEqual(report.name, name)
 

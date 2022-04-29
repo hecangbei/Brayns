@@ -21,9 +21,9 @@
 import unittest
 
 from brayns.core.common.color import Color
-from brayns.plugins.circuit.circuit_color_by_method import CircuitColorByMethod
-from brayns.plugins.circuit.color_method import ColorMethod
-from tests.plugins.circuit.mock_circuit_instance import MockCircuitInstance
+from brayns.plugins.common.circuit_color_by_method import CircuitColorByMethod
+from brayns.plugins.common.color_method import ColorMethod
+from tests.plugins.common.mock_circuit_instance import MockCircuitInstance
 
 
 class TestCircuitColorByMethod(unittest.TestCase):

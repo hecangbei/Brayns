@@ -22,7 +22,7 @@ from dataclasses import dataclass
 
 from brayns.core.common.color import Color
 from brayns.instance.instance import Instance
-from brayns.plugins.circuit.color_method import ColorMethod
+from brayns.plugins.common.color_method import ColorMethod
 
 
 @dataclass

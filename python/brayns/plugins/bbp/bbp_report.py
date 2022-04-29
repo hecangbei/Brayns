@@ -18,34 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from brayns.plugins.circuit.cell_id import CellId
+from dataclasses import dataclass
 
 
-class TestCellId(unittest.TestCase):
+@dataclass(frozen=True)
+class BbpReport:
 
-    def test_from_integer(self) -> None:
-        test = CellId.from_integer(3)
-        ref = '3'
-        self.assertEqual(test.value, ref)
+    type: str
+    name: str = ''
+    spike_transition_time: float = 1.0
 
-    def test_from_iterable(self) -> None:
-        values = [1, 3, 6]
-        test = CellId.from_iterable(values)
-        ref = '1,3,6'
-        self.assertEqual(test.value, ref)
+    @staticmethod
+    def none() -> 'BbpReport':
+        return BbpReport(type='none')
 
-    def test_from_range(self) -> None:
-        test = CellId.from_range(0, 3)
-        ref = '0-3'
-        self.assertEqual(test.value, ref)
+    @staticmethod
+    def spikes(spike_transition_time: float = 1.0) -> 'BbpReport':
+        return BbpReport(
+            type='spikes',
+            spike_transition_time=spike_transition_time
+        )
 
-    def test_or(self) -> None:
-        test = CellId.from_integer(3) | CellId.from_range(10, 13) | CellId('5')
-        ref = '3,10-13,5'
-        self.assertEqual(test.value, ref)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    @staticmethod
+    def compartment(name: str) -> 'BbpReport':
+        return BbpReport(type='compartment', name=name)

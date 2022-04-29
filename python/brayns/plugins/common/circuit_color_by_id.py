@@ -18,12 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.plugins.circuit.cells import Cells
-from brayns.plugins.circuit.circuit_loader import CircuitLoader
-from brayns.plugins.circuit.report import Report
+from dataclasses import dataclass
 
-__all__ = [
-    'Cells',
-    'CircuitLoader',
-    'Report'
-]
+from brayns.core.common.color import Color
+from brayns.instance.instance import Instance
+from brayns.plugins.common.cell_id import CellId
+
+
+@dataclass
+class CircuitColorById:
+
+    colors: dict[CellId, Color]
+
+    def apply(self, instance: Instance, model_id: int) -> list[int]:
+        params = {
+            'model_id': model_id,
+            'color_info': [
+                {
+                    'variable': id.value,
+                    'color': list(color)
+                }
+                for id, color in self.colors.items()
+            ]
+        }
+        return instance.request('color-circuit-by-id', params)
