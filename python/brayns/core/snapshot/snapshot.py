@@ -35,7 +35,7 @@ from brayns.instance.instance import Instance
 @dataclass
 class Snapshot:
 
-    jpeg_quality: Optional[int] = None
+    jpeg_quality: int = 100
     resolution: Optional[Resolution] = None
     frame: Optional[int] = None
     view: Optional[CameraView] = None
@@ -82,8 +82,10 @@ class Snapshot:
         message = {}
         if path is not None:
             message['path'] = path
-        image_settings = {'format': format.value}
-        if self.jpeg_quality is not None:
+        image_settings = {
+            'format': format.value
+        }
+        if format is ImageFormat.JPEG:
             image_settings['quality'] = self.jpeg_quality
         if self.resolution is not None:
             image_settings['size'] = list(self.resolution)

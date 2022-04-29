@@ -34,7 +34,7 @@ class FrameExporter:
 
     frames: list[KeyFrame]
     format: ImageFormat = ImageFormat.PNG
-    jpeg_quality: Optional[int] = 100
+    jpeg_quality: int = 100
     resolution: Optional[Resolution] = None
     sequential_naming: bool = True
     camera: Optional[Camera] = None
@@ -53,8 +53,10 @@ class FrameExporter:
             ],
             'sequential_naming': self.sequential_naming
         }
-        image_settings = {'format': self.format.value}
-        if self.jpeg_quality is not None:
+        image_settings = {
+            'format': self.format.value
+        }
+        if self.format is ImageFormat.JPEG:
             image_settings['quality'] = self.jpeg_quality
         if self.resolution is not None:
             image_settings['size'] = list(self.resolution)
