@@ -44,3 +44,13 @@ class BbpCells:
     @staticmethod
     def from_gids(gids: list[int]) -> 'BbpCells':
         return BbpCells(gids=gids)
+
+    def serialize(self) -> dict:
+        message = {
+            'percentage': self.density
+        }
+        if self.targets is not None:
+            message['targets'] = self.targets
+        if self.gids is not None:
+            message['gids'] = self.gids
+        return message

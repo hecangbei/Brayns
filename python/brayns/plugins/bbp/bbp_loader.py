@@ -61,7 +61,6 @@ class BbpLoader:
 
     def _get_properties(self) -> dict:
         params = {
-            'percentage': self.cells.density,
             'neuron_morphology_parameters': {
                 'radius_multiplier': self.radius_multiplier,
                 'load_soma': self.load_soma,
@@ -71,14 +70,7 @@ class BbpLoader:
             'load_afferent_synapses': self.load_afferent_synapses,
             'load_efferent_synapses': self.load_efferent_synapses
         }
-        if self.cells.gids is not None:
-            params['gids'] = self.cells.gids
-        if self.cells.targets is not None:
-            params['targets'] = self.cells.targets
+        params.update(self.cells.serialize())
         if self.report is not None:
-            params['report_type'] = self.report.type
-            if self.report.name is not None:
-                params['report_name'] = self.report.name
-            if self.report.spike_transition_time is not None:
-                params['spike_transition_time'] = self.report.spike_transition_time
+            params.update(self.report.serialize())
         return params
