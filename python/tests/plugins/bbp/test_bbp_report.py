@@ -28,16 +28,20 @@ class TestBbpReport(unittest.TestCase):
     def test_none(self) -> None:
         report = BbpReport.none()
         self.assertEqual(report.type, 'none')
+        self.assertIsNone(report.name)
+        self.assertIsNone(report.spike_transition_time)
 
     def test_spikes(self) -> None:
         report = BbpReport.spikes()
         self.assertEqual(report.type, 'spikes')
+        self.assertIsNone(report.name)
         self.assertEqual(report.spike_transition_time, 1.0)
 
     def test_spikes_with_time(self) -> None:
         spike_transition_time = 0.5
         report = BbpReport.spikes(spike_transition_time)
         self.assertEqual(report.type, 'spikes')
+        self.assertIsNone(report.name)
         self.assertEqual(report.spike_transition_time, spike_transition_time)
 
     def test_compartment(self) -> None:
@@ -45,6 +49,15 @@ class TestBbpReport(unittest.TestCase):
         report = BbpReport.compartment(name)
         self.assertEqual(report.type, 'compartment')
         self.assertEqual(report.name, name)
+        self.assertIsNone(report.spike_transition_time)
+
+    def test_serialize(self) -> None:
+        test = BbpReport.compartment('test')
+        ref = {
+            'report_type': 'compartment',
+            'report_name': 'test'
+        }
+        self.assertEqual(test.serialize(), ref)
 
 
 if __name__ == '__main__':
