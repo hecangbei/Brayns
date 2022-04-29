@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass
+from typing import Iterable
 
 
 @dataclass(frozen=True)
@@ -31,8 +32,12 @@ class CellId:
         return CellId(str(value))
 
     @staticmethod
+    def from_iterable(values: Iterable[int]) -> 'CellId':
+        return CellId(','.join(str(value) for value in values))
+
+    @staticmethod
     def from_range(start: int, end: int) -> 'CellId':
         return CellId(f'{start}-{end}')
 
     def __or__(self, other: 'CellId') -> 'CellId':
-        return CellId(f'{self.value},{other.value}')
+        return CellId.from_iterable([self.value, other.value])
