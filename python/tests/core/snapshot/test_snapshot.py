@@ -21,6 +21,9 @@
 import unittest
 
 from brayns.core.camera.camera_view import CameraView
+from brayns.core.common.resolution import Resolution
+from brayns.core.renderer.interactive_renderer import InteractiveRenderer
+from brayns.core.renderer.production_renderer import ProductionRenderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.snapshot import Snapshot
 from tests.core.camera.mock_camera import MockCamera
@@ -32,6 +35,20 @@ class TestSnapshot(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockSnapshotInstance()
+
+    def test_for_production(self) -> None:
+        test = Snapshot.for_production()
+        self.assertEqual(test.resolution, 8 * Resolution.full_hd)
+        self.assertIsInstance(test.renderer, ProductionRenderer)
+        self.assertEqual(test.renderer.samples_per_pixel, 128)
+        self.assertEqual(test.renderer.max_ray_bounces, 7)
+
+    def test_for_testing(self) -> None:
+        test = Snapshot.for_testing()
+        self.assertEqual(test.resolution, Resolution.full_hd)
+        self.assertIsInstance(test.renderer, InteractiveRenderer)
+        self.assertEqual(test.renderer.samples_per_pixel, 1)
+        self.assertEqual(test.renderer.max_ray_bounces, 3)
 
     def test_save_remotely(self) -> None:
         snapshot = Snapshot()
