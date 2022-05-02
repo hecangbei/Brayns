@@ -17,21 +17,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-from brayns.core.common.box import Box
-from brayns.core.common.color import Color
-from brayns.core.common.plane import Plane
-from brayns.core.common.quaternion import Quaternion
-from brayns.core.common.resolution import Resolution
-from brayns.core.common.transform import Transform
-from brayns.core.common.vector3 import Vector3
-
-__all__ = [
-    'Box',
-    'Color',
-    'Plane',
-    'Quaternion',
-    'Resolution',
-    'Transform',
-    'Vector3'
-]

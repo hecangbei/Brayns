@@ -18,20 +18,25 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.common.box import Box
-from brayns.core.common.color import Color
-from brayns.core.common.plane import Plane
-from brayns.core.common.quaternion import Quaternion
-from brayns.core.common.resolution import Resolution
-from brayns.core.common.transform import Transform
-from brayns.core.common.vector3 import Vector3
+from dataclasses import dataclass
 
-__all__ = [
-    'Box',
-    'Color',
-    'Plane',
-    'Quaternion',
-    'Resolution',
-    'Transform',
-    'Vector3'
-]
+from brayns.core.common.plane import Plane
+from brayns.instance.instance import Instance
+
+
+@dataclass(frozen=True)
+class ClipPlane:
+
+    id: int
+    plane: Plane
+
+    @staticmethod
+    def remove(instance: Instance, ids: list[int]) -> None:
+        params = {'ids': ids}
+        instance.request('remove-clip-planes', params)
+
+    @staticmethod
+    def add(instance: Instance, plane: Plane) -> 'ClipPlane':
+        params = plane.serialize()
+        id = instance.request('add-clip-plane', params)
+        return ClipPlane(id, plane)

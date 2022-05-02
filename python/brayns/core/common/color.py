@@ -24,7 +24,7 @@ from typing import Iterator
 from brayns.core.common.vector import Vector
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Color(Vector):
 
     red: float = 0.0

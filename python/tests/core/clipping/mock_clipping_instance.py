@@ -18,20 +18,23 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.common.box import Box
-from brayns.core.common.color import Color
-from brayns.core.common.plane import Plane
-from brayns.core.common.quaternion import Quaternion
-from brayns.core.common.resolution import Resolution
-from brayns.core.common.transform import Transform
-from brayns.core.common.vector3 import Vector3
+from typing import Any
 
-__all__ = [
-    'Box',
-    'Color',
-    'Plane',
-    'Quaternion',
-    'Resolution',
-    'Transform',
-    'Vector3'
-]
+from brayns.instance.instance import Instance
+
+
+class MockClippingInstance(Instance):
+
+    def __init__(self) -> None:
+        self.id = 0
+        self.method = ''
+        self.params = None
+
+    def request(self, method: str, params: Any = None) -> Any:
+        self.method = method
+        self.params = params
+        if method == 'add-clip-plane':
+            return self.id
+        if method == 'remove-clip-planes':
+            return None
+        raise RuntimeError('Invalid request')
