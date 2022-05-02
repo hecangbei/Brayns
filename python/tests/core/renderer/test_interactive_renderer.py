@@ -42,6 +42,11 @@ class TestInteractiveRenderer(unittest.TestCase):
             'ao_samples': 15
         }
 
+    def test_default(self) -> None:
+        test = InteractiveRenderer.default()
+        self.assertEqual(test.samples_per_pixel, 1)
+        self.assertEqual(test.max_ray_bounces, 3)
+
     def test_name(self) -> None:
         test = InteractiveRenderer.name
         ref = 'interactive'

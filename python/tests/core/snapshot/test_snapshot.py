@@ -38,17 +38,13 @@ class TestSnapshot(unittest.TestCase):
 
     def test_for_production(self) -> None:
         test = Snapshot.for_production()
-        self.assertEqual(test.resolution, 8 * Resolution.full_hd)
-        self.assertIsInstance(test.renderer, ProductionRenderer)
-        self.assertEqual(test.renderer.samples_per_pixel, 128)
-        self.assertEqual(test.renderer.max_ray_bounces, 7)
+        self.assertEqual(test.resolution, Resolution.production)
+        self.assertEqual(test.renderer, ProductionRenderer.default())
 
     def test_for_testing(self) -> None:
         test = Snapshot.for_testing()
         self.assertEqual(test.resolution, Resolution.full_hd)
-        self.assertIsInstance(test.renderer, InteractiveRenderer)
-        self.assertEqual(test.renderer.samples_per_pixel, 1)
-        self.assertEqual(test.renderer.max_ray_bounces, 3)
+        self.assertEqual(test.renderer, InteractiveRenderer.default())
 
     def test_save_remotely(self) -> None:
         snapshot = Snapshot()

@@ -38,6 +38,11 @@ class TestProductionRenderer(unittest.TestCase):
             'background_color': [0, 0, 1, 1]
         }
 
+    def test_default(self) -> None:
+        test = ProductionRenderer.default()
+        self.assertEqual(test.samples_per_pixel, 128)
+        self.assertEqual(test.max_ray_bounces, 7)
+
     def test_name(self) -> None:
         test = ProductionRenderer.name
         ref = 'production'

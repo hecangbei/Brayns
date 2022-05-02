@@ -45,21 +45,15 @@ class Snapshot:
     @staticmethod
     def for_production() -> 'Snapshot':
         return Snapshot(
-            resolution=8 * Resolution.full_hd,
-            renderer=ProductionRenderer(
-                samples_per_pixel=128,
-                max_ray_bounces=7
-            )
+            resolution=Resolution.production,
+            renderer=ProductionRenderer.default()
         )
 
     @staticmethod
     def for_testing() -> 'Snapshot':
         return Snapshot(
             resolution=Resolution.full_hd,
-            renderer=InteractiveRenderer(
-                samples_per_pixel=1,
-                max_ray_bounces=3
-            )
+            renderer=InteractiveRenderer.default()
         )
 
     def save(self, instance: Instance, path: str) -> None:
