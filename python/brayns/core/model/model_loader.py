@@ -18,23 +18,33 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
 from brayns.core.model.model import Model
 from brayns.instance.instance import Instance
 
 
-@dataclass
-class ModelLoader:
+class ModelLoader(ABC):
 
-    name: str = ''
-    properties: dict = field(default_factory=dict)
+    @classmethod
+    @property
+    @abstractmethod
+    def name(cls) -> str:
+        pass
 
-    def add_model(self, instance: Instance, path: str) -> list[Model]:
+    @property
+    @abstractmethod
+    def properties(self) -> dict:
+        pass
+
+    def load(self, instance: Instance, path: str) -> list[Model]:
         params = {
             'path': path,
             'loader': self.name,
             'loader_properties': self.properties
         }
         result = instance.request('add-model', params)
-        return [Model.deserialize(model) for model in result]
+        return [
+            Model.deserialize(model)
+            for model in result
+        ]

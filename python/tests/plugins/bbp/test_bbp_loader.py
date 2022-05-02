@@ -23,14 +23,15 @@ import unittest
 from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_loader import BbpLoader
 from brayns.plugins.bbp.bbp_report import BbpReport
-from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestBbpLoader(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockSceneInstance()
-        self._loader = BbpLoader(
+    def test_name(self) -> None:
+        self.assertEqual(BbpLoader.name, 'BBP loader')
+
+    def test_properties(self) -> None:
+        loader = BbpLoader(
             cells=BbpCells.from_targets(['tests'], 0.5),
             report=BbpReport.compartment('test'),
             radius_multiplier=3,
@@ -40,7 +41,7 @@ class TestBbpLoader(unittest.TestCase):
             load_afferent_synapses=True,
             load_efferent_synapses=True
         )
-        self._properties = {
+        properties = {
             'percentage': 0.5,
             'targets': ['tests'],
             'report_type': 'compartment',
@@ -54,6 +55,7 @@ class TestBbpLoader(unittest.TestCase):
                 'load_dendrites': True
             }
         }
+        self.assertEqual(loader.properties, properties)
 
     def test_for_soma_only(self) -> None:
         loader = BbpLoader.for_soma_only()
@@ -67,13 +69,6 @@ class TestBbpLoader(unittest.TestCase):
         self.assertEqual(loader.radius_multiplier, 1.0)
         self.assertTrue(loader.load_soma)
         self.assertTrue(loader.load_dendrites)
-
-    def test_load_circuit(self) -> None:
-        self._loader.load_circuit(self._instance, 'path')
-        test = self._instance.params
-        self.assertEqual(test['path'], 'path')
-        self.assertEqual(test['loader'], 'BBP loader')
-        self.assertEqual(test['loader_properties'], self._properties)
 
 
 if __name__ == '__main__':
