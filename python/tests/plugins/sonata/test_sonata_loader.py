@@ -22,7 +22,6 @@ import unittest
 
 from brayns.plugins.sonata.sonata_loader import SonataLoader
 from brayns.plugins.sonata.sonata_node_population import SonataNodePopulation
-from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestSonataLoader(unittest.TestCase):
@@ -31,7 +30,6 @@ class TestSonataLoader(unittest.TestCase):
         self.assertEqual(SonataLoader.name, 'SONATA loader')
 
     def test_properties(self) -> None:
-        instance = MockSceneInstance()
         loader = SonataLoader(
             node_populations=[
                 SonataNodePopulation('test1'),
