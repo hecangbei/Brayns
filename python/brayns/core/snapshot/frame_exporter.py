@@ -36,9 +36,9 @@ class FrameExporter:
     format: ImageFormat = ImageFormat.PNG
     jpeg_quality: int = 100
     resolution: Optional[Resolution] = None
-    sequential_naming: bool = True
     camera: Optional[Camera] = None
     renderer: Optional[Renderer] = None
+    sequential_naming: bool = True
 
     def export_frames(self, instance: Instance, destination_folder: str) -> None:
         params = self._get_params(destination_folder)
