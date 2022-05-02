@@ -32,11 +32,12 @@ def connect(
     uri: str,
     secure: bool = False,
     cafile: Optional[str] = None,
-    logger: Optional[logging.Logger] = None
+    logger: Optional[logging.Logger] = None,
 ) -> Instance:
-    websocket = WebSocketClient.connect(uri, secure, cafile)
     if logger is None:
         logger = logging.Logger('Brayns', logging.WARN)
         logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger.info('Connecting to instance at %s.', uri)
+    websocket = WebSocketClient.connect(uri, secure, cafile)
     json_rpc_client = JsonRpcClient(websocket, logger)
     return Client(json_rpc_client)

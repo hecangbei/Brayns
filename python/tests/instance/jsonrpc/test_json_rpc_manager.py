@@ -54,17 +54,14 @@ class TestJsonRpcManager(unittest.TestCase):
     def test_add_task(self) -> None:
         task = self._manager.add_task(0)
         self.assertFalse(task.is_ready())
-        self.assertFalse(task.has_progress())
 
     def test_cancel_all_tasks(self) -> None:
         tasks = [self._manager.add_task(i) for i in range(3)]
-        error = RequestError('Test cancel all')
-        self._manager.cancel_all_tasks(error)
+        self._manager.cancel_all_tasks()
         self.assertEqual(len(self._manager), 0)
         for task in tasks:
-            with self.assertRaises(RequestError) as context:
+            with self.assertRaises(RequestError):
                 task.get_result()
-            self.assertEqual(context.exception, error)
 
     def test_set_result(self) -> None:
         result = 123
@@ -73,7 +70,7 @@ class TestJsonRpcManager(unittest.TestCase):
         self.assertEqual(len(self._manager), 0)
         self.assertEqual(task.get_result(), result)
 
-    def test_error(self) -> None:
+    def test_set_error(self) -> None:
         error = RequestError('test', 0, 123)
         task = self._manager.add_task(0)
         self._manager.set_error(0, error)
@@ -81,13 +78,6 @@ class TestJsonRpcManager(unittest.TestCase):
         with self.assertRaises(RequestError) as context:
             task.get_result()
         self.assertEqual(context.exception, error)
-
-    def test_progress(self) -> None:
-        progress = RequestProgress('test', 0.5)
-        task = self._manager.add_task(0)
-        self._manager.add_progress(0, progress)
-        self.assertEqual(len(self._manager), 1)
-        self.assertEqual(task.get_progress(), progress)
 
 
 if __name__ == '__main__':

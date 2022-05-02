@@ -25,22 +25,17 @@ from brayns.instance.jsonrpc.json_rpc_handler import JsonRpcHandler
 from brayns.instance.jsonrpc.json_rpc_manager import JsonRpcManager
 from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.instance.jsonrpc.json_rpc_task import JsonRpcTask
-from brayns.instance.request_error import RequestError
 from brayns.instance.websocket.web_socket import WebSocket
 
 
 class JsonRpcClient:
 
-    def __init__(
-        self,
-        websocket: WebSocket,
-        logger: logging.Logger
-    ) -> None:
+    def __init__(self, websocket: WebSocket, logger: logging.Logger) -> None:
         self._websocket = websocket
         self._logger = logger
         self._manager = JsonRpcManager()
-        reply_handler = JsonRpcHandler(self._manager, self._logger)
-        self._dispatcher = JsonRpcDispatcher(reply_handler)
+        self._handler = JsonRpcHandler(self._manager, logger)
+        self._dispatcher = JsonRpcDispatcher(self._handler)
 
     def __enter__(self) -> 'JsonRpcClient':
         return self
@@ -49,22 +44,18 @@ class JsonRpcClient:
         self.disconnect()
 
     def disconnect(self) -> None:
-        self._logger.info('Disconnection from JSON-RPC server.')
+        self._logger.info('Disconnecting from instance.')
+        self._manager.cancel_all_tasks()
         self._websocket.close()
-        error = RequestError('Disconnection from client side')
-        self._manager.cancel_all_tasks(error)
 
     def send(self, request: JsonRpcRequest) -> JsonRpcTask:
-        self._logger.info('Send JSON-RPC request: %s.', request)
+        self._logger.info('Sending request: %s.')
         self._websocket.send(request.to_json())
         if request.is_notification():
             return JsonRpcTask.from_result(None)
         return self._manager.add_task(request.id)
 
     def poll(self) -> None:
-        self._logger.debug('Poll incoming JSON-RPC messages.')
+        self._logger.debug('Polling incoming messages.')
         data = self._websocket.receive()
         self._dispatcher.dispatch(data)
-
-    def get_active_tasks(self) -> JsonRpcManager:
-        return self._manager

@@ -18,11 +18,10 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Any, Iterator, Optional, Tuple, Union
+from typing import Any, Iterator, Optional, Union
 
 from brayns.instance.jsonrpc.json_rpc_task import JsonRpcTask
 from brayns.instance.request_error import RequestError
-from brayns.instance.request_progress import RequestProgress
 
 
 class JsonRpcManager:
@@ -33,7 +32,7 @@ class JsonRpcManager:
     def __len__(self) -> int:
         return len(self._tasks)
 
-    def __iter__(self) -> Iterator[Tuple[Union[int, str], JsonRpcTask]]:
+    def __iter__(self) -> Iterator[tuple[Union[int, str], JsonRpcTask]]:
         yield from self._tasks.items()
 
     def __contains__(self, id: Union[int, str]) -> bool:
@@ -43,15 +42,14 @@ class JsonRpcManager:
         return self._tasks.get(id)
 
     def add_task(self, id: Union[int, str]) -> JsonRpcTask:
-        if id is None:
-            raise RuntimeError('Cannot create a task for a notification')
         if id in self._tasks:
             raise RuntimeError('Request with same ID already running')
         task = JsonRpcTask()
         self._tasks[id] = task
         return task
 
-    def cancel_all_tasks(self, error: RequestError) -> None:
+    def cancel_all_tasks(self) -> None:
+        error = RequestError(0, 'Task cancelled from client side')
         for task in self._tasks.values():
             task.set_error(error)
         self._tasks.clear()
@@ -63,18 +61,9 @@ class JsonRpcManager:
         task.set_result(result)
         del self._tasks[id]
 
-    def set_error(self, id: Union[int, str, None], error: RequestError) -> None:
-        if id is None:
-            self.cancel_all_tasks(error)
-            return
+    def set_error(self, id: Union[int, str], error: RequestError) -> None:
         task = self.get_task(id)
         if task is None:
             return
         task.set_error(error)
         del self._tasks[id]
-
-    def add_progress(self, id: Union[int, str], progress: RequestProgress) -> None:
-        task = self.get_task(id)
-        if task is None:
-            return
-        task.add_progress(progress)

@@ -21,6 +21,7 @@
 import unittest
 
 from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
+from brayns.instance.request_error import RequestError
 
 
 class TestJsonRpcError(unittest.TestCase):
@@ -38,6 +39,10 @@ class TestJsonRpcError(unittest.TestCase):
         self.assertEqual(error.error.message, 'test')
         self.assertEqual(error.error.code, 2)
         self.assertEqual(error.error.data, 123)
+
+    def test_is_global(self) -> None:
+        test = JsonRpcError(None, RequestError(1, 'test'))
+        self.assertTrue(test.is_global())
 
 
 if __name__ == '__main__':

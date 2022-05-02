@@ -21,7 +21,6 @@
 from typing import Any, Optional
 
 from brayns.instance.request_error import RequestError
-from brayns.instance.request_progress import RequestProgress
 
 
 class JsonRpcTask:
@@ -36,13 +35,9 @@ class JsonRpcTask:
         self._ready = False
         self._result: Any = None
         self._error: Optional[RequestError] = None
-        self._progress: Optional[RequestProgress] = None
 
-    def is_ready(self) -> None:
+    def is_ready(self) -> bool:
         return self._ready
-
-    def has_progress(self) -> None:
-        return self._progress is not None
 
     def get_result(self) -> Any:
         if not self.is_ready():
@@ -51,28 +46,14 @@ class JsonRpcTask:
             raise self._error
         return self._result
 
-    def get_progress(self) -> RequestProgress:
-        if self.is_ready():
-            raise RuntimeError('Task is not running')
-        if not self.has_progress():
-            raise RuntimeError('No progresses received yet')
-        progress = self._progress
-        self._progress = None
-        return progress
-
     def set_result(self, result: Any) -> None:
         if self.is_ready():
-            raise RuntimeError('Task is not running')
+            raise RuntimeError('Task already finished')
         self._result = result
         self._ready = True
 
     def set_error(self, error: RequestError) -> None:
         if self.is_ready():
-            raise RuntimeError('Task is not running')
+            raise RuntimeError('Task already finished')
         self._error = error
         self._ready = True
-
-    def add_progress(self, progress: RequestProgress) -> None:
-        if self.is_ready():
-            raise RuntimeError('Task is not running')
-        self._progress = progress

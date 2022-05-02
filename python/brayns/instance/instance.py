@@ -20,8 +20,6 @@
 
 from typing import Any, Protocol
 
-from brayns.instance.request_future import RequestFuture
-
 
 class Instance(Protocol):
 
@@ -35,7 +33,4 @@ class Instance(Protocol):
         pass
 
     def request(self, method: str, params: Any = None) -> Any:
-        return self.task(method, params).wait_for_result()
-
-    def task(self, method: str, params: Any = None) -> RequestFuture:
         raise NotImplementedError()

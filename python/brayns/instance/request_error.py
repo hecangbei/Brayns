@@ -26,6 +26,11 @@ from typing import Any
 class RequestError(Exception):
     """Exception raised when the renderer replies an error."""
 
+    code: int
+    """Error code."""
+
     message: str
-    code: int = 0
+    """Error description message."""
+
     data: Any = None
+    """Optional additional error data."""

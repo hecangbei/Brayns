@@ -22,53 +22,57 @@ import json
 import logging
 import unittest
 
+from brayns.instance.client import Client
 from brayns.instance.jsonrpc.json_rpc_client import JsonRpcClient
+from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
 from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
+from brayns.instance.request_error import RequestError
 from tests.instance.websocket.mock_web_socket import MockWebSocket
 
 
-class TestJsonRpcClient(unittest.TestCase):
+class TestClient(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._logger = logging.Logger('Test')
         self._websocket = MockWebSocket()
 
     def test_context(self) -> None:
         with self._connect():
-            pass
+            self.assertFalse(self._websocket.closed)
         self.assertTrue(self._websocket.closed)
 
     def test_disconnect(self) -> None:
         client = self._connect()
+        self.assertFalse(self._websocket.closed)
         client.disconnect()
         self.assertTrue(self._websocket.closed)
 
-    def test_send(self) -> None:
-        request = JsonRpcRequest(0, 'test', 12)
-        with self._connect() as client:
-            client.send(request)
-            self.assertEqual(self._websocket.request, request.to_json())
-
-    def test_poll(self) -> None:
+    def test_request(self) -> None:
         request = JsonRpcRequest(0, 'test', 123)
         self._websocket.reply = json.dumps({'id': 0, 'result': 456})
         with self._connect() as client:
-            task = client.send(request)
-            self.assertFalse(task.is_ready())
-            client.poll()
-            test = task.get_result()
-            self.assertEqual(test, 456)
+            result = client.request(request.method, request.params)
+            self.assertEqual(self._websocket.request, request.to_json())
+            self.assertEqual(result, 456)
 
-    def test_poll_notification(self) -> None:
-        request = JsonRpcRequest(None, 'test', 123)
+    def test_request_error(self) -> None:
+        self._websocket.reply = json.dumps({
+            'id': 0,
+            'error': {
+                'code': 0,
+                'message': 'test'
+            }
+        })
         with self._connect() as client:
-            task = client.send(request)
-            self.assertEqual(task.get_result(), None)
+            with self.assertRaises(RequestError) as context:
+                client.request('test', 123)
+            self.assertEqual(context.exception, RequestError(0, 'test'))
 
-    def _connect(self) -> JsonRpcClient:
-        return JsonRpcClient(
-            websocket=self._websocket,
-            logger=self._logger
+    def _connect(self) -> Client:
+        return Client(
+            JsonRpcClient(
+                websocket=self._websocket,
+                logger=logging.Logger('Test')
+            )
         )
 
 
