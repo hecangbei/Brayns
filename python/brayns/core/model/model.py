@@ -20,7 +20,7 @@
 
 from types import MappingProxyType
 
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.transform import Transform
 from brayns.core.common.vector3 import Vector3
@@ -38,7 +38,7 @@ class Model:
     def deserialize(message: dict) -> 'Model':
         return Model(
             id=message['id'],
-            bounds=Box.deserialize(message['bounds']),
+            bounds=Bounds.deserialize(message['bounds']),
             metadata=MappingProxyType(message['metadata']),
             visible=message['visible'],
             transform=Transform.deserialize(message['transformation'])
@@ -59,7 +59,7 @@ class Model:
     def __init__(
         self,
         id: int,
-        bounds: Box,
+        bounds: Bounds,
         metadata: MappingProxyType[str, str],
         visible: bool,
         transform: Transform
@@ -75,7 +75,7 @@ class Model:
         return self._id
 
     @property
-    def bounds(self) -> Box:
+    def bounds(self) -> Bounds:
         return self._bounds
 
     @property

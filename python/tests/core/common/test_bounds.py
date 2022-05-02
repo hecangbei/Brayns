@@ -20,14 +20,14 @@
 
 import unittest
 
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.vector3 import Vector3
 
 
-class TestBox(unittest.TestCase):
+class TestBounds(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._box = Box(
+        self._box = Bounds(
             min=Vector3(1, 2, 3),
             max=Vector3(3, 6, 9)
         )
@@ -37,13 +37,8 @@ class TestBox(unittest.TestCase):
             'min': [1, 2, 3],
             'max': [3, 6, 9]
         }
-        test = Box.deserialize(message)
+        test = Bounds.deserialize(message)
         self.assertEqual(test, self._box)
-
-    def test_empty(self) -> None:
-        test = Box.empty
-        self.assertEqual(test.min, Vector3.zero)
-        self.assertEqual(test.max, Vector3.zero)
 
     def test_center(self) -> None:
         self.assertEqual(self._box.center, Vector3(2, 4, 6))

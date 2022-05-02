@@ -23,7 +23,7 @@ from dataclasses import InitVar, dataclass
 
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.vector3 import Vector3
 
 
@@ -75,7 +75,7 @@ class PerspectiveCamera(Camera):
             'focus_distance': self.focus_distance
         }
 
-    def get_full_screen_view(self, target: Box) -> CameraView:
+    def get_full_screen_view(self, target: Bounds) -> CameraView:
         center = target.center
         distance = target.height / 2 / math.tan(self.fovy_radians / 2)
         position = center + distance * Vector3.forward

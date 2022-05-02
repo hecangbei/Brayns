@@ -22,7 +22,7 @@ from dataclasses import dataclass
 
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.vector3 import Vector3
 
 
@@ -32,7 +32,7 @@ class OrthographicCamera(Camera):
     height: float = 0.0
 
     @staticmethod
-    def from_target(target: Box) -> 'OrthographicCamera':
+    def from_target(target: Bounds) -> 'OrthographicCamera':
         return OrthographicCamera(target.height)
 
     @classmethod
@@ -51,7 +51,7 @@ class OrthographicCamera(Camera):
             'height': self.height,
         }
 
-    def get_full_screen_view(self, target: Box) -> CameraView:
+    def get_full_screen_view(self, target: Bounds) -> CameraView:
         center = target.center
         distance = target.depth
         position = center + distance * Vector3.forward

@@ -21,7 +21,7 @@
 import unittest
 from types import MappingProxyType
 
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.transform import Transform
 from brayns.core.common.vector3 import Vector3
@@ -35,7 +35,7 @@ class TestModel(unittest.TestCase):
         self._instance = MockSceneInstance()
         self._model = Model(
             id=1,
-            bounds=Box(Vector3.zero, Vector3.one),
+            bounds=Bounds(Vector3.zero, Vector3.one),
             metadata=MappingProxyType({'test': '1'}),
             visible=True,
             transform=Transform(
