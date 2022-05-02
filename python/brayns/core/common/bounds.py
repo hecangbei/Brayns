@@ -24,22 +24,17 @@ from brayns.core.common.vector3 import Vector3
 
 
 @dataclass(frozen=True)
-class Box:
+class Bounds:
 
     min: Vector3 = Vector3.zero
     max: Vector3 = Vector3.zero
 
     @staticmethod
-    def deserialize(message: dict) -> 'Box':
-        return Box(
+    def deserialize(message: dict) -> 'Bounds':
+        return Bounds(
             min=Vector3(*message['min']),
             max=Vector3(*message['max'])
         )
-
-    @classmethod
-    @property
-    def empty(cls) -> 'Box':
-        return Box()
 
     @property
     def center(self) -> Vector3:

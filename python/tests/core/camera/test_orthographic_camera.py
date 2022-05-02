@@ -21,14 +21,14 @@
 import unittest
 
 from brayns.core.camera.orthographic_camera import OrthographicCamera
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.vector3 import Vector3
 
 
 class TestPerspectiveCamera(unittest.TestCase):
 
     def test_from_target(self) -> None:
-        target = Box(-Vector3.one, Vector3.one)
+        target = Bounds(-Vector3.one, Vector3.one)
         test = OrthographicCamera.from_target(target)
         self.assertEqual(test.height, 2)
 
@@ -50,9 +50,9 @@ class TestPerspectiveCamera(unittest.TestCase):
         self.assertAlmostEqual(test['height'], 3)
 
     def test_get_full_screen_view(self) -> None:
-        target = Box(-Vector3.one, Vector3.one)
+        target = Bounds(-Vector3.one, Vector3.one)
         camera = OrthographicCamera.from_target(target)
-        target = Box(-Vector3.one, Vector3.one)
+        target = Bounds(-Vector3.one, Vector3.one)
         test = camera.get_full_screen_view(target)
         self.assertEqual(test.position, 2 * Vector3.forward)
         self.assertEqual(test.target, Vector3.zero)

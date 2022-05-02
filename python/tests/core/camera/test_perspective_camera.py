@@ -22,7 +22,7 @@ import math
 import unittest
 
 from brayns.core.camera.perspective_camera import PerspectiveCamera
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.common.vector3 import Vector3
 
 
@@ -67,7 +67,7 @@ class TestPerspectiveCamera(unittest.TestCase):
 
     def test_get_full_screen_view(self) -> None:
         camera = PerspectiveCamera(fovy=90, degrees=True)
-        target = Box(-Vector3.one, Vector3.one)
+        target = Bounds(-Vector3.one, Vector3.one)
         test = camera.get_full_screen_view(target)
         self.assertAlmostEqual(test.position.x, 0)
         self.assertAlmostEqual(test.position.y, 0)

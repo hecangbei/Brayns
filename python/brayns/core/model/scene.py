@@ -18,7 +18,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.model.model import Model
 from brayns.instance.instance import Instance
 
@@ -33,7 +33,7 @@ class Scene:
     @staticmethod
     def deserialize(message: dict) -> 'Scene':
         return Scene(
-            bounds=Box.deserialize(message['bounds']),
+            bounds=Bounds.deserialize(message['bounds']),
             models=tuple(
                 Model.deserialize(model)
                 for model in message['models']
@@ -42,14 +42,14 @@ class Scene:
 
     def __init__(
         self,
-        bounds: Box,
+        bounds: Bounds,
         models: tuple[Model]
     ) -> None:
         self._bounds = bounds
         self._models = models
 
     @property
-    def bounds(self) -> Box:
+    def bounds(self) -> Bounds:
         return self._bounds
 
     @property

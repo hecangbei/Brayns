@@ -20,7 +20,7 @@
 
 import unittest
 
-from brayns.core.common.box import Box
+from brayns.core.common.bounds import Bounds
 from brayns.core.model.model import Model
 from brayns.core.model.scene import Scene
 from tests.core.model.mock_scene_instance import MockSceneInstance
@@ -36,7 +36,8 @@ class TestScene(unittest.TestCase):
         scene = Scene.from_instance(self._instance)
         self.assertEqual(self._instance.method, 'get-scene')
         self.assertEqual(self._instance.params, None)
-        self.assertEqual(scene.bounds, Box.deserialize(self._instance.bounds))
+        self.assertEqual(
+            scene.bounds, Bounds.deserialize(self._instance.bounds))
         self.assertEqual(len(scene.models), 1)
         model = scene.models[0]
         ref = Model.deserialize(message)
@@ -50,7 +51,8 @@ class TestScene(unittest.TestCase):
         self._instance.add_model()
         message = self._instance.get_scene()
         scene = Scene.deserialize(message)
-        self.assertEqual(scene.bounds, Box.deserialize(self._instance.bounds))
+        bounds = Bounds.deserialize(self._instance.bounds)
+        self.assertEqual(scene.bounds, bounds)
         self.assertEqual(len(scene.models), 1)
         model = scene.models[0]
         ref = Model.deserialize(self._instance.models[0])
