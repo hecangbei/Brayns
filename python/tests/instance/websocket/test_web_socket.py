@@ -24,7 +24,7 @@ from typing import Union
 
 from brayns.instance.websocket.web_socket_client import WebSocketClient
 from brayns.instance.websocket.web_socket_error import WebSocketError
-from tests.instance.websocket.web_socket_server import WebSocketServer
+from tests.instance.websocket.echo_server import EchoServer
 
 
 class TestWebSocket(unittest.TestCase):
@@ -35,10 +35,6 @@ class TestWebSocket(unittest.TestCase):
         self._certificate = str(ssl_folder / 'certificate.pem')
         self._key = str(ssl_folder / 'key.pem')
         self._password = 'test'
-        self._expected_request = None
-        self._expected_reply = None
-        self._request = None
-        self._reply = None
 
     def test_connect_error(self) -> None:
         with self.assertRaises(WebSocketError):
@@ -49,11 +45,17 @@ class TestWebSocket(unittest.TestCase):
             with self._connect():
                 pass
 
+    def test_closed(self) -> None:
+        with self._start_echo_server():
+            with self._connect() as websocket:
+                self.assertFalse(websocket.closed)
+        self.assertTrue(websocket.closed)
+
     def test_close(self) -> None:
         with self._start_echo_server():
-            with self._connect() as client:
-                pass
-        self.assertTrue(client.closed)
+            websocket = self._connect()
+            websocket.close()
+            self.assertTrue(websocket.closed)
 
     def test_send_receive_text(self) -> None:
         self._send_and_receive('test')
@@ -67,9 +69,8 @@ class TestWebSocket(unittest.TestCase):
     def test_send_receive_binary_secure(self) -> None:
         self._send_and_receive(b'test', secure=True)
 
-    def _start_echo_server(self, secure: bool = False) -> WebSocketServer:
-        return WebSocketServer.start(
-            connection_handler=WebSocketServer.echo,
+    def _start_echo_server(self, secure: bool = False) -> EchoServer:
+        return EchoServer.start(
             uri=self._uri,
             certfile=self._certificate if secure else None,
             keyfile=self._key if secure else None,
@@ -89,9 +90,9 @@ class TestWebSocket(unittest.TestCase):
         secure: bool = False
     ) -> None:
         with self._start_echo_server(secure):
-            with self._connect(secure) as client:
-                client.send(request)
-                reply = client.receive()
+            with self._connect(secure) as websocket:
+                websocket.send(request)
+                reply = websocket.receive()
                 self.assertEqual(reply, request)
 
 

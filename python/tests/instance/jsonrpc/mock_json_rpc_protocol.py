@@ -18,38 +18,39 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import logging
-from typing import Union
+from typing import Any, Union
 
 from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.instance.jsonrpc.json_rpc_manager import JsonRpcManager
 from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.instance.jsonrpc.json_rpc_protocol import JsonRpcProtocol
 from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
 
 
-class JsonRpcHandler(JsonRpcProtocol):
+class MockJsonRpcProtocol:
 
-    def __init__(self, manager: JsonRpcManager, logger: logging.Logger) -> None:
-        self._manager = manager
-        self._logger = logger
+    def __init__(self) -> None:
+        self._called = False
+        self._data = None
+
+    def get_data(self) -> Any:
+        assert self._called
+        return self._data
 
     def on_binary(self, data: bytes) -> None:
-        self._logger.info('Binary frame of %d bytes received.', len(data))
+        self._set_data(data)
 
     def on_reply(self, reply: JsonRpcReply) -> None:
-        self._logger.info('Reply received: %s.', reply)
-        self._manager.set_result(reply.id, reply.result)
+        self._set_data(reply)
 
     def on_error(self, error: JsonRpcError) -> None:
-        self._logger.info('Error received: %s.', error)
-        if error.is_global():
-            self._manager.cancel_all_tasks()
-            return
-        self._manager.set_error(error.id, error.error)
+        self._set_data(error)
 
     def on_progress(self, progress: JsonRpcProgress) -> None:
-        self._logger.info('Progress received: %s.', progress)
+        self._set_data(progress)
 
     def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        self._logger.error('Invalid frame received (%s): %s', e, data)
+        self._set_data((data, e))
+
+    def _set_data(self, data: Any) -> None:
+        assert not self._called
+        self._called = True
+        self._data = data

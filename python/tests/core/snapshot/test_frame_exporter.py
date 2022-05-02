@@ -39,9 +39,9 @@ class TestFrameExporter(unittest.TestCase):
             format=ImageFormat.JPEG,
             jpeg_quality=50,
             resolution=(600, 900),
-            sequential_naming=False,
             camera=MockCamera(),
-            renderer=MockRenderer()
+            renderer=MockRenderer(),
+            sequential_naming=False
         )
         self._message = {
             'path': self._path,
@@ -60,9 +60,9 @@ class TestFrameExporter(unittest.TestCase):
                 'quality': 50,
                 'size': [600, 900]
             },
-            'sequential_naming': self._exporter.sequential_naming,
             'camera': MockCamera().serialize(),
-            'renderer': MockRenderer().serialize()
+            'renderer': MockRenderer().serialize(),
+            'sequential_naming': self._exporter.sequential_naming
         }
 
     def test_export_frames(self) -> None:

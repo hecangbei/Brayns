@@ -29,8 +29,12 @@ class WebSocket(Protocol):
     def __exit__(self, *_) -> None:
         self.close()
 
+    @property
+    def closed(self) -> bool:
+        return False
+
     def close(self) -> None:
-        raise NotImplementedError()
+        pass
 
     def receive(self) -> Union[bytes, str]:
         raise NotImplementedError()

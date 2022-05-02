@@ -38,6 +38,10 @@ class TestJsonRpcRequest(unittest.TestCase):
         self.assertEqual(notification.method, message['method'])
         self.assertNotIn('params', message)
 
+    def test_is_notification(self) -> None:
+        test = JsonRpcRequest(None, 'test')
+        self.assertTrue(test.is_notification())
+
 
 if __name__ == '__main__':
     unittest.main()

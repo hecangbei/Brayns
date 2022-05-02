@@ -19,24 +19,31 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import ssl
-from typing import Any, Callable, Coroutine, Optional
+from typing import Optional
 
 import websockets
 from brayns.instance.websocket.event_loop import EventLoop
 
 
-class WebSocketServer:
-
-    ConnectionHandler = Callable[
-        [websockets.WebSocketServerProtocol, str],
-        Coroutine[Any, Any, None]
-    ]
+class EchoServer:
 
     @staticmethod
-    async def echo(
-        websocket: websockets.WebSocketServerProtocol,
-        path: str
-    ) -> None:
+    def start(
+        uri: str,
+        certfile: Optional[str] = None,
+        keyfile: Optional[str] = None,
+        password: Optional[str] = None
+    ) -> 'EchoServer':
+        loop = EventLoop()
+        return EchoServer(
+            websocket=loop.run(
+                EchoServer._start(uri, certfile, keyfile, password)
+            ).result(),
+            loop=loop
+        )
+
+    @staticmethod
+    async def _echo(websocket: websockets.WebSocketServerProtocol, _) -> None:
         try:
             data = await websocket.recv()
             await websocket.send(data)
@@ -44,37 +51,24 @@ class WebSocketServer:
             pass
 
     @staticmethod
-    def start(
-        connection_handler: ConnectionHandler,
+    async def _start(
         uri: str,
         certfile: Optional[str] = None,
         keyfile: Optional[str] = None,
         password: Optional[str] = None
-    ) -> 'WebSocketServer':
-        async def _start():
-            host, port = uri.split(':')
-            context = None
-            if certfile is not None:
-                context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-                context.load_cert_chain(
-                    certfile=certfile,
-                    keyfile=keyfile,
-                    password=password
-                )
-            return await websockets.serve(
-                ws_handler=connection_handler,
-                host=host,
-                port=int(port),
-                ssl=context,
-                ping_interval=None,
-                close_timeout=0
-            )
-        loop = EventLoop()
-        return WebSocketServer(
-            websocket=loop.run(
-                _start()
-            ).result(),
-            loop=loop
+    ) -> websockets.WebSocketServer:
+        host, port = uri.split(':')
+        context = None
+        if certfile is not None:
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(certfile, keyfile, password)
+        return await websockets.serve(
+            ws_handler=EchoServer._echo,
+            host=host,
+            port=int(port),
+            ssl=context,
+            ping_interval=None,
+            close_timeout=0
         )
 
     def __init__(
@@ -85,7 +79,7 @@ class WebSocketServer:
         self._websocket = websocket
         self._loop = loop
 
-    def __enter__(self) -> 'WebSocketServer':
+    def __enter__(self) -> 'EchoServer':
         return self
 
     def __exit__(self, *_) -> None:

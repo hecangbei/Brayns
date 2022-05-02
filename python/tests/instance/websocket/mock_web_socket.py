@@ -18,13 +18,8 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import json
-from typing import Any, Union
+from typing import Union
 
-from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
-from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
-from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
-from brayns.instance.jsonrpc.json_rpc_request import JsonRpcRequest
 from brayns.instance.websocket.web_socket import WebSocket
 
 
@@ -32,52 +27,18 @@ class MockWebSocket(WebSocket):
 
     def __init__(self) -> None:
         self._closed = False
-        self._requests = []
-        self._replies = []
+        self.request = None
+        self.reply = None
 
     @property
     def closed(self) -> bool:
         return self._closed
 
-    @property
-    def requests(self) -> list[JsonRpcRequest]:
-        return self._requests
-
-    def reply(self, reply: JsonRpcReply) -> None:
-        self._replies.append(json.dumps({
-            'id': reply.id,
-            'result': reply.result
-        }))
-
-    def progress(self, progress: JsonRpcProgress) -> None:
-        self._replies.append(json.dumps({
-            'params': {
-                'id': progress.id,
-                'operation': progress.params.operation,
-                'amount': progress.params.amount
-            }
-        }))
-
-    def error(self, error: JsonRpcError) -> None:
-        self._replies.append(json.dumps({
-            'id': error.id,
-            'error': {
-                'code': error.error.code,
-                'message': error.error.message,
-                'data': error.error.data
-            }
-        }))
-
     def close(self) -> None:
         self._closed = True
 
     def receive(self) -> Union[bytes, str]:
-        return self._replies.pop(0)
+        return self.reply
 
     def send(self, data: Union[bytes, str]) -> None:
-        message: dict = json.loads(data)
-        self._requests.append(JsonRpcRequest(
-            id=message.get('id'),
-            method=message['method'],
-            params=message.get('params')
-        ))
+        self.request = data

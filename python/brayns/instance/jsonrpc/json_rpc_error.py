@@ -41,3 +41,6 @@ class JsonRpcError:
                 data=error.get('data')
             )
         )
+
+    def is_global(self) -> bool:
+        return self.id is None

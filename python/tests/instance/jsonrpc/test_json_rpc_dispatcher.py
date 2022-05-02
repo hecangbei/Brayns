@@ -26,37 +26,7 @@ from brayns.instance.jsonrpc.json_rpc_dispatcher import JsonRpcDispatcher
 from brayns.instance.jsonrpc.json_rpc_error import JsonRpcError
 from brayns.instance.jsonrpc.json_rpc_progress import JsonRpcProgress
 from brayns.instance.jsonrpc.json_rpc_reply import JsonRpcReply
-
-
-class MockJsonRpcProtocol:
-
-    def __init__(self) -> None:
-        self._called = False
-        self._data = None
-
-    def get_data(self) -> Any:
-        assert self._called
-        return self._data
-
-    def on_binary(self, data: bytes) -> None:
-        self._set_data(data)
-
-    def on_reply(self, reply: JsonRpcReply) -> None:
-        self._set_data(reply)
-
-    def on_error(self, error: JsonRpcError) -> None:
-        self._set_data(error)
-
-    def on_progress(self, progress: JsonRpcProgress) -> None:
-        self._set_data(progress)
-
-    def on_invalid_frame(self, data: Union[bytes, str], e: Exception) -> None:
-        self._set_data((data, e))
-
-    def _set_data(self, data: Any) -> None:
-        assert not self._called
-        self._called = True
-        self._data = data
+from tests.instance.jsonrpc.mock_json_rpc_protocol import MockJsonRpcProtocol
 
 
 class TestJsonRpcDispatcher(unittest.TestCase):

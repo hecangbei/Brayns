@@ -23,10 +23,10 @@ import threading
 from concurrent.futures import Future
 from typing import Any, Coroutine, TypeVar
 
+T = TypeVar('T')
+
 
 class EventLoop:
-
-    T = TypeVar('T')
 
     def __init__(self) -> None:
         self._loop = asyncio.new_event_loop()

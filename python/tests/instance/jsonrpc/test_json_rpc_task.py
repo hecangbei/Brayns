@@ -35,33 +35,18 @@ class TestJsonRpcTask(unittest.TestCase):
     def test_init(self) -> None:
         task = JsonRpcTask()
         self.assertFalse(task.is_ready())
-        self.assertFalse(task.has_progress())
         with self.assertRaises(RuntimeError):
             task.get_result()
-        with self.assertRaises(RuntimeError):
-            task.get_progress()
 
     def test_is_ready(self) -> None:
         task = JsonRpcTask()
-        task.add_progress(RequestProgress('test', 0.5))
         self.assertFalse(task.is_ready())
         task = JsonRpcTask()
         task.set_result(123)
         self.assertTrue(task.is_ready())
         task = JsonRpcTask()
-        task.set_error(RequestError('test'))
+        task.set_error(RequestError(0, 'test'))
         self.assertTrue(task.is_ready())
-
-    def test_has_progress(self) -> None:
-        task = JsonRpcTask()
-        task.add_progress(RequestProgress('test', 0.5))
-        self.assertTrue(task.has_progress())
-        task = JsonRpcTask()
-        task.set_result(123)
-        self.assertFalse(task.has_progress())
-        task = JsonRpcTask()
-        task.set_error(RequestError('test'))
-        self.assertFalse(task.has_progress())
 
     def test_get_result(self) -> None:
         task = JsonRpcTask()
@@ -76,17 +61,6 @@ class TestJsonRpcTask(unittest.TestCase):
         with self.assertRaises(RequestError) as context:
             task.get_result()
         self.assertEqual(context.exception, error)
-
-    def test_get_progress(self) -> None:
-        task = JsonRpcTask.from_result(123)
-        with self.assertRaises(RuntimeError):
-            task.get_progress()
-        task = JsonRpcTask()
-        with self.assertRaises(RuntimeError):
-            task.get_progress()
-        progress = RequestProgress('test', 0.5)
-        task.add_progress(progress)
-        self.assertEqual(task.get_progress(), progress)
 
     def test_set_result(self) -> None:
         task = JsonRpcTask()
@@ -105,15 +79,6 @@ class TestJsonRpcTask(unittest.TestCase):
         self.assertEqual(context.exception, error)
         with self.assertRaises(RuntimeError):
             task.set_error(error)
-
-    def test_add_progress(self) -> None:
-        task = JsonRpcTask()
-        progress = RequestProgress('test', 0.5)
-        task.add_progress(progress)
-        self.assertEqual(task.get_progress(), progress)
-        task.set_result(123)
-        with self.assertRaises(RuntimeError):
-            task.add_progress(progress)
 
 
 if __name__ == '__main__':
