@@ -25,8 +25,6 @@ from typing import Optional
 from brayns.core.camera.camera import Camera
 from brayns.core.camera.camera_view import CameraView
 from brayns.core.common.resolution import Resolution
-from brayns.core.renderer.interactive_renderer import InteractiveRenderer
-from brayns.core.renderer.production_renderer import ProductionRenderer
 from brayns.core.renderer.renderer import Renderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.instance.instance import Instance
@@ -41,20 +39,6 @@ class Snapshot:
     view: Optional[CameraView] = None
     camera: Optional[Camera] = None
     renderer: Optional[Renderer] = None
-
-    @staticmethod
-    def for_production() -> 'Snapshot':
-        return Snapshot(
-            resolution=Resolution.production,
-            renderer=ProductionRenderer.default()
-        )
-
-    @staticmethod
-    def for_testing() -> 'Snapshot':
-        return Snapshot(
-            resolution=Resolution.full_hd,
-            renderer=InteractiveRenderer.default()
-        )
 
     def save(self, instance: Instance, path: str) -> None:
         format = ImageFormat.from_path(path)
