@@ -35,6 +35,11 @@ class Resolution(Vector):
     def full_hd(cls) -> 'Resolution':
         return Resolution(1920, 1080)
 
+    @classmethod
+    @property
+    def production(cls) -> 'Resolution':
+        return 8 * cls.full_hd
+
     def __iter__(self) -> Iterator[float]:
         yield self.width
         yield self.height

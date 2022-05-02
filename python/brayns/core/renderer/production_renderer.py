@@ -26,6 +26,13 @@ from brayns.core.renderer.renderer import Renderer
 @dataclass
 class ProductionRenderer(Renderer):
 
+    @staticmethod
+    def default() -> 'ProductionRenderer':
+        return ProductionRenderer(
+            samples_per_pixel=128,
+            max_ray_bounces=7
+        )
+
     @classmethod
     @property
     def name(cls) -> str:

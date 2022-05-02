@@ -29,6 +29,10 @@ class InteractiveRenderer(Renderer):
     enable_shadows: bool = True
     ambient_occlusion_samples: int = 0
 
+    @staticmethod
+    def default() -> 'InteractiveRenderer':
+        return InteractiveRenderer()
+
     @classmethod
     @property
     def name(cls) -> str:

@@ -23,6 +23,8 @@ from typing import Optional
 
 from brayns.core.camera.camera import Camera
 from brayns.core.common.resolution import Resolution
+from brayns.core.renderer.interactive_renderer import InteractiveRenderer
+from brayns.core.renderer.production_renderer import ProductionRenderer
 from brayns.core.renderer.renderer import Renderer
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
@@ -39,6 +41,22 @@ class FrameExporter:
     camera: Optional[Camera] = None
     renderer: Optional[Renderer] = None
     sequential_naming: bool = True
+
+    @staticmethod
+    def for_production(frames: list[KeyFrame]) -> 'FrameExporter':
+        return FrameExporter(
+            frames=frames,
+            resolution=Resolution.production,
+            renderer=ProductionRenderer.default()
+        )
+
+    @staticmethod
+    def for_testing(frames: list[KeyFrame]) -> 'FrameExporter':
+        return FrameExporter(
+            frames=frames,
+            resolution=Resolution.full_hd,
+            renderer=InteractiveRenderer.default()
+        )
 
     def export_frames(self, instance: Instance, destination_folder: str) -> None:
         params = self._get_params(destination_folder)
