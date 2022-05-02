@@ -21,9 +21,6 @@
 import unittest
 
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.common.resolution import Resolution
-from brayns.core.renderer.interactive_renderer import InteractiveRenderer
-from brayns.core.renderer.production_renderer import ProductionRenderer
 from brayns.core.snapshot.frame_exporter import FrameExporter
 from brayns.core.snapshot.image_format import ImageFormat
 from brayns.core.snapshot.key_frame import KeyFrame
@@ -67,16 +64,6 @@ class TestFrameExporter(unittest.TestCase):
             'renderer': MockRenderer().serialize(),
             'sequential_naming': self._exporter.sequential_naming
         }
-
-    def test_for_production(self) -> None:
-        test = FrameExporter.for_production([])
-        self.assertEqual(test.resolution, Resolution.production)
-        self.assertEqual(test.renderer, ProductionRenderer.default())
-
-    def test_for_testing(self) -> None:
-        test = FrameExporter.for_testing([])
-        self.assertEqual(test.resolution, Resolution.full_hd)
-        self.assertEqual(test.renderer, InteractiveRenderer.default())
 
     def test_export_frames(self) -> None:
         self._exporter.export_frames(self._instance, self._path)
