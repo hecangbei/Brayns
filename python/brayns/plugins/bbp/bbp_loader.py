@@ -21,15 +21,13 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from brayns.core.model.model import Model
 from brayns.core.model.model_loader import ModelLoader
-from brayns.instance.instance import Instance
 from brayns.plugins.bbp.bbp_cells import BbpCells
 from brayns.plugins.bbp.bbp_report import BbpReport
 
 
 @dataclass
-class BbpLoader:
+class BbpLoader(ModelLoader):
 
     cells: BbpCells = BbpCells.all()
     report: Optional[BbpReport] = None
@@ -54,12 +52,13 @@ class BbpLoader:
             load_dendrites=True
         )
 
-    def load_circuit(self, instance: Instance, path: str) -> list[Model]:
-        properties = self._get_properties()
-        loader = ModelLoader('BBP loader', properties)
-        return loader.add_model(instance, path)
+    @classmethod
+    @property
+    def name(cls) -> str:
+        return 'BBP loader'
 
-    def _get_properties(self) -> dict:
+    @property
+    def properties(self) -> dict:
         properties = {
             'neuron_morphology_parameters': {
                 'radius_multiplier': self.radius_multiplier,

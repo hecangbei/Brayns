@@ -18,26 +18,19 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
-
-from tests.core.model.mock_model_loader import MockModelLoader
-from tests.core.model.mock_scene_instance import MockSceneInstance
+from brayns.core.model.model_loader import ModelLoader
 
 
-class TestModelLoader(unittest.TestCase):
+class MockModelLoader(ModelLoader):
 
-    def test_load(self) -> None:
-        loader = MockModelLoader()
-        instance = MockSceneInstance()
-        path = 'path/test.model'
-        loader.load(instance, path)
-        self.assertEqual(instance.method, 'add-model')
-        self.assertEqual(instance.params, {
-            'path': path,
-            'loader': MockModelLoader.name,
-            'loader_properties': loader.properties
-        })
+    @classmethod
+    @property
+    def name(cls) -> str:
+        return 'test'
 
-
-if __name__ == '__main__':
-    unittest.main()
+    @property
+    def properties(self) -> dict:
+        return {
+            'test1': 1,
+            'test2': 'test'
+        }

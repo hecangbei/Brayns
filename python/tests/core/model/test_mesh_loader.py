@@ -20,23 +20,17 @@
 
 import unittest
 
-from tests.core.model.mock_model_loader import MockModelLoader
-from tests.core.model.mock_scene_instance import MockSceneInstance
+from brayns.core.model.mesh_loader import MeshLoader
 
 
-class TestModelLoader(unittest.TestCase):
+class TestMeshLoader(unittest.TestCase):
 
-    def test_load(self) -> None:
-        loader = MockModelLoader()
-        instance = MockSceneInstance()
-        path = 'path/test.model'
-        loader.load(instance, path)
-        self.assertEqual(instance.method, 'add-model')
-        self.assertEqual(instance.params, {
-            'path': path,
-            'loader': MockModelLoader.name,
-            'loader_properties': loader.properties
-        })
+    def test_name(self) -> None:
+        self.assertEqual(MeshLoader.name, 'mesh')
+
+    def test_properties(self) -> None:
+        test = MeshLoader()
+        self.assertEqual(test.properties, {})
 
 
 if __name__ == '__main__':

@@ -27,16 +27,19 @@ from tests.core.model.mock_scene_instance import MockSceneInstance
 
 class TestSonataLoader(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockSceneInstance()
-        self._loader = SonataLoader(
+    def test_name(self) -> None:
+        self.assertEqual(SonataLoader.name, 'SONATA loader')
+
+    def test_properties(self) -> None:
+        instance = MockSceneInstance()
+        loader = SonataLoader(
             node_populations=[
                 SonataNodePopulation('test1'),
                 SonataNodePopulation('test2')
             ],
             simulation_config='test'
         )
-        self._properties = {
+        properties = {
             'node_population_settings': [
                 {
                     'node_population': 'test1',
@@ -67,13 +70,7 @@ class TestSonataLoader(unittest.TestCase):
             ],
             'simulation_config_path': 'test'
         }
-
-    def test_serialize(self) -> None:
-        self._loader.load_circuit(self._instance, 'path')
-        test = self._instance.params
-        self.assertEqual(test['path'], 'path')
-        self.assertEqual(test['loader'], 'SONATA loader')
-        self.assertEqual(test['loader_properties'], self._properties)
+        self.assertEqual(loader.properties, properties)
 
 
 if __name__ == '__main__':
