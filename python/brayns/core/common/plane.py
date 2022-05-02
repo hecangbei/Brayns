@@ -18,20 +18,44 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from brayns.core.common.box import Box
-from brayns.core.common.color import Color
-from brayns.core.common.plane import Plane
+from dataclasses import dataclass, replace
+
 from brayns.core.common.quaternion import Quaternion
-from brayns.core.common.resolution import Resolution
-from brayns.core.common.transform import Transform
 from brayns.core.common.vector3 import Vector3
 
-__all__ = [
-    'Box',
-    'Color',
-    'Plane',
-    'Quaternion',
-    'Resolution',
-    'Transform',
-    'Vector3'
-]
+
+@dataclass(frozen=True)
+class Plane:
+
+    normal: Vector3
+    distance: float = 0.0
+
+    @classmethod
+    @property
+    def horizonal(cls) -> 'Plane':
+        return Plane(Vector3.up)
+
+    @classmethod
+    @property
+    def front(cls) -> 'Plane':
+        return Plane(Vector3.forward)
+
+    @classmethod
+    @property
+    def side(cls) -> 'Plane':
+        return Plane(Vector3.right)
+
+    def serialize(self) -> list[float]:
+        return [*self.normal, self.distance]
+
+    def with_distance(self, distance: float) -> 'Plane':
+        return replace(self, distance=distance)
+
+    def translate(self, distance: float) -> 'Plane':
+        return Plane(self.normal, self.distance + distance)
+
+    def with_normal(self, normal: Vector3) -> 'Plane':
+        return replace(self, normal=normal)
+
+    def rotate(self, rotation: Quaternion) -> 'Plane':
+        return replace(self, normal=rotation.rotate(self.normal))
