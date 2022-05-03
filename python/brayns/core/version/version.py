@@ -46,5 +46,5 @@ class Version:
         )
 
     @property
-    def release(self) -> str:
-        return f'{self.major}.{self.minor}.{self.patch}'
+    def release(self) -> tuple[int, int, int]:
+        return (self.major, self.minor, self.patch)
