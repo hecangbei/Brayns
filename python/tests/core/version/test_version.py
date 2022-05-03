@@ -38,8 +38,8 @@ class TestVersion(unittest.TestCase):
         ref = MockVersionInstance.version
         self.assertEqual(test, ref)
 
-    def test_string(self) -> None:
-        test = MockVersionInstance.version.string
+    def test_release(self) -> None:
+        test = MockVersionInstance.version.release
         ref = '1.2.3'
         self.assertEqual(test, ref)
 
