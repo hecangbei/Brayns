@@ -25,18 +25,13 @@ from brayns.instance.instance import Instance
 
 
 @dataclass(frozen=True)
-class ClipPlane:
-
-    id: int
-    plane: Plane
+class ClipPlane(Plane):
 
     @staticmethod
     def remove(instance: Instance, ids: list[int]) -> None:
         params = {'ids': ids}
         instance.request('remove-clip-planes', params)
 
-    @staticmethod
-    def add(instance: Instance, plane: Plane) -> 'ClipPlane':
-        params = plane.serialize()
-        id = instance.request('add-clip-plane', params)
-        return ClipPlane(id, plane)
+    def add(self, instance: Instance) -> int:
+        params = self.serialize()
+        return instance.request('add-clip-plane', params)

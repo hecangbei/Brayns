@@ -37,10 +37,9 @@ class TestClipPlane(unittest.TestCase):
 
     def test_add(self) -> None:
         instance = MockClippingInstance()
-        plane = Plane(Vector3(1, 2, 3), 4)
-        test = ClipPlane.add(instance, plane)
-        self.assertEqual(test.id, instance.id)
-        self.assertEqual(test.plane, plane)
+        plane = ClipPlane(Vector3(1, 2, 3), 4)
+        test = plane.add(instance)
+        self.assertEqual(test, instance.id)
         self.assertEqual(instance.method, 'add-clip-plane')
         self.assertEqual(instance.params, [1, 2, 3, 4])
 
