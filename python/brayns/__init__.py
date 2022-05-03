@@ -21,3 +21,4 @@
 from brayns.core import *
 from brayns.instance import *
 from brayns.plugins import *
+from brayns.version import __version__

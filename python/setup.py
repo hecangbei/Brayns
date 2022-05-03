@@ -23,30 +23,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # All rights reserved. Do not distribute without further notice.
 
-import pathlib
-
 import setuptools
 
-DIRECTORY = pathlib.Path(__file__).parent
-
-
-def get_readme():
-    with (DIRECTORY / 'README.md').open() as readme:
-        return readme.read()
-
-
-setuptools.setup(
-    packages=setuptools.find_packages(),
-    install_requires=[
-        'websockets~=9.1'
-    ],
-    description="The Brayns renderer python API",
-    long_description=get_readme(),
-    long_description_content_type='text/markdown',
-    url='https://github.com/BlueBrain/Brayns',
-    download_url='https://github.com/BlueBrain/Brayns',
-    project_urls={
-        'Tracker': 'https://bbpteam.epfl.ch/project/issues/projects/BRAYNS/issues',
-        'Source': 'https://github.com/BlueBrain/Brayns',
-    }
-)
+setuptools.setup()

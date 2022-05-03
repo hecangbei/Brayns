@@ -23,8 +23,6 @@
 from pkg_resources import DistributionNotFound, get_distribution
 
 try:
-    VERSION = get_distribution('brayns').version
+    __version__ = get_distribution('brayns').version
 except DistributionNotFound:
-    VERSION = 'brayns-local'
-
-MINIMAL_VERSION = '2.0.0'
+    __version__ = 'brayns-local'
