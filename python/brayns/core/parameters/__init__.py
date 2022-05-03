@@ -19,9 +19,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from brayns.core.parameters.animation_parameters import AnimationParameters
+from brayns.core.parameters.application_parameters import ApplicationParameters
 from brayns.core.parameters.time_unit import TimeUnit
 
 __all__ = [
     'AnimationParameters',
+    'ApplicationParameters',
     'TimeUnit'
 ]

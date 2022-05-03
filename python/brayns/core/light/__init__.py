@@ -17,3 +17,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+from brayns.core.light.ambient_light import AmbientLight
+from brayns.core.light.directional_light import DirectionalLight
+from brayns.core.light.light import Light
+from brayns.core.light.quad_light import QuadLight
+
+__all__ = [
+    'AmbientLight',
+    'DirectionalLight',
+    'Light',
+    'QuadLight'
+]

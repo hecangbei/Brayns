@@ -21,11 +21,9 @@
 from brayns.instance.connect import connect
 from brayns.instance.instance import Instance
 from brayns.instance.request_error import RequestError
-from brayns.instance.request_progress import RequestProgress
 
 __all__ = [
     'connect',
     'Instance',
-    'RequestError',
-    'RequestProgress'
+    'RequestError'
 ]

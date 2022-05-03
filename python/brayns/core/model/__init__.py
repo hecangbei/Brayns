@@ -18,11 +18,13 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from brayns.core.model.mesh_loader import MeshLoader
 from brayns.core.model.model import Model
 from brayns.core.model.model_loader import ModelLoader
 from brayns.core.model.scene import Scene
 
 __all__ = [
+    'MeshLoader',
     'Model',
     'ModelLoader',
     'Scene'
