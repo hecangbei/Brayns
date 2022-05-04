@@ -18,28 +18,36 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
+from dataclasses import dataclass, replace
 
-from tests.core.model.mock_model_loader import MockModelLoader
-from tests.core.model.mock_scene_instance import MockSceneInstance
-
-
-class TestModelLoader(unittest.TestCase):
-
-    def test_load(self) -> None:
-        loader = MockModelLoader()
-        instance = MockSceneInstance()
-        path = 'path/test.model'
-        models = loader.load(instance, path)
-        self.assertEqual(len(models), 1)
-        self.assertEqual(models[0].id, instance.models[0]['id'])
-        self.assertEqual(instance.method, 'add-model')
-        self.assertEqual(instance.params, {
-            'path': path,
-            'loader': MockModelLoader.name,
-            'loader_properties': loader.properties
-        })
+from brayns.core.common.vector3 import Vector3
 
 
-if __name__ == '__main__':
-    unittest.main()
+@dataclass(frozen=True)
+class Sphere:
+
+    radius: float
+    center: Vector3 = Vector3.zero
+
+    @classmethod
+    @property
+    def one(cls) -> 'Sphere':
+        return Sphere(1.0)
+
+    def serialize(self) -> dict:
+        return {
+            'center': list(self.center),
+            'radius': self.radius
+        }
+
+    def with_center(self, center: Vector3) -> 'Sphere':
+        return replace(self, center=center)
+
+    def with_radius(self, radius: float) -> 'Sphere':
+        return replace(self, radius=radius)
+
+    def translate(self, translation: Vector3) -> 'Sphere':
+        return self.with_center(self.center + translation)
+
+    def rescale(self, scale: float) -> 'Sphere':
+        return self.with_radius(scale * self.radius)

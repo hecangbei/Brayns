@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass, replace
+from typing import Iterator
 
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.vector3 import Vector3
@@ -29,6 +30,10 @@ class Plane:
 
     normal: Vector3
     distance: float = 0.0
+
+    @staticmethod
+    def from_coefficients(a: float, b: float, c: float, d: float) -> 'Plane':
+        return Plane(Vector3(a, b, c), d)
 
     @classmethod
     @property
@@ -45,17 +50,23 @@ class Plane:
     def side(cls) -> 'Plane':
         return Plane(Vector3.right)
 
-    def serialize(self) -> list[float]:
-        return [*self.normal, self.distance]
+    def __iter__(self) -> Iterator[float]:
+        yield from self.normal
+        yield self.distance
+
+    def serialize(self) -> dict:
+        return {
+            'coefficients': list(self)
+        }
+
+    def with_normal(self, normal: Vector3) -> 'Plane':
+        return replace(self, normal=normal)
 
     def with_distance(self, distance: float) -> 'Plane':
         return replace(self, distance=distance)
 
     def translate(self, distance: float) -> 'Plane':
         return Plane(self.normal, self.distance + distance)
-
-    def with_normal(self, normal: Vector3) -> 'Plane':
-        return replace(self, normal=normal)
 
     def rotate(self, rotation: Quaternion) -> 'Plane':
         return replace(self, normal=rotation.rotate(self.normal))

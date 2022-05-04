@@ -27,6 +27,11 @@ from brayns.core.common.vector3 import Vector3
 
 class TestPlane(unittest.TestCase):
 
+    def test_from_coefficients(self) -> None:
+        test = Plane.from_coefficients(1, 2, 3, 4)
+        ref = Plane(Vector3(1, 2, 3), 4)
+        self.assertEqual(test, ref)
+
     def test_horizonal(self) -> None:
         self.assertEqual(Plane.horizonal, Plane(Vector3.up))
 
@@ -36,10 +41,16 @@ class TestPlane(unittest.TestCase):
     def test_side(self) -> None:
         self.assertEqual(Plane.side, Plane(Vector3.right))
 
+    def test_iter(self) -> None:
+        plane = Plane.from_coefficients(1, 2, 3, 4)
+        test = list(plane)
+        ref = [1, 2, 3, 4]
+        self.assertEqual(test, ref)
+
     def test_serialize(self) -> list[float]:
         plane = Plane(Vector3(1, 2, 3), 4)
         test = plane.serialize()
-        ref = [1, 2, 3, 4]
+        ref = {'coefficients': [1, 2, 3, 4]}
         self.assertEqual(test, ref)
 
     def test_with_distance(self) -> None:

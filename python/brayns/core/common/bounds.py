@@ -27,8 +27,8 @@ from brayns.core.common.vector3 import Vector3
 @dataclass(frozen=True)
 class Bounds:
 
-    min: Vector3 = Vector3.zero
-    max: Vector3 = Vector3.zero
+    min: Vector3
+    max: Vector3
 
     @staticmethod
     def deserialize(message: dict) -> 'Bounds':
@@ -47,7 +47,10 @@ class Bounds:
     @staticmethod
     def from_size(size: Vector3, center: Vector3 = Vector3.zero) -> 'Bounds':
         half_size = size / 2
-        return Bounds(center - half_size, center + half_size)
+        return Bounds(
+            min=center - half_size,
+            max=center + half_size
+        )
 
     @staticmethod
     def cube(size: float, center: Vector3 = Vector3.zero) -> 'Bounds':
@@ -56,20 +59,22 @@ class Bounds:
     @classmethod
     @property
     def empty(self) -> 'Bounds':
-        return Bounds()
+        return Bounds(Vector3.zero, Vector3.zero)
 
     @classmethod
     @property
     def one(self) -> 'Bounds':
-        one_half = Vector3.full(0.5)
-        return Bounds(-one_half, one_half)
+        return Bounds(-Vector3.one / 2, Vector3.one / 2)
 
     def __post_init__(self) -> None:
         if self.min > self.max:
             raise ValueError(f'Min {self.min} > max {self.max}')
 
     def __or__(self, other: 'Bounds') -> 'Bounds':
-        return Bounds(min(self.min, other.min), max(self.max, other.max))
+        return Bounds(
+            min=min(self.min, other.min),
+            max=max(self.max, other.max)
+        )
 
     def __contains__(self, value: Union['Bounds', Vector3]) -> bool:
         if isinstance(value, Bounds):

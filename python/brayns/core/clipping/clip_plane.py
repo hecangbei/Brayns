@@ -33,5 +33,5 @@ class ClipPlane(Plane):
         instance.request('remove-clip-planes', params)
 
     def add(self, instance: Instance) -> int:
-        params = self.serialize()
+        params = list(self)
         return instance.request('add-clip-plane', params)

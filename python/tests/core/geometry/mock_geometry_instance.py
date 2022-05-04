@@ -18,28 +18,27 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import unittest
+from typing import Any
 
-from tests.core.model.mock_model_loader import MockModelLoader
-from tests.core.model.mock_scene_instance import MockSceneInstance
-
-
-class TestModelLoader(unittest.TestCase):
-
-    def test_load(self) -> None:
-        loader = MockModelLoader()
-        instance = MockSceneInstance()
-        path = 'path/test.model'
-        models = loader.load(instance, path)
-        self.assertEqual(len(models), 1)
-        self.assertEqual(models[0].id, instance.models[0]['id'])
-        self.assertEqual(instance.method, 'add-model')
-        self.assertEqual(instance.params, {
-            'path': path,
-            'loader': MockModelLoader.name,
-            'loader_properties': loader.properties
-        })
+from brayns.core.common.bounds import Bounds
+from brayns.core.common.transform import Transform
+from brayns.instance.instance import Instance
 
 
-if __name__ == '__main__':
-    unittest.main()
+class MockGeometryInstance(Instance):
+
+    def __init__(self) -> None:
+        self.model = {
+            'id': 0,
+            'bounds': Bounds.one.serialize(),
+            'metadata': {},
+            'visible': True,
+            'transformation': Transform.identity.serialize()
+        }
+        self.method = ''
+        self.params = None
+
+    def request(self, method: str, params: Any = None) -> Any:
+        self.method = method
+        self.params = params
+        return self.model

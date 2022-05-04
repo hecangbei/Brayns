@@ -66,7 +66,7 @@ class TestBounds(unittest.TestCase):
         self.assertEqual(test, ref)
 
     def test_empty(self) -> None:
-        self.assertEqual(Bounds.empty, Bounds())
+        self.assertEqual(Bounds.empty, Bounds(Vector3.zero, Vector3.zero))
 
     def test_one(self) -> None:
         one_half = Vector3.full(0.5)

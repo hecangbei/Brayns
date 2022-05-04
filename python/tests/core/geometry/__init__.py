@@ -17,29 +17,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-import unittest
-
-from tests.core.model.mock_model_loader import MockModelLoader
-from tests.core.model.mock_scene_instance import MockSceneInstance
-
-
-class TestModelLoader(unittest.TestCase):
-
-    def test_load(self) -> None:
-        loader = MockModelLoader()
-        instance = MockSceneInstance()
-        path = 'path/test.model'
-        models = loader.load(instance, path)
-        self.assertEqual(len(models), 1)
-        self.assertEqual(models[0].id, instance.models[0]['id'])
-        self.assertEqual(instance.method, 'add-model')
-        self.assertEqual(instance.params, {
-            'path': path,
-            'loader': MockModelLoader.name,
-            'loader_properties': loader.properties
-        })
-
-
-if __name__ == '__main__':
-    unittest.main()
