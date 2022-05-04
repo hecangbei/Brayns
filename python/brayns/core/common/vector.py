@@ -20,7 +20,7 @@
 
 import math
 from abc import ABC, abstractmethod
-from typing import Iterable, Iterator, TypeVar, Union
+from typing import Callable, Iterable, Iterator, TypeVar, Union
 
 T = TypeVar('T', bound='Vector')
 
@@ -48,22 +48,34 @@ class Vector(ABC):
         return self.unpack(i - j for i, j in zip(self, other))
 
     def __mul__(self: T, value: Union[int, float, T]) -> T:
-        if isinstance(value, (int, float)):
-            return self.unpack(i * value for i in self)
-        return self.unpack(i * j for i, j in zip(self, value))
+        return self.__unpack(value, lambda x, y: x * y)
 
     def __rmul__(self: T, value: Union[int, float, T]) -> T:
-        return self * value
+        return self.__unpack(value, lambda x, y: y * x)
 
     def __truediv__(self: T, value: Union[int, float, T]) -> T:
-        if isinstance(value, (int, float)):
-            return self.unpack(i / value for i in self)
-        return self.unpack(i / j for i, j in zip(self, value))
+        return self.__unpack(value, lambda x, y: x / y)
 
     def __rtruediv__(self: T, value: Union[int, float, T]) -> T:
-        if isinstance(value, (int, float)):
-            return self.unpack(value / i for i in self)
-        return self.unpack(j / i for i, j in zip(self, value))
+        return self.__unpack(value, lambda x, y: y / x)
+
+    def __floordiv__(self: T, value: Union[int, float, T]) -> T:
+        return self.__unpack(value, lambda x, y: x // y)
+
+    def __rfloordiv__(self: T, value: Union[int, float, T]) -> T:
+        return self.__unpack(value, lambda x, y: y // x)
+
+    def __mod__(self: T, value: Union[int, float, T]) -> T:
+        return self.__unpack(value, lambda x, y: x % y)
+
+    def __rmod__(self: T, value: Union[int, float, T]) -> T:
+        return self.__unpack(value, lambda x, y: y % x)
+
+    def __pow__(self: T, value: Union[int, float, T]) -> T:
+        return self.__unpack(value, lambda x, y: x ** y)
+
+    def __rpow__(self: T, value: Union[int, float, T]) -> T:
+        return self.__unpack(value, lambda x, y: y ** x)
 
     @property
     def square_norm(self) -> float:
@@ -76,3 +88,8 @@ class Vector(ABC):
     @property
     def normalized(self: T) -> T:
         return self / self.norm
+
+    def __unpack(self: T, value: Union[int, float, T], operation: Callable[[float, float], float]) -> T:
+        if isinstance(value, (int, float)):
+            return self.unpack(operation(i, value) for i in self)
+        return self.unpack(operation(i, j) for i, j in zip(self, value))

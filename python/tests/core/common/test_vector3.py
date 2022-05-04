@@ -80,13 +80,37 @@ class TestVector3(unittest.TestCase):
         self.assertEqual(3 * Vector3(1, 2, 3), Vector3(3, 6, 9))
         self.assertEqual(Vector3(1, 2, 3) * 3, Vector3(3, 6, 9))
 
-    def test_div(self) -> None:
+    def test_truediv(self) -> None:
         self.assertEqual(
             Vector3(1, 2, 3) / Vector3(1, 2, 4),
             Vector3(1, 1, 0.75)
         )
         self.assertEqual(Vector3(1, 2, 4) / 4, Vector3(0.25, 0.5, 1))
         self.assertEqual(2 / Vector3(1, 2, 4), Vector3(2, 1, 0.5))
+
+    def test_floordiv(self) -> None:
+        self.assertEqual(
+            Vector3(1, 2, 3) // Vector3(1, 2, 4),
+            Vector3(1, 1, 0)
+        )
+        self.assertEqual(Vector3(1, 2, 4) // 4, Vector3(0, 0, 1))
+        self.assertEqual(2 // Vector3(1, 2, 4), Vector3(2, 1, 0))
+
+    def test_mod(self) -> None:
+        self.assertEqual(
+            Vector3(10, 12, 14) % Vector3(2, 5, 6),
+            Vector3(0, 2, 2)
+        )
+        self.assertEqual(Vector3(3, 4, 5) % 3, Vector3(0, 1, 2))
+        self.assertEqual(3 % Vector3(3, 4, 5), Vector3(0, 3, 3))
+
+    def test_pow(self) -> None:
+        self.assertEqual(
+            Vector3(1, 2, 3) ** Vector3(2, 3, 3),
+            Vector3(1, 8, 27)
+        )
+        self.assertEqual(Vector3(1, 2, 3) ** 2, Vector3(1, 4, 9))
+        self.assertEqual(2 ** Vector3(1, 2, 3), Vector3(2, 4, 8))
 
     def test_square_norm(self) -> None:
         self.assertEqual(Vector3(1, 2, 3).square_norm, 14)
