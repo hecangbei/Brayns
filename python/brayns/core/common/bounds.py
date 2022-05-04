@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from dataclasses import dataclass, replace
-from typing import Union
+from typing import Iterable, Union
 
 from brayns.core.common.vector3 import Vector3
 
@@ -35,6 +35,13 @@ class Bounds:
         return Bounds(
             min=Vector3(*message['min']),
             max=Vector3(*message['max'])
+        )
+
+    @staticmethod
+    def merge(bounds: Iterable['Bounds']) -> 'Bounds':
+        return Bounds(
+            min=min(i.min for i in bounds),
+            max=max(i.max for i in bounds)
         )
 
     @staticmethod

@@ -40,6 +40,16 @@ class TestBounds(unittest.TestCase):
         test = Bounds.deserialize(self._message)
         self.assertEqual(test, self._box)
 
+    def test_merge(self) -> None:
+        tests = [
+            Bounds(Vector3.one, 2 * Vector3.one),
+            Bounds(-Vector3.one, 2 * Vector3.one),
+            Bounds(3 * Vector3.one, 12 * Vector3.one)
+        ]
+        test = Bounds.merge(tests)
+        ref = Bounds(-Vector3.one, 12 * Vector3.one)
+        self.assertEqual(test, ref)
+
     def test_from_size(self) -> None:
         from_size = Bounds.from_size(Vector3.one)
         self.assertEqual(from_size, Bounds.one)
