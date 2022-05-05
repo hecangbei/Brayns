@@ -29,18 +29,33 @@ class TestVersion(unittest.TestCase):
     def test_of(self) -> None:
         instance = MockVersionInstance()
         test = Version.of(instance)
-        ref = MockVersionInstance.version
+        ref = Version.deserialize(instance.version)
         self.assertEqual(test, ref)
 
     def test_deserialize(self) -> None:
-        message = MockVersionInstance.reply
+        message = {
+            'major': 0,
+            'minor': 1,
+            'patch': 2,
+            'revision': '3'
+        }
         test = Version.deserialize(message)
-        ref = MockVersionInstance.version
+        ref = Version(
+            major=0,
+            minor=1,
+            patch=2,
+            revision='3'
+        )
         self.assertEqual(test, ref)
 
     def test_release(self) -> None:
-        test = MockVersionInstance.version.release
-        ref = (1, 2, 3)
+        test = Version(
+            major=0,
+            minor=1,
+            patch=2,
+            revision='3'
+        ).release
+        ref = (0, 1, 2)
         self.assertEqual(test, ref)
 
 

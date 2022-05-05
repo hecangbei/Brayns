@@ -18,36 +18,32 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, replace
+import unittest
 
 from brayns.core.common.vector3 import Vector3
+from brayns.core.geometry.capsule import Capsule
 
 
-@dataclass(frozen=True)
-class Sphere:
+class TestCapsule(unittest.TestCase):
 
-    radius: float
-    center: Vector3 = Vector3.zero
+    def test_name(self) -> None:
+        self.assertEqual(Capsule.name, 'capsules')
 
-    @classmethod
-    @property
-    def one(cls) -> 'Sphere':
-        return Sphere(1.0)
-
-    def serialize(self) -> dict:
-        return {
-            'center': list(self.center),
-            'radius': self.radius
+    def test_properties(self) -> None:
+        test = Capsule(
+            start_point=Vector3.zero,
+            start_radius=1,
+            end_point=Vector3.one,
+            end_radius=2
+        )
+        ref = {
+            'p0': [0, 0, 0],
+            'r0': 1,
+            'p1': [1, 1, 1],
+            'r1': 2
         }
+        self.assertEqual(test.properties, ref)
 
-    def with_center(self, center: Vector3) -> 'Sphere':
-        return replace(self, center=center)
 
-    def with_radius(self, radius: float) -> 'Sphere':
-        return replace(self, radius=radius)
-
-    def translate(self, translation: Vector3) -> 'Sphere':
-        return self.with_center(self.center + translation)
-
-    def rescale(self, scale: float) -> 'Sphere':
-        return self.with_radius(scale * self.radius)
+if __name__ == '__main__':
+    unittest.main()

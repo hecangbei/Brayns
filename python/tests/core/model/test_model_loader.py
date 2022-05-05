@@ -20,19 +20,20 @@
 
 import unittest
 
+from brayns.core.model.model import Model
+from tests.core.model.mock_model_instance import MockModelInstance
 from tests.core.model.mock_model_loader import MockModelLoader
-from tests.core.model.mock_scene_instance import MockSceneInstance
 
 
 class TestModelLoader(unittest.TestCase):
 
     def test_load(self) -> None:
-        loader = MockModelLoader()
-        instance = MockSceneInstance()
+        loader = MockModelLoader(1, 'test')
+        instance = MockModelInstance()
         path = 'path/test.model'
         models = loader.load(instance, path)
-        self.assertEqual(len(models), 1)
-        self.assertEqual(models[0].id, instance.models[0]['id'])
+        ref = [Model.deserialize(model) for model in instance.models]
+        self.assertEqual(models, ref)
         self.assertEqual(instance.method, 'add-model')
         self.assertEqual(instance.params, {
             'path': path,

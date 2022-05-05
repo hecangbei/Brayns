@@ -20,12 +20,16 @@
 
 from dataclasses import dataclass
 
-from brayns.core.common.plane import Plane
 from brayns.instance.instance import Instance
 
 
-@dataclass(frozen=True)
-class ClipPlane(Plane):
+@dataclass
+class ClipPlane:
+
+    a: float
+    b: float
+    c: float
+    d: float = 0.0
 
     @staticmethod
     def remove(instance: Instance, ids: list[int]) -> None:
@@ -33,5 +37,5 @@ class ClipPlane(Plane):
         instance.request('remove-clip-planes', params)
 
     def add(self, instance: Instance) -> int:
-        params = list(self)
+        params = [self.a, self.b, self.c, self.d]
         return instance.request('add-clip-plane', params)

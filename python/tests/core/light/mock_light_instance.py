@@ -26,8 +26,7 @@ from brayns.instance.instance import Instance
 class MockLightInstance(Instance):
 
     def __init__(self) -> None:
-        self.lights = list[dict]()
-        self.names = list[str]()
+        self.id = 0
         self.method = ''
         self.params = None
 
@@ -35,25 +34,9 @@ class MockLightInstance(Instance):
         self.method = method
         self.params = params
         if method == 'remove-lights':
-            ids = params['ids']
-            self.lights = [
-                light
-                for id, light in enumerate(self.lights)
-                if id not in ids
-            ]
-            self.names = [
-                name
-                for id, name in enumerate(self.names)
-                if id not in ids
-            ]
             return None
         if method == 'clear-lights':
-            self.lights.clear()
-            self.names.clear()
             return None
         if method.startswith('add-light-'):
-            name = method.split('-')[2]
-            self.names.append(name)
-            self.lights.append(params)
-            return len(self.names) - 1
+            return self.id
         raise RuntimeError('Invalid request')

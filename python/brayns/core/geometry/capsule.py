@@ -21,36 +21,27 @@
 from dataclasses import dataclass
 
 from brayns.core.common.vector3 import Vector3
-from brayns.instance.instance import Instance
+from brayns.core.geometry.geometry import Geometry
 
 
 @dataclass
-class CameraView:
+class Capsule(Geometry):
 
-    position: Vector3 = Vector3.zero
-    target: Vector3 = Vector3.zero
-    up: Vector3 = Vector3.up
+    start_point: Vector3
+    start_radius: float
+    end_point: Vector3
+    end_radius: float
 
-    @staticmethod
-    def from_instance(instance: Instance) -> 'CameraView':
-        result = instance.request('get-camera-look-at')
-        return CameraView.deserialize(result)
+    @classmethod
+    @property
+    def name(cls) -> str:
+        return 'capsules'
 
-    @staticmethod
-    def deserialize(message: dict) -> 'CameraView':
-        return CameraView(
-            position=Vector3(*message['position']),
-            target=Vector3(*message['target']),
-            up=Vector3(*message['up'])
-        )
-
-    def use_for_main_camera(self, instance: Instance) -> None:
-        params = self.serialize()
-        instance.request('set-camera-look-at', params)
-
-    def serialize(self) -> dict:
+    @property
+    def properties(self) -> dict:
         return {
-            'position': list(self.position),
-            'target': list(self.target),
-            'up': list(self.up)
+            'p0': list(self.start_point),
+            'r0': self.start_radius,
+            'p1': list(self.end_point),
+            'r1': self.end_radius
         }

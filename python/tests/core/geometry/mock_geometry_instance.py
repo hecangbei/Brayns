@@ -20,7 +20,6 @@
 
 from typing import Any
 
-from brayns.core.common.bounds import Bounds
 from brayns.core.common.transform import Transform
 from brayns.instance.instance import Instance
 
@@ -30,7 +29,10 @@ class MockGeometryInstance(Instance):
     def __init__(self) -> None:
         self.model = {
             'id': 0,
-            'bounds': Bounds.one.serialize(),
+            'bounds': {
+                'min': [-1, -1, -1],
+                'max': [1, 1, 1]
+            },
             'metadata': {},
             'visible': True,
             'transformation': Transform.identity.serialize()

@@ -29,8 +29,6 @@ class TestCamera(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockCameraInstance()
-        self._instance.name = MockCamera.name
-        self._instance.properties = MockCamera().serialize()
 
     def test_get_main_camera_name(self) -> None:
         test = Camera.get_main_camera_name(self._instance)
@@ -41,7 +39,7 @@ class TestCamera(unittest.TestCase):
 
     def test_from_instance(self) -> None:
         test = MockCamera.from_instance(self._instance)
-        ref = MockCamera.deserialize(self._instance.properties)
+        ref = MockCamera.deserialize(self._instance.camera)
         self.assertEqual(test, ref)
         self.assertEqual(self._instance.method, 'get-camera-test')
         self.assertEqual(self._instance.params, None)
@@ -54,11 +52,7 @@ class TestCamera(unittest.TestCase):
 
     def test_use_as_main_camera(self) -> None:
         test = MockCamera('test1', 3)
-        self._instance.name = ''
-        self._instance.properties = {}
         test.use_as_main_camera(self._instance)
-        self.assertEqual(self._instance.name, MockCamera.name)
-        self.assertEqual(self._instance.properties, test.serialize())
         self.assertEqual(self._instance.method, 'set-camera-test')
         self.assertEqual(self._instance.params, test.serialize())
 

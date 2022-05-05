@@ -26,8 +26,6 @@ from brayns.instance.instance import Instance
 class MockParametersInstance(Instance):
 
     def __init__(self) -> None:
-        self.method = ''
-        self.params = None
         self.animation = {
             'start_frame': 0,
             'end_frame': 10,
@@ -39,6 +37,8 @@ class MockParametersInstance(Instance):
             'plugins': ['test1', 'test2'],
             'viewport': [1920, 1080]
         }
+        self.method = ''
+        self.params = None
 
     def request(self, method: str, params: Any = None) -> Any:
         self.method = method

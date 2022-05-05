@@ -32,37 +32,29 @@ class TestMaterial(unittest.TestCase):
         self._instance = MockMaterialInstance()
 
     def test_get_material_name(self) -> None:
-        ref = MockMaterial.name
-        self._instance.names.append(ref)
         test = Material.get_material_name(self._instance, 0)
-        self.assertEqual(test, ref)
+        self.assertEqual(test, self._instance.name)
         self.assertEqual(self._instance.method, 'get-material-type')
         self.assertEqual(self._instance.params, {'id': 0})
 
     def test_from_model(self) -> None:
-        ref = MockMaterial(Color.pure_blue, 'test', 12)
-        self._instance.names.append(ref.name)
-        self._instance.materials.append(ref.serialize())
         test = MockMaterial.from_model(self._instance, 0)
+        ref = MockMaterial.deserialize(self._instance.material)
         self.assertEqual(test, ref)
         self.assertEqual(self._instance.method, 'get-material-test')
         self.assertEqual(self._instance.params, {'id': 0})
 
     def test_is_applied(self) -> None:
-        self._instance.names.append(MockMaterial.name)
         self.assertTrue(MockMaterial.is_applied(self._instance, 0))
 
     def test_apply(self) -> None:
         material = MockMaterial(Color.pure_blue, test1='test', test2=3)
-        self._instance.names.append(material.name)
-        self._instance.materials.append({})
         material.apply(self._instance, 0)
-        params = {
+        self.assertEqual(self._instance.method, 'set-material-test')
+        self.assertEqual(self._instance.params, {
             'model_id': 0,
             'material': material.serialize()
-        }
-        self.assertEqual(self._instance.method, 'set-material-test')
-        self.assertEqual(self._instance.params, params)
+        })
 
 
 if __name__ == '__main__':

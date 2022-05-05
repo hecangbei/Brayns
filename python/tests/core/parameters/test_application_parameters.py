@@ -27,40 +27,33 @@ from tests.core.parameters.mock_parameters_instance import MockParametersInstanc
 
 class TestApplicationParameters(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockParametersInstance()
-        self._application = ApplicationParameters(
-            plugins=('test1', 'test2'),
-            resolution=Resolution.full_hd
-        )
-        self._message = {
+    def test_from_instance(self) -> None:
+        instance = MockParametersInstance()
+        test = ApplicationParameters.from_instance(instance)
+        ref = ApplicationParameters.deserialize(instance.application)
+        self.assertEqual(test, ref)
+        self.assertEqual(instance.method, 'get-application-parameters')
+        self.assertEqual(instance.params, None)
+
+    def test_deserialize(self) -> None:
+        message = {
             'plugins': ['test1', 'test2'],
             'viewport': [1920, 1080]
         }
-
-    def test_from_instance(self) -> None:
-        self._instance.application = self._message
-        test = ApplicationParameters.from_instance(self._instance)
-        self.assertEqual(self._instance.method, 'get-application-parameters')
-        self.assertEqual(self._instance.params, None)
-        self.assertEqual(test.plugins, self._application.plugins)
-        self.assertEqual(test.resolution, self._application.resolution)
-
-    def test_deserialize(self) -> None:
-        test = ApplicationParameters.deserialize(self._message)
-        self.assertEqual(test.plugins, self._application.plugins)
-        self.assertEqual(test.resolution, self._application.resolution)
+        test = ApplicationParameters.deserialize(message)
+        ref = ApplicationParameters(
+            plugins=['test1', 'test2'],
+            resolution=Resolution(1920, 1080)
+        )
+        self.assertEqual(test, ref)
 
     def test_update(self) -> None:
-        self._application.update(self._instance)
-        self.assertEqual(self._instance.method, 'set-application-parameters')
-        self.assertEqual(self._instance.params, self._application.serialize())
-
-    def test_serialize(self) -> None:
-        ref = {
-            'viewport': list(self._application.resolution)
-        }
-        self.assertEqual(self._application.serialize(), ref)
+        instance = MockParametersInstance()
+        ApplicationParameters.update(instance, Resolution(100, 200))
+        self.assertEqual(instance.method, 'set-application-parameters')
+        self.assertEqual(instance.params, {
+            'viewport': [100, 200]
+        })
 
 
 if __name__ == '__main__':

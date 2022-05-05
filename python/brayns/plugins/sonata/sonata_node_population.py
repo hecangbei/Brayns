@@ -26,7 +26,7 @@ from brayns.plugins.sonata.sonata_nodes import SonataNodes
 from brayns.plugins.sonata.sonata_report import SonataReport
 
 
-@dataclass(frozen=True)
+@dataclass
 class SonataNodePopulation:
 
     name: str

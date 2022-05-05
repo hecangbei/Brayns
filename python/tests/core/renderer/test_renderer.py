@@ -27,40 +27,35 @@ from tests.core.renderer.mock_renderer_instance import MockRendererInstance
 
 class TestRenderer(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockRendererInstance()
-        self._instance.name = MockRenderer.name
-        self._instance.properties = MockRenderer().serialize()
-
     def test_get_main_renderer_name(self) -> None:
-        test = Renderer.get_main_renderer_name(self._instance)
-        ref = self._instance.name
+        instance = MockRendererInstance()
+        test = Renderer.get_main_renderer_name(instance)
+        ref = instance.name
         self.assertEqual(test, ref)
-        self.assertEqual(self._instance.method, 'get-renderer-type')
-        self.assertEqual(self._instance.params, None)
+        self.assertEqual(instance.method, 'get-renderer-type')
+        self.assertEqual(instance.params, None)
 
     def test_from_instance(self) -> None:
-        test = MockRenderer.from_instance(self._instance)
-        ref = MockRenderer.deserialize(self._instance.properties)
+        instance = MockRendererInstance()
+        test = MockRenderer.from_instance(instance)
+        ref = MockRenderer.deserialize(instance.renderer)
         self.assertEqual(test, ref)
-        self.assertEqual(self._instance.method, 'get-renderer-test')
-        self.assertEqual(self._instance.params, None)
+        self.assertEqual(instance.method, 'get-renderer-test')
+        self.assertEqual(instance.params, None)
 
     def test_is_main_renderer(self) -> None:
-        test = MockRenderer.is_main_renderer(self._instance)
+        instance = MockRendererInstance()
+        test = MockRenderer.is_main_renderer(instance)
         self.assertTrue(test)
-        self.assertEqual(self._instance.method, 'get-renderer-type')
-        self.assertEqual(self._instance.params, None)
+        self.assertEqual(instance.method, 'get-renderer-type')
+        self.assertEqual(instance.params, None)
 
     def test_use_as_main_renderer(self) -> None:
-        test = MockRenderer('test1', 3)
-        self._instance.name = ''
-        self._instance.properties = {}
-        test.use_as_main_renderer(self._instance)
-        self.assertEqual(self._instance.name, MockRenderer.name)
-        self.assertEqual(self._instance.properties, test.serialize())
-        self.assertEqual(self._instance.method, 'set-renderer-test')
-        self.assertEqual(self._instance.params, test.serialize())
+        instance = MockRendererInstance()
+        test = MockRenderer()
+        test.use_as_main_renderer(instance)
+        self.assertEqual(instance.method, 'set-renderer-test')
+        self.assertEqual(instance.params, test.serialize())
 
 
 if __name__ == '__main__':

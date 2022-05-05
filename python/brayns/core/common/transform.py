@@ -18,13 +18,13 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.vector3 import Vector3
 
 
-@dataclass(frozen=True)
+@dataclass
 class Transform:
 
     translation: Vector3 = Vector3.zero
@@ -51,25 +51,3 @@ class Transform:
             'rotation_center': list(self.translation),
             'scale': list(self.scale)
         }
-
-    def with_translation(self, translation: Vector3) -> 'Transform':
-        return replace(self, translation=translation)
-
-    def with_rotation(self, rotation: Quaternion) -> 'Transform':
-        return replace(self, rotation=rotation)
-
-    def with_scale(self, scale: Vector3) -> 'Transform':
-        return replace(self, scale=scale)
-
-    def translate(self, translation: Vector3) -> 'Transform':
-        return self.with_translation(self.translation + translation)
-
-    def rotate(self, rotation: Quaternion, center: Vector3 = Vector3.zero) -> 'Transform':
-        return replace(
-            self,
-            translation=self.translation + center - rotation.rotate(center),
-            rotation=rotation * self.rotation
-        )
-
-    def rescale(self, scale: Vector3) -> 'Transform':
-        return self.with_scale(scale * self.scale)

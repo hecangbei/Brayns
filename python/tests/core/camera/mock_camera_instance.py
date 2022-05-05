@@ -22,14 +22,15 @@ from typing import Any
 
 from brayns.core.camera.camera_view import CameraView
 from brayns.instance.instance import Instance
+from tests.core.camera.mock_camera import MockCamera
 
 
 class MockCameraInstance(Instance):
 
     def __init__(self) -> None:
-        self.view = CameraView()
-        self.name = ''
-        self.properties = {}
+        self.view = CameraView().serialize()
+        self.name = MockCamera.name
+        self.camera = MockCamera().serialize()
         self.method = ''
         self.params = None
 
@@ -37,19 +38,13 @@ class MockCameraInstance(Instance):
         self.method = method
         self.params = params
         if method == 'get-camera-look-at':
-            return self.view.serialize()
+            return self.view
         if method == 'set-camera-look-at':
-            self.view = CameraView.deserialize(params)
             return None
         if method == 'get-camera-type':
             return self.name
         if method.startswith('get-camera-'):
-            name = method.split('-')[2]
-            if name != self.name:
-                raise RuntimeError(f'Current camera is not {name}')
-            return self.properties
+            return self.camera
         if method.startswith('set-camera-'):
-            self.name = method.split('-')[2]
-            self.properties = params
             return None
         raise RuntimeError('Invalid request')

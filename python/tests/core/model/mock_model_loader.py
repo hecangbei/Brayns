@@ -18,10 +18,16 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from dataclasses import dataclass
+
 from brayns.core.model.model_loader import ModelLoader
 
 
+@dataclass
 class MockModelLoader(ModelLoader):
+
+    test1: int = 0
+    test2: str = ''
 
     @classmethod
     @property
@@ -31,6 +37,6 @@ class MockModelLoader(ModelLoader):
     @property
     def properties(self) -> dict:
         return {
-            'test1': 1,
-            'test2': 'test'
+            'test1': self.test1,
+            'test2': self.test2
         }

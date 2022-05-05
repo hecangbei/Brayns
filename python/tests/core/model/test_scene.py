@@ -21,46 +21,54 @@
 import unittest
 
 from brayns.core.common.bounds import Bounds
+from brayns.core.common.transform import Transform
+from brayns.core.common.vector3 import Vector3
 from brayns.core.model.model import Model
 from brayns.core.model.scene import Scene
-from tests.core.model.mock_scene_instance import MockSceneInstance
+from tests.core.model.mock_model_instance import MockModelInstance
 
 
 class TestScene(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockSceneInstance()
-
     def test_from_instance(self) -> None:
-        message = self._instance.add_model()
-        scene = Scene.from_instance(self._instance)
-        self.assertEqual(self._instance.method, 'get-scene')
-        self.assertEqual(self._instance.params, None)
-        self.assertEqual(
-            scene.bounds, Bounds.deserialize(self._instance.bounds))
-        self.assertEqual(len(scene.models), 1)
-        model = scene.models[0]
-        ref = Model.deserialize(message)
-        self.assertEqual(model.id, ref.id)
-        self.assertEqual(model.bounds, ref.bounds)
-        self.assertEqual(model.metadata, ref.metadata)
-        self.assertEqual(model.visible, ref.visible)
-        self.assertEqual(model.transform, ref.transform)
+        instance = MockModelInstance()
+        test = Scene.from_instance(instance)
+        ref = Scene.deserialize(instance.scene)
+        self.assertEqual(test, ref)
 
     def test_deserialize(self) -> None:
-        self._instance.add_model()
-        message = self._instance.get_scene()
-        scene = Scene.deserialize(message)
-        bounds = Bounds.deserialize(self._instance.bounds)
-        self.assertEqual(scene.bounds, bounds)
-        self.assertEqual(len(scene.models), 1)
-        model = scene.models[0]
-        ref = Model.deserialize(self._instance.models[0])
-        self.assertEqual(model.id, ref.id)
-        self.assertEqual(model.bounds, ref.bounds)
-        self.assertEqual(model.metadata, ref.metadata)
-        self.assertEqual(model.visible, ref.visible)
-        self.assertEqual(model.transform, ref.transform)
+        message = {
+            'bounds': {
+                'min': [0, 0, 0],
+                'max': [1, 1, 1]
+            },
+            'models': [
+                {
+                    'id': 0,
+                    'bounds': {
+                        'min': [0, 0, 0],
+                        'max': [1, 1, 1]
+                    },
+                    'metadata': {'test': 1},
+                    'visible': True,
+                    'transformation': Transform.identity.serialize()
+                }
+            ]
+        }
+        test = Scene.deserialize(message)
+        ref = Scene(
+            Bounds(Vector3.zero, Vector3.one),
+            [
+                Model(
+                    id=0,
+                    bounds=Bounds(Vector3.zero, Vector3.one),
+                    metadata={'test': 1},
+                    visible=True,
+                    transform=Transform.identity
+                )
+            ]
+        )
+        self.assertEqual(test, ref)
 
 
 if __name__ == '__main__':

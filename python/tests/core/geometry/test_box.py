@@ -18,30 +18,25 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from dataclasses import dataclass
+import unittest
 
-from brayns.core.common.bounds import Bounds
-from brayns.core.model.model import Model
-from brayns.instance.instance import Instance
+from brayns.core.common.vector3 import Vector3
+from brayns.core.geometry.box import Box
 
 
-@dataclass
-class Scene:
+class TestBox(unittest.TestCase):
 
-    bounds: Bounds
-    models: list[Model]
+    def test_name(self) -> None:
+        self.assertEqual(Box.name, 'boxes')
 
-    @staticmethod
-    def from_instance(instance: Instance) -> 'Scene':
-        result = instance.request('get-scene')
-        return Scene.deserialize(result)
+    def test_properties(self) -> None:
+        test = Box(-Vector3.one, Vector3.one)
+        ref = {
+            'min': [-1, -1, -1],
+            'max': [1, 1, 1],
+        }
+        self.assertEqual(test.properties, ref)
 
-    @staticmethod
-    def deserialize(message: dict) -> 'Scene':
-        return Scene(
-            bounds=Bounds.deserialize(message['bounds']),
-            models=[
-                Model.deserialize(model)
-                for model in message['models']
-            ]
-        )
+
+if __name__ == '__main__':
+    unittest.main()

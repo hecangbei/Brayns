@@ -20,123 +20,45 @@
 
 import unittest
 
-from brayns.core.common.bounds import Bounds
-from brayns.core.common.capsule import Capsule
 from brayns.core.common.color import Color
-from brayns.core.common.plane import Plane
-from brayns.core.common.sphere import Sphere
-from brayns.core.common.vector3 import Vector3
-from brayns.core.geometry.geometry import Geometry
+from brayns.core.model.model import Model
+from tests.core.geometry.mock_geometry import MockGeometry
 from tests.core.geometry.mock_geometry_instance import MockGeometryInstance
 
 
 class TestGeometry(unittest.TestCase):
 
-    def test_add_boxes(self) -> None:
+    def test_add(self) -> None:
         instance = MockGeometryInstance()
-        boxes = [
-            (Bounds.cube(2), Color.pure_red),
-            (Bounds.cube(4, Vector3.one), Color.pure_blue)
+        tests = [
+            MockGeometry(0, 'test0'),
+            MockGeometry(1, 'test1').with_color(Color.pure_red)
         ]
-        model = Geometry.add_boxes(instance, boxes)
-        self.assertEqual(model.id, instance.model['id'])
-        self.assertEqual(instance.method, 'add-boxes')
+        model = MockGeometry.add(instance, tests)
+        ref = Model.deserialize(instance.model)
+        self.assertEqual(model, ref)
+        self.assertEqual(instance.method, 'add-tests')
         self.assertEqual(instance.params, [
-            {
-                'geometry': {
-                    'min': [-1, -1, -1],
-                    'max': [1, 1, 1]
-                },
-                'color': [1, 0, 0, 1]
-            },
-            {
-                'geometry': {
-                    'min': [-1, -1, -1],
-                    'max': [3, 3, 3]
-                },
-                'color': [0, 0, 1, 1]
-            }
+            test.serialize()
+            for test in tests
         ])
 
-    def test_add_capsules(self) -> None:
-        instance = MockGeometryInstance()
-        capsules = [
-            (Capsule(Vector3.zero, 1, Vector3.one, 2), Color.pure_red),
-            (Capsule(Vector3.one, 2, 2 * Vector3.one, 3), Color.pure_blue)
-        ]
-        model = Geometry.add_capsules(instance, capsules)
-        self.assertEqual(model.id, instance.model['id'])
-        self.assertEqual(instance.method, 'add-capsules')
-        self.assertEqual(instance.params, [
-            {
-                'geometry': {
-                    'p0': [0, 0, 0],
-                    'r0': 1,
-                    'p1': [1, 1, 1],
-                    'p1': 2
-                },
-                'color': [1, 0, 0, 1]
+    def test_serialize(self) -> None:
+        geometry = MockGeometry(0, 'test')
+        geometry.color = Color.pure_red
+        test = geometry.serialize()
+        ref = {
+            'geometry': {
+                'test1': 0,
+                'test2': 'test'
             },
-            {
-                'geometry': {
-                    'p0': [1, 1, 1],
-                    'r0': 2,
-                    'p1': [2, 2, 2],
-                    'p1': 3
-                },
-                'color': [0, 0, 1, 1]
-            }
-        ])
+            'color': [1, 0, 0, 1]
+        }
+        self.assertEqual(test, ref)
 
-    def test_add_planes(self) -> None:
-        instance = MockGeometryInstance()
-        planes = [
-            (Plane(Vector3.one), Color.pure_red),
-            (Plane(3 * Vector3.one, 3), Color.pure_blue)
-        ]
-        model = Geometry.add_planes(instance, planes)
-        self.assertEqual(model.id, instance.model['id'])
-        self.assertEqual(instance.method, 'add-planes')
-        self.assertEqual(instance.params, [
-            {
-                'geometry': {
-                    'coefficients': [1, 1, 1, 0]
-                },
-                'color': [1, 0, 0, 1]
-            },
-            {
-                'geometry': {
-                    'coefficients': [3, 3, 3, 3]
-                },
-                'color': [0, 0, 1, 1]
-            }
-        ])
-
-    def test_add_spheres(self) -> None:
-        instance = MockGeometryInstance()
-        spheres = [
-            (Sphere(1), Color.pure_red),
-            (Sphere(2, Vector3.one), Color.pure_blue)
-        ]
-        model = Geometry.add_spheres(instance, spheres)
-        self.assertEqual(model.id, instance.model['id'])
-        self.assertEqual(instance.method, 'add-spheres')
-        self.assertEqual(instance.params, [
-            {
-                'geometry': {
-                    'center': [0, 0, 0],
-                    'radius': 1
-                },
-                'color': [1, 0, 0, 1]
-            },
-            {
-                'geometry': {
-                    'center': [1, 1, 1],
-                    'radius': 2
-                },
-                'color': [0, 0, 1, 1]
-            }
-        ])
+    def test_with_color(self) -> None:
+        test = MockGeometry().with_color(Color.pure_red)
+        self.assertEqual(test.color, Color.pure_red)
 
 
 if __name__ == '__main__':

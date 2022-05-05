@@ -21,8 +21,6 @@
 import unittest
 
 from brayns.core.clipping.clip_plane import ClipPlane
-from brayns.core.common.plane import Plane
-from brayns.core.common.vector3 import Vector3
 from tests.core.clipping.mock_clipping_instance import MockClippingInstance
 
 
@@ -37,7 +35,7 @@ class TestClipPlane(unittest.TestCase):
 
     def test_add(self) -> None:
         instance = MockClippingInstance()
-        plane = ClipPlane(Vector3(1, 2, 3), 4)
+        plane = ClipPlane(1, 2, 3, 4)
         test = plane.add(instance)
         self.assertEqual(test, instance.id)
         self.assertEqual(instance.method, 'add-clip-plane')

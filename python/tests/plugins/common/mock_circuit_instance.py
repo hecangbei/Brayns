@@ -30,7 +30,7 @@ class MockCircuitInstance(Instance):
         self.method = ''
         self.params = None
         self.not_colored = [1, 2, 3]
-        self.methods = list(ColorMethod)
+        self.methods = [method.value for method in ColorMethod]
         self.variables = ['test1', 'test2']
 
     def request(self, method: str, params: Any = None) -> Any:
@@ -43,7 +43,7 @@ class MockCircuitInstance(Instance):
         if method == 'color-circuit-by-single-color':
             return None
         if method == 'get-circuit-color-methods':
-            return {'methods': [method.value for method in self.methods]}
+            return {'methods': self.methods}
         if method == 'get-circuit-color-method-variables':
             return {'variables': self.variables}
         raise RuntimeError('Invalid request')

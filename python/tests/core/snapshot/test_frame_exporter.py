@@ -31,10 +31,10 @@ from tests.core.snapshot.mock_snapshot_instance import MockSnapshotInstance
 
 class TestFrameExporter(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockSnapshotInstance()
-        self._path = 'test'
-        self._exporter = FrameExporter(
+    def test_export_frames(self) -> None:
+        instance = MockSnapshotInstance()
+        path = 'test'
+        exporter = FrameExporter(
             frames=[KeyFrame(i, CameraView()) for i in range(2)],
             format=ImageFormat.JPEG,
             jpeg_quality=50,
@@ -43,8 +43,10 @@ class TestFrameExporter(unittest.TestCase):
             renderer=MockRenderer(),
             sequential_naming=False
         )
-        self._message = {
-            'path': self._path,
+        exporter.export_frames(instance, path)
+        self.assertEqual(instance.method, 'export-frames')
+        self.assertEqual(instance.params, {
+            'path': path,
             'key_frames': [
                 {
                     'frame_index': 0,
@@ -62,13 +64,8 @@ class TestFrameExporter(unittest.TestCase):
             },
             'camera': MockCamera().serialize(),
             'renderer': MockRenderer().serialize(),
-            'sequential_naming': self._exporter.sequential_naming
-        }
-
-    def test_export_frames(self) -> None:
-        self._exporter.export_frames(self._instance, self._path)
-        self.assertEqual(self._instance.method, 'export-frames')
-        self.assertEqual(self._instance.params, self._message)
+            'sequential_naming': exporter.sequential_naming
+        })
 
 
 if __name__ == '__main__':

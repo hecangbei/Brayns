@@ -26,7 +26,7 @@ from brayns.core.common.vector import Vector
 from brayns.core.common.vector3 import Vector3
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Quaternion(Vector):
 
     x: float = 0.0

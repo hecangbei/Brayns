@@ -30,12 +30,13 @@ class TestCircuitColorByMethod(unittest.TestCase):
 
     def test_get_available_methods(self) -> None:
         instance = MockCircuitInstance()
-        methods = CircuitColorByMethod.get_available_methods(instance, 0)
+        test = CircuitColorByMethod.get_available_methods(instance, 0)
+        ref = [ColorMethod(method) for method in instance.methods]
+        self.assertEqual(test, ref)
         self.assertEqual(instance.method, 'get-circuit-color-methods')
         self.assertEqual(instance.params, {
             'model_id': 0
         })
-        self.assertEqual(methods, instance.methods)
 
     def test_get_available_variables(self) -> None:
         instance = MockCircuitInstance()

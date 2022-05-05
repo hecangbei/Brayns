@@ -19,24 +19,23 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import unittest
-from types import MappingProxyType
 
 from brayns.core.common.bounds import Bounds
 from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.transform import Transform
 from brayns.core.common.vector3 import Vector3
 from brayns.core.model.model import Model
-from tests.core.model.mock_scene_instance import MockSceneInstance
+from tests.core.model.mock_model_instance import MockModelInstance
 
 
 class TestModel(unittest.TestCase):
 
     def setUp(self) -> None:
-        self._instance = MockSceneInstance()
+        self._instance = MockModelInstance()
         self._model = Model(
             id=1,
             bounds=Bounds(Vector3.zero, Vector3.one),
-            metadata=MappingProxyType({'test': '1'}),
+            metadata={'test': '1'},
             visible=True,
             transform=Transform(
                 Vector3.one,
@@ -56,22 +55,13 @@ class TestModel(unittest.TestCase):
         }
 
     def test_from_instance(self) -> None:
-        message = self._instance.add_model()
-        ref = Model.deserialize(message)
-        model = Model.from_instance(self._instance, ref.id)
-        self.assertEqual(model.id, ref.id)
-        self.assertEqual(model.bounds, ref.bounds)
-        self.assertEqual(model.metadata, ref.metadata)
-        self.assertEqual(model.visible, ref.visible)
-        self.assertEqual(model.transform, ref.transform)
+        test = Model.from_instance(self._instance, 0)
+        ref = Model.deserialize(self._instance.model)
+        self.assertEqual(test, ref)
 
     def test_deserialize(self) -> None:
         test = Model.deserialize(self._message)
-        self.assertEqual(test.id, self._model.id)
-        self.assertEqual(test.bounds, self._model.bounds)
-        self.assertEqual(test.metadata, self._model.metadata)
-        self.assertEqual(test.visible, self._model.visible)
-        self.assertEqual(test.transform, self._model.transform)
+        self.assertEqual(test, self._model)
 
     def test_remove(self) -> None:
         ids = [1, 2, 3]
@@ -79,55 +69,27 @@ class TestModel(unittest.TestCase):
         self.assertEqual(self._instance.method, 'remove-model')
         self.assertEqual(self._instance.params, {'ids': ids})
 
+    def test_update(self) -> None:
+        Model.update(
+            self._instance,
+            id=0,
+            visible=True,
+            transform=Transform.identity
+        )
+        self.assertEqual(self._instance.method, 'update-model')
+        self.assertEqual(self._instance.params, {
+            'id': 0,
+            'visible': True,
+            'transformation': Transform.identity.serialize()
+        })
+
     def test_enable_simulation(self) -> None:
-        self._instance.add_model()
         Model.enable_simulation(self._instance, 1, True)
         self.assertEqual(self._instance.method, 'enable-simulation')
         self.assertEqual(self._instance.params, {
             'model_id': 1,
             'enabled': True
         })
-
-    def test_serialize(self) -> None:
-        ref = {
-            'id': self._model.id,
-            'visible': self._model.visible,
-            'transformation': self._model.transform.serialize()
-        }
-        test = self._model.serialize()
-        self.assertEqual(test, ref)
-
-    def test_update(self) -> None:
-        message = self._instance.add_model()
-        model = Model.deserialize(message)
-        model.transform = self._model.transform
-        model.visible = False
-        model.update(self._instance)
-        self.assertEqual(self._instance.method, 'update-model')
-        self.assertEqual(self._instance.params, {
-            'id': model.id,
-            'visible': model.visible,
-            'transformation': model.transform.serialize()
-        })
-
-    def test_translate(self) -> None:
-        translation = 3 * Vector3.one
-        ref = self._model.transform.translate(translation)
-        self._model.translate(translation)
-        self.assertEqual(self._model.transform, ref)
-
-    def test_rotate(self) -> None:
-        rotation = Quaternion(1, 2, 3, 4)
-        center = Vector3(4, 5, 6)
-        ref = self._model.transform.rotate(rotation, center)
-        self._model.rotate(rotation, center)
-        self.assertEqual(self._model.transform, ref)
-
-    def test_rescale(self) -> None:
-        scale = 3 * Vector3.one
-        ref = self._model.transform.rescale(scale)
-        self._model.rescale(scale)
-        self.assertEqual(self._model.transform, ref)
 
 
 if __name__ == '__main__':

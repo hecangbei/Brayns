@@ -21,7 +21,6 @@
 import unittest
 
 from brayns.core.camera.camera_view import CameraView
-from brayns.core.common.quaternion import Quaternion
 from brayns.core.common.vector3 import Vector3
 from tests.core.camera.mock_camera_instance import MockCameraInstance
 
@@ -30,69 +29,37 @@ class TestCameraView(unittest.TestCase):
 
     def setUp(self) -> None:
         self._instance = MockCameraInstance()
-        self._instance.view = CameraView(
-            position=Vector3.one,
-            target=2 * Vector3.one,
-            up=Vector3.right
+        self._view = CameraView(
+            position=Vector3(1, 2, 3),
+            target=Vector3(4, 5, 6),
+            up=Vector3(7, 8, 9)
         )
-
-    def test_from_instance(self) -> None:
-        view = CameraView.from_instance(self._instance)
-        self.assertEqual(view, self._instance.view)
-        self.assertEqual(self._instance.method, 'get-camera-look-at')
-        self.assertEqual(self._instance.params, None)
-
-    def test_deserialize(self) -> None:
-        test = {
+        self._message = {
             'position': [1, 2, 3],
             'target': [4, 5, 6],
             'up': [7, 8, 9]
         }
-        view = CameraView.deserialize(test)
-        self.assertEqual(view.position, Vector3(1, 2, 3))
-        self.assertEqual(view.target, Vector3(4, 5, 6))
-        self.assertEqual(view.up, Vector3(7, 8, 9))
+
+    def test_from_instance(self) -> None:
+        test = CameraView.from_instance(self._instance)
+        ref = CameraView.deserialize(self._instance.view)
+        self.assertEqual(test, ref)
+        self.assertEqual(self._instance.method, 'get-camera-look-at')
+        self.assertEqual(self._instance.params, None)
+
+    def test_deserialize(self) -> None:
+        test = CameraView.deserialize(self._message)
+        self.assertEqual(test, self._view)
 
     def test_use_for_main_camera(self) -> None:
         view = CameraView()
         view.use_for_main_camera(self._instance)
-        self.assertEqual(self._instance.view, view)
         self.assertEqual(self._instance.method, 'set-camera-look-at')
         self.assertEqual(self._instance.params, view.serialize())
 
     def test_serialize(self) -> None:
-        view = CameraView()
-        test = view.serialize()
-        ref = {
-            'position': [0, 0, 0],
-            'target': [0, 0, 0],
-            'up': [0, 1, 0]
-        }
-        self.assertEqual(test, ref)
-
-    def test_rotate_around_position(self) -> None:
-        view = CameraView(target=Vector3.forward)
-        rotation = Quaternion.from_axis_angle(Vector3.up, -90, degrees=True)
-        view.rotate_around_position(rotation)
-        self.assertAlmostEqual(view.target.x, -1)
-        self.assertAlmostEqual(view.target.y, 0)
-        self.assertAlmostEqual(view.target.z, 0)
-
-    def test_rotate_around_target(self) -> None:
-        view = CameraView(position=Vector3.forward)
-        rotation = Quaternion.from_axis_angle(Vector3.up, -90, degrees=True)
-        view.rotate_around_target(rotation)
-        self.assertAlmostEqual(view.position.x, -1)
-        self.assertAlmostEqual(view.position.y, 0)
-        self.assertAlmostEqual(view.position.z, 0)
-
-    def test_rotate_up(self) -> None:
-        view = CameraView(up=Vector3.forward)
-        rotation = Quaternion.from_axis_angle(Vector3.up, -90, degrees=True)
-        view.rotate_up(rotation)
-        self.assertAlmostEqual(view.up.x, -1)
-        self.assertAlmostEqual(view.up.y, 0)
-        self.assertAlmostEqual(view.up.z, 0)
+        test = self._view.serialize()
+        self.assertEqual(test, self._message)
 
 
 if __name__ == '__main__':

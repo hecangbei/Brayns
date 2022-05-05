@@ -18,11 +18,17 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from dataclasses import dataclass
+
 from brayns.core.common.resolution import Resolution
 from brayns.instance.instance import Instance
 
 
+@dataclass
 class ApplicationParameters:
+
+    plugins: list[str]
+    resolution: Resolution
 
     @staticmethod
     def from_instance(instance: Instance) -> 'ApplicationParameters':
@@ -32,35 +38,13 @@ class ApplicationParameters:
     @staticmethod
     def deserialize(message: dict) -> 'ApplicationParameters':
         return ApplicationParameters(
-            plugins=tuple(message['plugins']),
+            plugins=message['plugins'],
             resolution=Resolution(*message['viewport'])
         )
 
-    def __init__(
-        self,
-        plugins: tuple[str],
-        resolution: Resolution
-    ) -> None:
-        self._plugins = plugins
-        self._resolution = resolution
-
-    @property
-    def plugins(self) -> tuple[str]:
-        return self._plugins
-
-    @property
-    def resolution(self) -> Resolution:
-        return self._resolution
-
-    @resolution.setter
-    def resolution(self, value: Resolution) -> None:
-        self._resolution = value
-
-    def update(self, instance: Instance) -> None:
-        params = self.serialize()
-        instance.request('set-application-parameters', params)
-
-    def serialize(self) -> dict:
-        return {
-            'viewport': list(self.resolution)
+    @staticmethod
+    def update(instance: Instance, resolution: Resolution) -> None:
+        params = {
+            'viewport': list(resolution)
         }
+        instance.request('set-application-parameters', params)

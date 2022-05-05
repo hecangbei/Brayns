@@ -18,59 +18,48 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from typing import Iterable
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import TypeVar
 
-from brayns.core.common.bounds import Bounds
-from brayns.core.common.capsule import Capsule
 from brayns.core.common.color import Color
-from brayns.core.common.plane import Plane
-from brayns.core.common.sphere import Sphere
 from brayns.core.model.model import Model
 from brayns.instance.instance import Instance
 
+T = TypeVar('T', bound='Geometry')
 
-class Geometry:
 
-    @staticmethod
-    def add_boxes(instance: Instance, boxes: list[tuple[Bounds, Color]]) -> Model:
-        geometries = (
-            (box.serialize(), color)
-            for box, color in boxes
-        )
-        return Geometry._add(instance, 'add-boxes', geometries)
+@dataclass
+class Geometry(ABC):
 
-    @staticmethod
-    def add_capsules(instance: Instance, capsules: list[tuple[Capsule, Color]]) -> Model:
-        geometries = (
-            (capsule.serialize(), color)
-            for capsule, color in capsules
-        )
-        return Geometry._add(instance, 'add-capsules', geometries)
+    color: Color = field(init=False, default=Color.white)
 
-    @staticmethod
-    def add_planes(instance: Instance, planes: list[tuple[Plane, Color]]) -> Model:
-        geometries = (
-            (plane.serialize(), color)
-            for plane, color in planes
-        )
-        return Geometry._add(instance, 'add-planes', geometries)
+    @classmethod
+    @property
+    @abstractmethod
+    def name(cls) -> str:
+        pass
 
-    @staticmethod
-    def add_spheres(instance: Instance, spheres: list[tuple[Sphere, Color]]) -> Model:
-        geometries = (
-            (sphere.serialize(), color)
-            for sphere, color in spheres
-        )
-        return Geometry._add(instance, 'add-spheres', geometries)
+    @property
+    @abstractmethod
+    def properties(self) -> dict:
+        pass
 
-    @staticmethod
-    def _add(instance: Instance, method: str, geometries: Iterable[tuple[dict, Color]]) -> Model:
+    @classmethod
+    def add(cls: type[T], instance: Instance, geometries: list[T]) -> Model:
         params = [
-            {
-                'geometry': geometry,
-                'color': list(color)
-            }
-            for geometry, color in geometries
+            geometry.serialize()
+            for geometry in geometries
         ]
-        result = instance.request(method, params)
+        result = instance.request(f'add-{cls.name}', params)
         return Model.deserialize(result)
+
+    def serialize(self) -> dict:
+        return {
+            'geometry': self.properties,
+            'color': list(self.color)
+        }
+
+    def with_color(self: T, color: Color) -> T:
+        self.color = color
+        return self

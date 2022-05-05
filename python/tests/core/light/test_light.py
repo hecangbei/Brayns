@@ -32,15 +32,11 @@ class TestLight(unittest.TestCase):
         self._instance = MockLightInstance()
 
     def test_remove(self) -> None:
-        self._instance.names = 3 * [MockLight.name]
-        self._instance.lights = 3 * [MockLight().serialize()]
         Light.remove(self._instance, [0, 1, 2])
         self.assertEqual(self._instance.method, 'remove-lights')
         self.assertEqual(self._instance.params, {'ids': [0, 1, 2]})
 
     def test_clear(self) -> None:
-        self._instance.names = 3 * [MockLight.name]
-        self._instance.lights = 3 * [MockLight().serialize()]
         Light.clear(self._instance)
         self.assertEqual(self._instance.method, 'clear-lights')
         self.assertEqual(self._instance.params, None)
@@ -48,7 +44,7 @@ class TestLight(unittest.TestCase):
     def test_add(self) -> None:
         light = MockLight(Color.pure_red, 3, False, 'test')
         id = light.add(self._instance)
-        self.assertEqual(id, 0)
+        self.assertEqual(id, self._instance.id)
         self.assertEqual(self._instance.method, 'add-light-test')
         self.assertEqual(self._instance.params, light.serialize())
 

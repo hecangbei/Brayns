@@ -21,13 +21,14 @@
 from typing import Any
 
 from brayns.instance.instance import Instance
+from tests.core.material.mock_material import MockMaterial
 
 
 class MockMaterialInstance(Instance):
 
     def __init__(self) -> None:
-        self.materials = list[dict]()
-        self.names = list[str]()
+        self.name = MockMaterial.name
+        self.material = MockMaterial().serialize()
         self.method = ''
         self.params = None
 
@@ -35,19 +36,9 @@ class MockMaterialInstance(Instance):
         self.method = method
         self.params = params
         if method == 'get-material-type':
-            id = params['id']
-            return self.names[id]
+            return self.name
         if method.startswith('get-material-'):
-            id = params['id']
-            name = method.split('-')[2]
-            if name != self.names[id]:
-                raise RuntimeError(f'Current material is not {name}')
-            return self.materials[id]
+            return self.material
         if method.startswith('set-material-'):
-            id = params['model_id']
-            name = method.split('-')[2]
-            if name != self.names[id]:
-                raise RuntimeError()
-            self.materials[id] = params['material']
             return None
         raise RuntimeError('Invalid request')

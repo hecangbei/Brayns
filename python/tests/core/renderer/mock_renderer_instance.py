@@ -21,13 +21,14 @@
 from typing import Any
 
 from brayns.instance.instance import Instance
+from tests.core.renderer.mock_renderer import MockRenderer
 
 
 class MockRendererInstance(Instance):
 
     def __init__(self) -> None:
-        self.name = ''
-        self.properties = {}
+        self.name = MockRenderer.name
+        self.renderer = MockRenderer().serialize()
         self.method = ''
         self.params = None
 
@@ -37,12 +38,7 @@ class MockRendererInstance(Instance):
         if method == 'get-renderer-type':
             return self.name
         if method.startswith('get-renderer-'):
-            name = method.split('-')[2]
-            if name != self.name:
-                raise RuntimeError(f'Current renderer is not {name}')
-            return self.properties
+            return self.renderer
         if method.startswith('set-renderer-'):
-            self.name = method.split('-')[2]
-            self.properties = params
             return None
         raise RuntimeError('Invalid request')

@@ -21,72 +21,47 @@
 from typing import Any
 
 from brayns.core.common.transform import Transform
-from brayns.core.model.model import Model
 from brayns.instance.instance import Instance
 
 
-class MockSceneInstance(Instance):
+class MockModelInstance(Instance):
 
     def __init__(self) -> None:
-        self.models = list[dict]()
         self.bounds = {
-            'min': [-1, -1, -1],
+            'min': [0, 0, 0],
             'max': [1, 1, 1]
         }
-        self.method = ''
-        self.params = None
-        self._id = 0
-
-    def create_model(self) -> Model:
-        self._id += 1
-        return {
-            'id': self._id,
+        self.model = {
+            'id': 1,
             'bounds': self.bounds,
-            'metadata': {
-                'test1': '1',
-                'test2': '2'
-            },
+            'metadata': {},
             'visible': True,
             'transformation': Transform.identity.serialize()
         }
-
-    def get_scene(self) -> dict:
-        return {
-            'models': self.models,
-            'bounds': self.bounds
-        }
-
-    def add_model(self) -> dict:
-        model = self.create_model()
-        self.models.append(model)
-        return model
-
-    def get_model(self, id: int) -> dict:
-        return next(model for model in self.models if model['id'] == id)
-
-    def update_model(self, params: dict) -> None:
-        model = self.get_model(params['id'])
-        model.update(params)
-
-    def remove_model(self, params: dict) -> None:
         self.models = [
-            model for model in self.models
-            if model['id'] not in params['ids']
+            self.model | {'id': 0},
+            self.model | {'id': 1},
         ]
+        self.scene = {
+            'bounds': self.bounds,
+            'models': self.models
+        }
+        self.method = ''
+        self.params = None
 
     def request(self, method: str, params: Any = None) -> Any:
         self.method = method
         self.params = params
         if method == 'get-scene':
-            return self.get_scene()
+            return self.scene
         if method == 'get-model':
-            return self.get_model(params['id'])
+            return self.model
         if method == 'add-model':
-            return [self.add_model()]
+            return self.models
         if method == 'update-model':
-            return self.update_model(params)
+            return None
         if method == 'remove-model':
-            return self.remove_model(params)
+            return None
         if method == 'enable-simulation':
             return None
         raise RuntimeError('Test error')

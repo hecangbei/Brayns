@@ -20,27 +20,24 @@
 
 from typing import Any
 
-from brayns.core.version.version import Version
 from brayns.instance.instance import Instance
 
 
 class MockVersionInstance(Instance):
 
-    version = Version(1, 2, 3, '4')
-    reply = {
-        'major': version.major,
-        'minor': version.minor,
-        'patch': version.patch,
-        'revision': version.revision
-    }
-
     def __init__(self) -> None:
         self.method = ''
         self.params = None
+        self.version = {
+            'major': 0,
+            'minor': 1,
+            'patch': 2,
+            'revision': '3'
+        }
 
     def request(self, method: str, params: Any = None) -> Any:
         self.method = method
         self.params = params
         if method == 'get-version':
-            return self.reply
+            return self.version
         raise RuntimeError('Invalid request')

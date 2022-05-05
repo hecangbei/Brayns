@@ -30,15 +30,13 @@ from tests.core.snapshot.mock_snapshot_instance import MockSnapshotInstance
 
 class TestSnapshot(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self._instance = MockSnapshotInstance()
-
     def test_save_remotely(self) -> None:
+        instance = MockSnapshotInstance()
         snapshot = Snapshot()
         path = 'test.jpg'
-        snapshot.save_remotely(self._instance, path)
-        self.assertEqual(self._instance.method, 'snapshot')
-        self.assertEqual(self._instance.params, {
+        snapshot.save_remotely(instance, path)
+        self.assertEqual(instance.method, 'snapshot')
+        self.assertEqual(instance.params, {
             'path': path,
             'image_settings': {
                 'format': 'jpg',
@@ -47,17 +45,19 @@ class TestSnapshot(unittest.TestCase):
         })
 
     def test_download_no_params(self) -> None:
+        instance = MockSnapshotInstance()
         snapshot = Snapshot()
-        data = snapshot.download(self._instance, ImageFormat.PNG)
-        self.assertEqual(data, self._instance.data)
-        self.assertEqual(self._instance.method, 'snapshot')
-        self.assertEqual(self._instance.params, {
+        data = snapshot.download(instance, ImageFormat.PNG)
+        self.assertEqual(data, instance.data)
+        self.assertEqual(instance.method, 'snapshot')
+        self.assertEqual(instance.params, {
             'image_settings': {
                 'format': 'png'
             }
         })
 
     def test_download_all_params(self) -> None:
+        instance = MockSnapshotInstance()
         snapshot = Snapshot(
             jpeg_quality=50,
             resolution=(1920, 1080),
@@ -66,7 +66,7 @@ class TestSnapshot(unittest.TestCase):
             camera=MockCamera(),
             renderer=MockRenderer()
         )
-        snapshot.download(self._instance, ImageFormat.JPEG)
+        snapshot.download(instance, ImageFormat.JPEG)
         ref = {
             'image_settings': {
                 'format': 'jpg',
@@ -80,7 +80,7 @@ class TestSnapshot(unittest.TestCase):
             'camera': MockCamera().serialize(),
             'renderer': MockRenderer().serialize()
         }
-        test = self._instance.params
+        test = instance.params
         self.assertEqual(test, ref)
 
 

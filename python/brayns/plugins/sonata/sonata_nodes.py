@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-@dataclass(frozen=True)
+@dataclass
 class SonataNodes:
 
     density: Optional[float] = None

@@ -18,7 +18,6 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import math
 import unittest
 
 from brayns.core.common.quaternion import Quaternion
@@ -62,26 +61,6 @@ class TestQuaternion(unittest.TestCase):
         test = Quaternion(*values)
         self.assertEqual(list(test), values)
 
-    def test_abs(self) -> None:
-        test = Quaternion(1, -2, 3, -4)
-        ref = Quaternion(1, 2, 3, 4)
-        self.assertEqual(abs(test), ref)
-
-    def test_neg(self) -> None:
-        self.assertEqual(-Quaternion(1, 2, 3, 4), Quaternion(-1, -2, -3, -4))
-
-    def test_add(self) -> None:
-        self.assertEqual(
-            Quaternion(1, 2, 3, 4) + Quaternion(5, 6, 7, 8),
-            Quaternion(6, 8, 10, 12)
-        )
-
-    def test_sub(self) -> None:
-        self.assertEqual(
-            Quaternion(1, 2, 3, 4) - Quaternion(5, 6, 7, 8),
-            Quaternion(-4, -4, -4, -4)
-        )
-
     def test_mul_scalar(self) -> None:
         values = [1, 2, 3, 4]
         ref = [2 * i for i in values]
@@ -113,22 +92,6 @@ class TestQuaternion(unittest.TestCase):
     def test_vector(self) -> None:
         test = Quaternion(1, 2, 3, 4)
         self.assertEqual(test.vector, Vector3(1, 2, 3))
-
-    def test_square_norm(self) -> None:
-        test = Quaternion(1, 2, 3, 4)
-        self.assertAlmostEqual(test.square_norm, 30)
-
-    def test_norm(self) -> None:
-        test = Quaternion(1, 2, 3, 4)
-        self.assertAlmostEqual(test.norm, math.sqrt(30))
-
-    def test_normalized(self) -> None:
-        value = Quaternion(1, 2, 3, 4)
-        self.assertAlmostEqual(value.normalized.norm, 1)
-        test = value.normalized * value.norm
-        self.assertAlmostEqual(test.x, value.x)
-        self.assertAlmostEqual(test.y, value.y)
-        self.assertAlmostEqual(test.z, value.z)
 
     def test_conjugate(self) -> None:
         test = Quaternion(1, 2, 3, 4)
